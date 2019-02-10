@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="org.ljdp.plugin.batch.persistent.BtFileData" table="BATCH_FILEDATA">
+<id column="DATA_ID" name="dataId" type="java.lang.Long"/>
+<property column="TASK_ID" length="30" name="taskId"  type="java.lang.String"/>
+<property column="DATA_ITEM" length="2500" name="dataItem"  type="java.lang.String"/>
+</class>
+</hibernate-mapping>

@@ -1,0 +1,31 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<!-- 指定一个文件目录，当EHCache把数据写到硬盘上时，将把数据写到这个文件目录下 -->
+    <diskStore path="java.io.tmpdir"/>
+	
+	<!-- 
+	maxEntriesLocalHeap：内存中存放最大数量
+	maxEntriesLocalDisk：磁盘中存放最大数量
+	timeToIdleSeconds：最大空闲时间
+	timeToLiveSeconds：最大存活时间
+	子元素persistence：内存满了持久化至磁盘的策略
+	 -->
+	<cache name="quickcache"
+		 maxEntriesLocalHeap="0"
+		 eternal="false" 
+		 timeToIdleSeconds="60" 
+		 timeToLiveSeconds="120">
+	</cache>
+	
+	<defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="600"
+            overflowToDisk="true"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+</ehcache>

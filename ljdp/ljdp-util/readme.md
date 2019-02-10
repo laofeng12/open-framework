@@ -1,0 +1,15 @@
+# 轻量级java开发平台工具包
+## 常用工具集
+1. 二维码,在org.ljdp.util.orcode包下
+2. ByteUtil：字节与对象转换工具
+3. DataWrapper：把jdbc数据库查询结果（数组）封装为对象
+4. DateFormater：时间日期格式化工具（java8中建议使用LocalDateTimeUtils）
+5. EmojiUtil：emoji表情处理
+6. FileUtils：文件处理工具，继承org.apache.commons.io.FileUtils，扩展了一些功能
+7. LocalDateTimeUtils：基于java8的时间日期格式化和计算工具
+8. NameUtils：实现一些命名规范
+9. NumberUtil：10进制与62进制转换工具
+10. PicResize：图片尺寸剪接工具
+11. PicUtils：图片分辨率压缩工具
+12. RandomCode：随机码生成工具（不能保证唯一性）
+13. StringUtil：字符串工具(很少用，主要是扩展apache的StringUtils)

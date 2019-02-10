@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <package name="ljdp-batch" namespace="/ljdp/batch" extends="struts-default">
+    	<!-- 查询正在批量处理的任务列表 -->
+        <action name="batchList" method="batchList" class="org.opensource.ljdp.plugin.batch.view.BaseBatchAction"/>
+        <!-- 刷新处理文件的进度条 -->
+        <action name="batchState" method="batchState" class="org.opensource.ljdp.plugin.batch.view.BaseBatchAction"/>
+        <!-- 后台处理文件的进度条 -->
+        <action name="bsBatchState" method="bsBatchState" class="org.opensource.ljdp.plugin.batch.view.BaseBatchAction"/>
+        <!-- 触发后台任务运行 -->
+        <action name="notifyBsTaskScan" method="notifyBsTaskScan" class="org.opensource.ljdp.plugin.batch.view.BaseBatchAction"/>
+        
+        <!-- 上传文件 -->
+        <action name="uploadFileNow" method="uploadFileNow" class="org.opensource.ljdp.plugin.batch.view.FileUploadAction"/>
+        <!-- 下载文件 -->
+        <action name="downloadFile" method="downloadFile" class="org.opensource.ljdp.plugin.batch.view.DownloadAction"/>
+        <!-- 开始处理 -->
+        <action name="batchProcess" method="batchProcess" class="org.opensource.ljdp.plugin.batch.view.LjdpBatchAction"/>
+    </package>
+
+	<package name="ljdp-batch-task" namespace="/ljdp/batch/task" extends="struts-default">
+		<!-- 历史日志查询 -->
+        <action name="ajaxList" method="doAjaxList" class="org.opensource.ljdp.plugin.batch.view.FileImportTaskAction"/>
+        <action name="listAllTaskType" method="listAllTaskType" class="org.opensource.ljdp.plugin.batch.view.FileImportTaskAction"/>
+        <action name="exportTask" method="exportTask" class="org.opensource.ljdp.plugin.batch.view.FileImportTaskAction"/>
+        
+        <!-- 失败记录查询 -->
+        <action name="failList" method="doAjaxList" class="org.opensource.ljdp.plugin.batch.view.FileDataFailAction"/>
+        <action name="exportFailExcel" method="exportExcel" class="org.opensource.ljdp.plugin.batch.view.FileDataFailAction"/>
+	</package>
+</struts>

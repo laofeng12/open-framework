@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ljdp</groupId>
+  <artifactId>ljdp-all</artifactId>
+  <version>5.0</version>
+  <packaging>pom</packaging>
+  
+  <modules>
+	  <module>ljdp-common</module>
+	  <module>ljdp-component</module>
+	  <module>ljdp-ui</module>
+	  <module>ljdp-util</module>
+	  <module>ljdp-core3</module>
+	  <module>ljdp-secure</module>
+	  <module>ljdp-module</module>
+	  <module>ljdp-plugin-api</module>
+	  <module>ljdp-plugin-batch</module>
+	  <module>ljdp-plugin-sys</module>
+	  <module>ljdp-support-web</module>
+  </modules>
+  
+</project>

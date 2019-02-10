@@ -1,0 +1,34 @@
+package org.ljdp.support.attach.repository;
+
+import java.util.List;
+
+import org.ljdp.core.spring.data.DynamicJpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.query.Param;
+
+import org.ljdp.support.attach.domain.BsImageFile;
+
+/**
+ * 数据库访问层
+ * @author hzy
+ *
+ */
+public interface BsImageFileRepository extends DynamicJpaRepository<BsImageFile, Long>, BsImageFileRepositoryCustom{
+	
+	@Query("from BsImageFile where btype=:btype and bid=:bid order by seqno, creatime")
+	public List<BsImageFile> queryByBtypeAndBid(@Param("btype")String btype, @Param("bid")String bid);
+	
+	@Query("from BsImageFile where bid=:bid order by seqno, creatime")
+	public List<BsImageFile> queryByBid(@Param("bid")String bid);
+	
+	/**
+	 * 更新附件所关联的业务记录id
+	 * @param fid
+	 * @param bid
+	 * @return
+	 */
+	@Modifying
+	@Query("update BsImageFile set bid=:bid where id=:fid")
+	public int updateBid(@Param("fid")Long fid, @Param("bid")String bid);
+}

@@ -1,0 +1,18 @@
+.settings
+.project
+.classpath
+.settings
+target
+.class
+
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+test/
+.factorypath
+git.properties
+.apt_generated
