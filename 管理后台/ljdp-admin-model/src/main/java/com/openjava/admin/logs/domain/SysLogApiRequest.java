@@ -29,9 +29,9 @@ public class SysLogApiRequest implements Persistable<Long>,Serializable {
 	@ApiModelProperty("登陆帐号")
 	private String account;
 	@ApiModelProperty("登陆渠道")
-	private Long fromChannel;
+	private String fromChannel;
 	@ApiModelProperty("来源推广渠道")
-	private Long advertChannel;
+	private String advertChannel;
 	@ApiModelProperty("调用标识")
 	private String requestIden;
 	@ApiModelProperty("请求时间")
@@ -105,19 +105,19 @@ public class SysLogApiRequest implements Persistable<Long>,Serializable {
 	
 
 	@Column(name = "FROM_CHANNEL")
-	public Long getFromChannel() {
+	public String getFromChannel() {
 		return fromChannel;
 	}
-	public void setFromChannel(Long fromChannel) {
+	public void setFromChannel(String fromChannel) {
 		this.fromChannel = fromChannel;
 	}
 	
 
 	@Column(name = "ADVERT_CHANNEL")
-	public Long getAdvertChannel() {
+	public String getAdvertChannel() {
 		return advertChannel;
 	}
-	public void setAdvertChannel(Long advertChannel) {
+	public void setAdvertChannel(String advertChannel) {
 		this.advertChannel = advertChannel;
 	}
 	

@@ -12,14 +12,14 @@ server:
 
 spring:
   datasource:
-#    driver-class-name: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://rm-wz91mif0ulj9t9fn09o.mysql.rds.aliyuncs.com:3306/cloud?useUnicode=true&characterEncoding=utf-8&useSSL=false
-#    username: root
-#    password: lmcity1234!
-    driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@120.78.211.36:1521:orcl
-    username: c##ljdp
-    password: ch#123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-wz9a1c8d803l35e2hio.mysql.rds.aliyuncs.com:3306/cloud?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: alitest
+    password: Ch#123456
+#    driver-class-name: oracle.jdbc.OracleDriver
+#    url: jdbc:oracle:thin:@120.78.211.36:1521:orcl
+#    username: c##ljdp
+#    password: ch#123456
     druid:
       initial-size: 1
       max-active: 600
