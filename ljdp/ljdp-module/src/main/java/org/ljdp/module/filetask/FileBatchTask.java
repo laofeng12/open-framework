@@ -345,11 +345,11 @@ public abstract class FileBatchTask extends BaseBatchTask {
     	resultFile = poiRf;
     	resultFile.setNeedSuccFile(needSuccFile);
         resultFile.setContentType(ContentType.EXCELX);
-        poiRf.initialize(filename);
+        poiRf.initialize(filename, sheetNumber);
         Workbook xwb;
         InputStream input = null;
     	try {
-    		poiRf.openFile();
+    		poiRf.openFile(false);//false:只是创建excel，先不创建sheet
     		String title = getTitle();
             if(title != null) {
             	poiRf.writeTitle(title);
@@ -358,6 +358,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
             xwb = WorkbookFactory.create(input);
             for(int slocation = 0; slocation < sheetNumber; slocation++) {
             	Sheet sheet = xwb.getSheetAt(slocation);
+            	poiRf.createErrorSheet(slocation, sheet.getSheetName());//创建对应的失败记录sheet
                 if(currentReadRow < beginIndex){
     				currentReadRow = beginIndex;
     			}
@@ -394,7 +395,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
     						} else {
     							resultInfo = makeResultMsg(transactionError);
     						}
-    						poiRf.writeErrorRecord(records[j], resultInfo);
+    						poiRf.writeErrorRecord(slocation, records[j], resultInfo);
     					}
     				}
     				addCurrentRecord(currentBatchNum);
