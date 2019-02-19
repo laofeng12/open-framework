@@ -94,6 +94,15 @@ public class LjdpDfsUtils {
 	}
 	
 	public String replaceVedioUrl(String url){
+		return replaceVedioUrl(url, vedioServerUrl);
+	}
+	/**
+	 * 把视频地址里的参数替换为提供的服务器地址。
+	 * @param url
+	 * @param allocateUrl
+	 * @return
+	 */
+	public String replaceVedioUrl(String url, String allocateUrl){
 		try{
 			if(url == null)return url;
 			boolean match = false;
@@ -103,7 +112,7 @@ public class LjdpDfsUtils {
 				m1 = p1.matcher(url); 
 				while(m1.find()){
 					if(ossServerUrl != null) {
-						url = url.replaceAll(PicUrlUtils.OSS_PARAMS2, vedioServerUrl);
+						url = url.replaceAll(PicUrlUtils.OSS_PARAMS2, allocateUrl);
 						url = url.replace("\\","/");
 					}
 					match = true;
@@ -115,7 +124,7 @@ public class LjdpDfsUtils {
 				m1 = p1.matcher(url); 
 				while(m1.find()){
 					if(obsServerUrl != null) {
-						url = url.replaceAll(PicUrlUtils.OBS_PARAMS2, vedioServerUrl);
+						url = url.replaceAll(PicUrlUtils.OBS_PARAMS2, allocateUrl);
 						url = url.replace("\\","/");
 					}
 					match = true;
@@ -202,6 +211,10 @@ public class LjdpDfsUtils {
 //			return ftp2httpDownload + f.getId();
 //		}
 		return replaceVedioUrl(f.getPicurl());
+	}
+	
+	public String getVedioUrl(BsImageFile f, String allocateUrl) {
+		return replaceVedioUrl(f.getPicurl(), allocateUrl);
 	}
 
 	public String getVedioServerUrl() {
