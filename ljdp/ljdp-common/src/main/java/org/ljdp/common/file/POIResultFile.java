@@ -66,7 +66,7 @@ public class POIResultFile extends AbstractResultFile {
     }
     
     public void createErrorSheet(int sheet, String name) {
-    	errorSheet[sheet] = workbook.createSheet("失败记录"+(sheet+1)+":"+name);
+    	errorSheet[sheet] = workbook.createSheet("失败记录"+(sheet+1)+"-"+name);
     }
     
     public void writeTitle(String title) {
