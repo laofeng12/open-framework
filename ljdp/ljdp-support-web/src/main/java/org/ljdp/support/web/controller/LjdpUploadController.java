@@ -26,6 +26,7 @@ import org.ljdp.plugin.batch.task.FileUploadTask;
 import org.ljdp.plugin.batch.view.spring.FileUploadController;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.secure.sso.SsoContext;
+import org.ljdp.support.attach.component.HwcloudConfig;
 import org.ljdp.support.attach.component.LjdpDfsUtils;
 import org.ljdp.support.attach.component.LjdpFileuploadConfig;
 import org.ljdp.support.attach.domain.BsImageFile;
@@ -64,6 +65,8 @@ public class LjdpUploadController extends FileUploadController {
 	private HwObsService hwObsService;
 	@Resource
 	private LjdpDfsUtils dfsUtils;
+	@Resource
+	private HwcloudConfig hwcloudConfig;
 //	@Resource
 //	private RedisTemplate<String, Object> redisTemplate;
 	
@@ -259,7 +262,7 @@ public class LjdpUploadController extends FileUploadController {
 			@RequestParam(value="busiPath",required=false) String busiPath,
 			@RequestParam(value="bid",required=false) String bid,
 			@RequestParam(value="type",required=false) String type) throws Exception{
-		if(StringUtils.isEmpty(busiPath)) {
+		if(StringUtils.isBlank(busiPath)) {
 			if(StringUtils.isNotBlank(type)) {
 				if(type.equals("vedio")) {
 					busiPath = fileuploadConfig.getVedioBucket();
@@ -274,6 +277,17 @@ public class LjdpUploadController extends FileUploadController {
 		result.setCode(200);
 		result.setFid(imgFile.getId().toString());
 		result.setViewUrl(dfsUtils.getViewUrl(imgFile));
+		if(StringUtils.isNotBlank(busiPath)) {
+			String newviewurl = result.getViewUrl().replaceFirst(hwcloudConfig.getBucketname(), busiPath);
+			result.setViewUrl(newviewurl);
+		}
+		if(StringUtils.isNotBlank(type)) {
+			if(type.equals("vedio")) {
+				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getVedioServerUrl()));
+			} else if(type.equals("audio")) {
+				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getAudioServerUrl()));
+			}
+		}
 		return result;
 	}
 	

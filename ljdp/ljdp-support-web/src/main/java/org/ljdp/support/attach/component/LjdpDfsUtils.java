@@ -25,6 +25,7 @@ public class LjdpDfsUtils {
 	private String obsServerUrl;//华为云OBS服务地址
 	
 	private String vedioServerUrl;//视频服务地址
+	private String audioServerUrl;//音频服务地址
 	
 	public String getFtp2httpDownload() {
 		return ftp2httpDownload;
@@ -56,6 +57,25 @@ public class LjdpDfsUtils {
 
 	public void setObsServerUrl(String obsServerUrl) {
 		this.obsServerUrl = obsServerUrl;
+	}
+	
+	/**
+	 * 把obs参数的地址，替换为实际的服务器地址
+	 * @param url
+	 * @param serverUrl
+	 * @return
+	 */
+	public String replaceObsToServer(String url, String serverUrl){
+		if(url == null)return url;
+		Pattern p1 = Pattern.compile(PicUrlUtils.OBS_PARAMS2);
+		Matcher m1 = p1.matcher(url); 
+		while(m1.find()){
+			if(obsServerUrl != null) {
+				url = url.replaceAll(PicUrlUtils.OBS_PARAMS2, serverUrl);
+				url = url.replace("\\","/");
+			}
+		}
+		return url;
 	}
 	
 	public String replaceUrl(String url){
@@ -223,6 +243,14 @@ public class LjdpDfsUtils {
 
 	public void setVedioServerUrl(String vedioServerUrl) {
 		this.vedioServerUrl = vedioServerUrl;
+	}
+
+	public String getAudioServerUrl() {
+		return audioServerUrl;
+	}
+
+	public void setAudioServerUrl(String audioServerUrl) {
+		this.audioServerUrl = audioServerUrl;
 	}
 
 }
