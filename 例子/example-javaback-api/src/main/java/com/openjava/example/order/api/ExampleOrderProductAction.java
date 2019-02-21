@@ -42,6 +42,7 @@ import io.swagger.annotations.ApiResponses;
 import com.openjava.example.order.domain.ExampleOrderProduct;
 import com.openjava.example.order.service.ExampleOrderProductService;
 import com.openjava.example.order.query.ExampleOrderProductDBParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 /**
@@ -88,7 +89,7 @@ public class ExampleOrderProductAction {
 	})
 	@Security(session=true)
 	@RequestMapping(value="/search",method=RequestMethod.GET)
-	public TablePage<ExampleOrderProduct> doSearch(ExampleOrderProductDBParam params, Pageable pageable){
+	public TablePage<ExampleOrderProduct> doSearch(@ApiIgnore() ExampleOrderProductDBParam params, @ApiIgnore() Pageable pageable){
 		Page<ExampleOrderProduct> result =  exampleOrderProductService.query(params, pageable);
 		
 		return new TablePageImpl<>(result);

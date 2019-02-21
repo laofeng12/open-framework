@@ -45,6 +45,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 /**
@@ -127,7 +128,7 @@ public class ExampleOrderAction {
 	})
 	@Security(session=false)
 	@RequestMapping(value="/search",method=RequestMethod.GET)
-	public TablePage<ExampleOrder> doSearch(ExampleOrderDBParam params, Pageable pageable){
+	public TablePage<ExampleOrder> doSearch(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
 		
 //		params.setEq_totalPrice(new Long[] {100L, 288L, 399L});
 //		List<String> in_userName = new ArrayList<String>();
@@ -141,7 +142,7 @@ public class ExampleOrderAction {
 //		params.setSql_query1("exists("
 //				+ "select 1 from ExampleOrderProduct p where p.orderId=t.orderId"
 //				+ " and p.shopName='六沐商城')");
-		
+
 		Page<ExampleOrder> result =  exampleOrderService.query(params, pageable);
 		
 		return new TablePageImpl<>(result);
