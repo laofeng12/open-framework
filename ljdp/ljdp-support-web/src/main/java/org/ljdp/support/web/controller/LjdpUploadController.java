@@ -257,7 +257,17 @@ public class LjdpUploadController extends FileUploadController {
 	@Security(session=true)
 	public Result uploadObs(@RequestParam("file") Part file,
 			@RequestParam(value="busiPath",required=false) String busiPath,
-			@RequestParam(value="bid",required=false) String bid) throws Exception{
+			@RequestParam(value="bid",required=false) String bid,
+			@RequestParam(value="type",required=false) String type) throws Exception{
+		if(StringUtils.isEmpty(busiPath)) {
+			if(StringUtils.isNotBlank(type)) {
+				if(type.equals("vedio")) {
+					busiPath = fileuploadConfig.getVedioBucket();
+				} else if(type.equals("audio")) {
+					busiPath = fileuploadConfig.getAudioBucket();
+				}
+			}
+		}
 		BsImageFile imgFile = hwObsService.upload(file, busiPath, bid, null, SsoContext.getUserId());
 		
 		ImageResult result = new ImageResult(true);

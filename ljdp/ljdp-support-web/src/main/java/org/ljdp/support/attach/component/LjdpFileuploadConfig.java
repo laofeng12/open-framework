@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 public class LjdpFileuploadConfig {
 
 	private String localPath;
+	private String vedioBucket;
+	private String audioBucket;
 
 	public String getLocalPath() {
 		return localPath;
@@ -15,5 +17,21 @@ public class LjdpFileuploadConfig {
 
 	public void setLocalPath(String localPath) {
 		this.localPath = localPath;
+	}
+
+	public String getVedioBucket() {
+		return vedioBucket;
+	}
+
+	public void setVedioBucket(String vedioBucket) {
+		this.vedioBucket = vedioBucket;
+	}
+
+	public String getAudioBucket() {
+		return audioBucket;
+	}
+
+	public void setAudioBucket(String audioBucket) {
+		this.audioBucket = audioBucket;
 	}
 }
