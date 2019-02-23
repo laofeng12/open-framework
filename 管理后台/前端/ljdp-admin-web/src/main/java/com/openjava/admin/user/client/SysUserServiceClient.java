@@ -10,6 +10,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.openjava.admin.user.vo.LoginUserVO;
+
 public class SysUserServiceClient implements LjdpUserService {
 
 	@Override
@@ -23,7 +25,11 @@ public class SysUserServiceClient implements LjdpUserService {
 		apientity.addParam("userAccount", userAccount);
 		apientity.addParam("userPwd", userPwd);
 		try {
-			LoginResp resp = ApiClient.doPost(apientity, LoginResp.class);
+			LoginUserVO userResult = ApiClient.doPost(apientity, LoginUserVO.class);
+			LoginResp resp = new LoginResp();
+			resp.setCode(userResult.getCode());
+			resp.setMessage(userResult.getMessage());
+			resp.setUser(userResult.getUser());
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
