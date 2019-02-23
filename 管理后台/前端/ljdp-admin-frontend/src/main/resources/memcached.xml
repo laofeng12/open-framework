@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<memcached>
+    
+    <!-- sessionPool-->
+    <socketpool name="sessionPool" failover="true" initConn="1" minConn="1" maxConn="1" maintSleep="0"
+        nagle="false" socketTO="3000" aliveCheck="true">
+        <servers>121.40.188.31:11211</servers>
+    </socketpool>
+   
+    <client name="sessionCache" defaultEncoding="UTF-8" socketpool="sessionPool">
+        <errorHandler></errorHandler>
+        <transcoder>org.ljdp.cache.memcached.transcoder.AliNativeTranscoder</transcoder>
+    </client>
+    
+    <client name="xSessionCache" defaultEncoding="UTF-8" socketpool="sessionPool" command="binary">
+        <errorHandler></errorHandler>
+    </client>
+    
+</memcached>
