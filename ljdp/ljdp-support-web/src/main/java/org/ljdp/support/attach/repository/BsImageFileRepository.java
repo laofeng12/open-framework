@@ -1,9 +1,12 @@
 package org.ljdp.support.attach.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.ljdp.core.spring.data.DynamicJpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
@@ -31,4 +34,12 @@ public interface BsImageFileRepository extends DynamicJpaRepository<BsImageFile,
 	@Modifying
 	@Query("update BsImageFile set bid=:bid where id=:fid")
 	public int updateBid(@Param("fid")Long fid, @Param("bid")String bid);
+	
+	@Query("from BsImageFile where bid is null and creatime<=:creatime")
+	public List<BsImageFile> queryByBidIsNull(@Param("creatime")Date creatime, Pageable pageable);
+	
+	@Query("from BsImageFile where objectkey is null")
+	public List<BsImageFile> queryByObjectkeyIsNull(Pageable pageable);
+	
+	public BsImageFile findByObjectkey(String objectkey);
 }

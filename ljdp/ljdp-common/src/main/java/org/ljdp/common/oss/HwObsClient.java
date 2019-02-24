@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import org.ljdp.util.FileUtils;
 
@@ -108,4 +109,10 @@ public class HwObsClient {
 		}
 		client = null;
 	}
+	
+//	public static void main(String[] args) {
+//		HwObsClient c = new HwObsClient("", "", "obs.cn-south-1.myhwclouds.com", "");
+//		ObsObject obsObject = c.getObject("bookaudio3", "QuestionManager/20180418024731_我要更勇敢选择题一1.MP3");
+//		System.out.println(obsObject);
+//	}
 }

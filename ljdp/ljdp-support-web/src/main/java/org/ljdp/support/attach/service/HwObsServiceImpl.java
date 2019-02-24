@@ -30,6 +30,8 @@ import org.ljdp.support.dictionary.DictConstants;
 import org.ljdp.util.ByteUtil;
 import org.ljdp.util.PicResize;
 import org.ljdp.util.VedioUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -212,6 +214,7 @@ public class HwObsServiceImpl implements HwObsService {
 		img.setPicname(filename);//图片名称
 		img.setPicurl(PicUrlUtils.OBS_PARAMS+"/"+ossName);//图片路径
 		img.setUserid(userid);//上传人
+		img.setObjectkey(ossName);
 		if(seqno != null){
 			img.setSeqno(seqno);//显示顺序
 		}
@@ -232,7 +235,7 @@ public class HwObsServiceImpl implements HwObsService {
 		delete(img);
 	}
 
-	private void delete(BsImageFile img) {
+	public void delete(BsImageFile img) {
 		if(StringUtils.isNotEmpty(img.getPicurl())) {
 			String key = dfsUtils.replaceUrlToEmpt(img.getPicurl());
 			if(key.startsWith("/")) {
@@ -402,5 +405,22 @@ public class HwObsServiceImpl implements HwObsService {
 		output.close();
 		input.close();
 		return fullFilePath;
+	}
+	
+	@Override
+	public List<BsImageFile> queryByBidIsNull(Date creatime, Pageable pageable){
+		return bsImageFileRepository.queryByBidIsNull(creatime, pageable);
+	}
+	@Override
+	public List<BsImageFile> queryByObjectkeyIsNull(Pageable pageable){
+		return bsImageFileRepository.queryByObjectkeyIsNull(pageable);
+	}
+	@Override
+	public BsImageFile findByObjectkey(String objectkey) {
+		return bsImageFileRepository.findByObjectkey(objectkey);
+	}
+	@Override
+	public void doSave(BsImageFile f) {
+		bsImageFileRepository.save(f);
 	}
 }

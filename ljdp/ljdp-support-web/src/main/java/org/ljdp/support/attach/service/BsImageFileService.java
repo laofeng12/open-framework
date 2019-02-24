@@ -1,10 +1,13 @@
 package org.ljdp.support.attach.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Part;
 
 import org.ljdp.support.attach.domain.BsImageFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 图片服务接口
@@ -37,6 +40,8 @@ public interface BsImageFileService {
 	
 	public void removeByBId(String bid) throws Exception;
 	
+	public void delete(BsImageFile img);
+	
 	/**
 	 * 上传指定规格的图片n0(最大图)、n1(350*350px)、n2(160*160px)、n3(130*130px)、n4(100*100px) 
 	 * @param img
@@ -67,4 +72,18 @@ public interface BsImageFileService {
 	 * @return
 	 */
 	public int doUpdateBid(Long fid, String bid);
+	
+	/**
+	 * 查找bid是空的记录，通常是上传后没有做保存提交。
+	 * @param creatime
+	 * @param pageable
+	 * @return
+	 */
+	public List<BsImageFile> queryByBidIsNull(Date creatime, Pageable pageable);
+	
+	List<BsImageFile> queryByObjectkeyIsNull(Pageable pageable);
+	
+	public BsImageFile findByObjectkey(String objectkey);
+	
+	public void doSave(BsImageFile f);
 }

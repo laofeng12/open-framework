@@ -26,6 +26,8 @@ import org.ljdp.support.attach.repository.BsImageFileRepository;
 import org.ljdp.support.dictionary.DictConstants;
 import org.ljdp.util.ByteUtil;
 import org.ljdp.util.PicResize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +103,7 @@ public class BsImageFileServiceImpl implements BsImageFileService {
 		img.setPicname(filename);//图片名称
 		img.setPicurl(PicUrlUtils.OSS_PARAMS+"/"+ossName);//图片路径
 		img.setUserid(userid);//上传人
+		img.setObjectkey(ossName);
 		if(seqno != null){
 			img.setSeqno(seqno);//显示顺序
 		}
@@ -114,7 +117,7 @@ public class BsImageFileServiceImpl implements BsImageFileService {
 		delete(img);
 	}
 
-	private void delete(BsImageFile img) {
+	public void delete(BsImageFile img) {
 		if(StringUtils.isNotEmpty(img.getPicurl())) {
 			String key = dfsUtils.replaceUrlToEmpt(img.getPicurl());
 			if(key.startsWith("/")) {
@@ -243,5 +246,22 @@ public class BsImageFileServiceImpl implements BsImageFileService {
 	
 	public int doUpdateBid(Long fid, String bid) {
 		return bsImageFileRepository.updateBid(fid, bid);
+	}
+	
+	@Override
+	public List<BsImageFile> queryByBidIsNull(Date creatime, Pageable pageable){
+		return bsImageFileRepository.queryByBidIsNull(creatime, pageable);
+	}
+	@Override
+	public List<BsImageFile> queryByObjectkeyIsNull(Pageable pageable){
+		return bsImageFileRepository.queryByObjectkeyIsNull(pageable);
+	}
+	@Override
+	public BsImageFile findByObjectkey(String objectkey) {
+		return bsImageFileRepository.findByObjectkey(objectkey);
+	}
+	@Override
+	public void doSave(BsImageFile f) {
+		bsImageFileRepository.save(f);
 	}
 }

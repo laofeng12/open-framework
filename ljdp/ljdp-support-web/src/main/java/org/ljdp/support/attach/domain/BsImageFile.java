@@ -39,6 +39,7 @@ public class BsImageFile extends BaseVO implements Persistable<Long>,java.io.Ser
 	private String bucketname;//桶（OSS，OBS上面的存放参数）
 	private Long filesize;//文件大小（字节）
 	private Long duration;//播放时长（毫秒）（音视频）
+	private String objectkey;//文件对象id，唯一
 	
     private Boolean isNew;
     @JsonIgnore
@@ -172,5 +173,14 @@ public class BsImageFile extends BaseVO implements Persistable<Long>,java.io.Ser
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	@Column(name = "objectkey")
+	public String getObjectkey() {
+		return objectkey;
+	}
+
+	public void setObjectkey(String objectkey) {
+		this.objectkey = objectkey;
 	}
 }
