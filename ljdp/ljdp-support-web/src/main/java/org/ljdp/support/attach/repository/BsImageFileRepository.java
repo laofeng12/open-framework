@@ -42,4 +42,7 @@ public interface BsImageFileRepository extends DynamicJpaRepository<BsImageFile,
 	public List<BsImageFile> queryByObjectkeyIsNull(Pageable pageable);
 	
 	public BsImageFile findByObjectkey(String objectkey);
+	
+	@Query("from BsImageFile where btype=:btype and creatime>=:creatime and bid is not null")
+	public List<BsImageFile> queryByBypeAndGeTime(@Param("btype")String btype, @Param("creatime")Date creatime);
 }

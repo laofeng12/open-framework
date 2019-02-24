@@ -36,7 +36,6 @@ import org.ljdp.util.ByteUtil;
 import org.ljdp.util.DateFormater;
 import org.ljdp.util.FileUtils;
 import org.ljdp.util.PicResize;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -372,5 +371,9 @@ public class FtpImageFileServiceImpl implements FtpImageFileService {
 	@Override
 	public void doSave(BsImageFile f) {
 		bsImageFileRepository.save(f);
+	}
+	@Override
+	public List<BsImageFile> queryByBypeAndGeTime(String btype, Date creatime){
+		return bsImageFileRepository.queryByBypeAndGeTime(btype, creatime);
 	}
 }

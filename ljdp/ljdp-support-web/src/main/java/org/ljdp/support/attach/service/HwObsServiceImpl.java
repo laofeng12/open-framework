@@ -30,7 +30,6 @@ import org.ljdp.support.dictionary.DictConstants;
 import org.ljdp.util.ByteUtil;
 import org.ljdp.util.PicResize;
 import org.ljdp.util.VedioUtil;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -422,5 +421,9 @@ public class HwObsServiceImpl implements HwObsService {
 	@Override
 	public void doSave(BsImageFile f) {
 		bsImageFileRepository.save(f);
+	}
+	@Override
+	public List<BsImageFile> queryByBypeAndGeTime(String btype, Date creatime){
+		return bsImageFileRepository.queryByBypeAndGeTime(btype, creatime);
 	}
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.Part;
 
 import org.ljdp.support.attach.domain.BsImageFile;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -86,4 +85,12 @@ public interface BsImageFileService {
 	public BsImageFile findByObjectkey(String objectkey);
 	
 	public void doSave(BsImageFile f);
+	
+	/**
+	 * 查询在时间点后上传的文件
+	 * @param btype
+	 * @param creatime
+	 * @return
+	 */
+	List<BsImageFile> queryByBypeAndGeTime(String btype, Date creatime);
 }
