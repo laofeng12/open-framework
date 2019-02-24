@@ -19,18 +19,15 @@ mybatis:
 spring:
   datasource:
     # 用MySQL
-#    driver-class-name: com.mysql.jdbc.Driver
-#    url: jrdbc:mysql://rm-wz91mif0ulj9t9fn09o.mysql.rds.aliyuncs.com:3306/example?useUnicode=true&characterEncoding=utf-8&useSSL=false
-#    username: root
-#    password: lmcity1234!
-    # 用Oracle 【----请找我要密码----】
-    driver-class-name: oracle.jdbc.OracleDriver
-#    url: jdbc:oracle:thin:@127.0.0.1:1521:orcl
-#    username: ljdp
-#    password: 123456
-    url: jdbc:oracle:thin:@nhc.smart-info.cn:8521:orcl
-    username: c##ljdp
-    password: ch#123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-wz9a1c8d803l35e2hio.mysql.rds.aliyuncs.com:3306/cloud?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: alitest
+    password: Ch#123456
+    # 用Oracle 
+#    driver-class-name: oracle.jdbc.OracleDriver
+#    url: jdbc:oracle:thin:@nhc.smart-info.cn:8521:orcl
+#    username: c##ljdp
+#    password: ch#123456
     druid:
       initial-size: 1
       max-active: 100
