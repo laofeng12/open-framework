@@ -30,6 +30,10 @@ public class DashboardController {
 	@RequestMapping(value="/index.jspx",method=RequestMethod.GET)
 	public ModelAndView index(HttpServletRequest request, HttpServletResponse response) {
 		UserVO user = (UserVO)SsoContext.getSignedInUserFromSession(request);
+		if(null == user) {
+			ModelAndView mav = new ModelAndView("redirect:/dashboard/user/login.jspx");
+			return mav;
+		}
 		RoleVO role;
 		if(user.getRoleList() != null && !user.getRoleList().isEmpty()) {
 			role = user.getRoleList().get(0);
