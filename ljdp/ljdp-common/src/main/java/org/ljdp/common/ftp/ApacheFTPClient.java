@@ -21,10 +21,15 @@ public class ApacheFTPClient {
 
 	private FTPClient ftp;
 	
-	public ApacheFTPClient(String server, String username, String password, String mode) throws FTPException{
+	public ApacheFTPClient(String server, Integer port, String username, String password, String mode) throws FTPException{
 		try {
+			if(port == null) {
+				port = 21;
+			} else if(port.intValue() <= 21) {
+				port = 21;
+			}
 			ftp = new FTPClient();
-			ftp.connect(server);
+			ftp.connect(server, port);
 			int reply = ftp.getReplyCode();
 			if (!FTPReply.isPositiveCompletion(reply))
 	        {

@@ -168,7 +168,7 @@ public class FtpImageFileServiceImpl implements FtpImageFileService {
 			showConfig = true;
 			System.out.println(ftpConfig.toStringMultiLine());
 		}
-		ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
+		ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(),ftpConfig.getPort(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
 		
 		//初始化目录
 		if(StringUtils.isNotEmpty(directorys[0])) {
@@ -219,7 +219,7 @@ public class FtpImageFileServiceImpl implements FtpImageFileService {
 		if(StringUtils.isNotEmpty(img.getPicurl())) {
 			try {				
 				String key = dfsUtils.replaceUrlToEmpt(img.getPicurl());
-				ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
+				ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(),ftpConfig.getPort(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
 				
 				boolean flag = ftpclient.deleteFile(key);
 				System.out.println("[FTP]delete:"+key+","+flag);
@@ -297,7 +297,7 @@ public class FtpImageFileServiceImpl implements FtpImageFileService {
 			String smallurl = npath+origImgPath;
 			String localTempPath = FileUtils.joinDirectory(ftpConfig.getLocalTempPath(), origImgPath);
 			FileUtils.writeByteArrayToFile(new File(localTempPath), smallContents);
-			ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
+			ApacheFTPClient ftpclient = new ApacheFTPClient(ftpConfig.getUrl(),ftpConfig.getPort(), ftpConfig.getUsername(), ftpConfig.getPassword(), ftpConfig.getMode());
 			
 			boolean ossres = ftpclient.uploadFile(smallurl, localTempPath);
 			if(!ossres) {

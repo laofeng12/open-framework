@@ -35,7 +35,7 @@ public class FtpDownloadServlet extends HttpServlet {
 		try {
 			if(!localTempFile.exists()) {
 				//文件不存在，去ftp下载
-				ApacheFTPClient ftpclient = new ApacheFTPClient(config.getUrl(), config.getUsername(), config.getPassword(), config.getMode());
+				ApacheFTPClient ftpclient = new ApacheFTPClient(config.getUrl(),config.getPort(), config.getUsername(), config.getPassword(), config.getMode());
 				
 				boolean res = ftpclient.downloadFile(remotePath, localTempPath);
 				System.out.println("[FTP]download:"+res+"\n"+

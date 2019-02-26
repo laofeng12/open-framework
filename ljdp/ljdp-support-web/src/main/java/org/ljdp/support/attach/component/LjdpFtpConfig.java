@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class LjdpFtpConfig extends BaseVO{
 
 	private String url;
+	private Integer port;
 	private String username;
 	private String password;
 	private String remotePath;
@@ -55,5 +56,11 @@ public class LjdpFtpConfig extends BaseVO{
 	}
 	public void setMode(String mode) {
 		this.mode = mode;
+	}
+	public Integer getPort() {
+		return port;
+	}
+	public void setPort(Integer port) {
+		this.port = port;
 	}
 }
