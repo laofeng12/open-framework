@@ -92,6 +92,8 @@ public class RbcCoderAction {
 			templatePath = coderPath +"/template/LJDP5";
 		} else if(frameType.equals("LJDP5.1")) {
 			templatePath = coderPath +"/template/LJDP5.1";
+		} else if(frameType.equals("LJDP5.2")) {
+			templatePath = coderPath +"/template/LJDP5.2";
 		}
 		String pageTemplatePath = null;
 		String mobilePageTemplateDirectory = null;

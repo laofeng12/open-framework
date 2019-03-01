@@ -92,6 +92,7 @@ Ext.onReady(function(){
 		   store: new Ext.data.SimpleStore({
 			   fields: ['value', 'text'],
 			   data: [
+				   ['LJDP5.2','LJDP5.2(code合并至HTTP header)'],
 				   ['LJDP5.1','LJDP5.1(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP5.0','LJDP5.0(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP4.0','LJDP4.0(springboot1+antDesignPro(前后端分离))'],
