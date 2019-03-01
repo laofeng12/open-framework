@@ -1,6 +1,10 @@
 package org.ljdp.component.result;
 
 public class APIConstants {
+	
+	public static int HTTP_POSITION_BODY = 1;//存放在报文主体中
+	public static int HTTP_POSITION_HEAD = 2;//存放在http header中
+	
 	public static final int CODE_SUCCESS = 200;
 	public static final int CODE_FAILD = 400;
 	public static final int CODE_SERVER_ERR = 500;
