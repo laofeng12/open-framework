@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.ljdp.common.config.Env;
@@ -27,11 +29,15 @@ import org.ljdp.component.sequence.SequenceService;
 import org.ljdp.log.aop.ControllerLogAspect;
 import org.ljdp.log.model.RequestErrorLog;
 import org.ljdp.secure.sso.SsoContext;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class ExceptionAspect {
 	
 	public static final BlockingQueue<RequestErrorLog> queue;
 	public static Class logCls;
+	public int resultPosition = APIConstants.HTTP_POSITION_BODY;//Body: code和message存放在报文区域。Head：code和message存放在http head，code共用http status
 	
 	static {
 		String logcfg = Env.getCurrent().getConfigFile().getValue("request.errorlog.entity");
@@ -186,6 +192,24 @@ public class ExceptionAspect {
 		}
 //		System.out.println("[isApiRet]="+isApiRet);
 //		System.out.println("[isApiImplRet]="+isApiImplRet);
+		if(APIConstants.HTTP_POSITION_HEAD == resultPosition) {
+			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
+			//返回错误信息需要放到head
+			if(ae != null) {
+				response.setStatus(ae.getCode());
+				response.addHeader("message", ae.getMessage());
+			} else if(be != null) {
+				response.setStatus(be.getCode());
+				response.addHeader("message", be.getMessage());
+			} else if(ce != null) {
+				response.setStatus(ce.getCode());
+				response.addHeader("message", ce.getMessage());
+			} else {
+				response.setStatus(APIConstants.CODE_SERVER_ERR);
+				response.addHeader("message", "服务异常");
+			}
+		}
 		if(isApiRet) {
 			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
 			if(ae != null) {
@@ -229,4 +253,11 @@ public class ExceptionAspect {
 		}
 		return hasInterface(myClass.getSuperclass(), intfCls);
 	}
+	public int getResultPosition() {
+		return resultPosition;
+	}
+	public void setResultPosition(int resultPosition) {
+		this.resultPosition = resultPosition;
+	}
+	
 }
