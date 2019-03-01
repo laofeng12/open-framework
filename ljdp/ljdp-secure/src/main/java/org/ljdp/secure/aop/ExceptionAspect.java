@@ -210,6 +210,18 @@ public class ExceptionAspect {
 				response.addHeader("message", "服务异常");
 			}
 		}
+		{
+			//存入线程区，下个环节日志保存可以用到
+			ApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
+			if(ae != null) {
+				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+			} else if(be != null) {
+				resp = new BasicApiResponse(be.getCode(), be.getMessage());
+			} else if(ce != null) {
+				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			}
+			SsoContext.setApiResponse(resp);
+		}
 		if(isApiRet) {
 			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
 			if(ae != null) {

@@ -8,12 +8,13 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,6 @@ import org.ljdp.log.model.RequestLog;
 import org.ljdp.secure.sso.SsoContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -74,7 +74,8 @@ public class ControllerLogAspect {
 	public Object doAudit(ProceedingJoinPoint point) throws Throwable
 	{
 		RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-		HttpServletRequest request = ((ServletRequestAttributes)ra).getRequest(); 
+		HttpServletRequest request = ((ServletRequestAttributes)ra).getRequest();
+		HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
 		
 		if(logCls == null) {
 			return point.proceed();
@@ -312,6 +313,13 @@ public class ControllerLogAspect {
 				logreq.setRequestParams(reqParams);
 				logreq.setTokenId(tokenid);
 				logreq.setUserAgent(userAgent);
+				ApiResponse apiresult = SsoContext.getApiResponse();
+				if(apiresult != null) {
+					logreq.setResponseCode(apiresult.getCode().toString());
+					logreq.setResponseMessage(apiresult.getMessage());
+				} else {
+					logreq.setResponseCode("200");
+				}
 				Long logReqId = SsoContext.getRequestId();
 				if(returnVal != null) {
 					if(returnVal instanceof ApiResponse) {
@@ -357,6 +365,7 @@ public class ControllerLogAspect {
 					logReqId = ss.getSequence();
 				}
 				logreq.setId(logReqId);
+				response.addHeader("requestId", logReqId.toString());
 				queue.put(logreq);
 			}
 //			System.out.println("结束：ControllerLogAspect");

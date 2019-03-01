@@ -78,8 +78,8 @@ public class SecurityAspect {
 							response.setStatus(result.getCode());
 							response.addHeader("message", result.getMessage());
 						} else {
-							JacksonTools.writePage(result, response);
 						}
+						JacksonTools.writePage(result, response);
 						return null;
 					}
 				}
