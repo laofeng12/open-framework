@@ -1,11 +1,7 @@
 package com.openjava.admin.batch.api;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,19 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.ljdp.common.bean.MyBeanUtils;
 import org.ljdp.common.file.ContentType;
 import org.ljdp.common.file.POIExcelBuilder;
 import org.ljdp.common.http.HttpClientUtils;
 import org.ljdp.common.http.LjdpHttpClient;
-import org.ljdp.component.result.ApiResponse;
-import org.ljdp.component.result.BasicApiResponse;
-import org.ljdp.component.result.DataApiResponse;
-import org.ljdp.component.sequence.SequenceService;
-import org.ljdp.component.sequence.TimeSequence;
-import org.ljdp.plugin.batch.persistent.BtFileImportTask;
 import org.ljdp.plugin.batch.view.spring.DownloadController;
-import org.ljdp.component.sequence.ConcurrentSequence;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.secure.sso.SsoContext;
 import org.ljdp.ui.bootstrap.TablePage;
@@ -41,15 +29,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.openjava.admin.batch.domain.BatchFileimportTask;
+import com.openjava.admin.batch.query.BatchFileimportTaskDBParam;
+import com.openjava.admin.batch.service.BatchImportTaskService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
-
-import com.openjava.admin.batch.domain.BatchFileimportTask;
-import com.openjava.admin.batch.service.BatchImportTaskService;
-import com.openjava.admin.batch.query.BatchFileimportTaskDBParam;
 
 
 /**

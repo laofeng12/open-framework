@@ -106,7 +106,7 @@ public class SysUserRoleAction {
 		SequenceService ss = ConcurrentSequence.getInstance();
 		model.setUserroleid(ss.getSequence());
 		SysUserRole dbObj = sysUserRoleService.doSave(model);
-		DataApiResponse resp = new DataApiResponse();
+		ApiResponse resp = new BasicApiResponse(200);
 		return resp;
 	}
 	

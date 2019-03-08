@@ -37,6 +37,7 @@ import org.ljdp.secure.sso.SsoContext;
 import org.ljdp.support.dictionary.DictConstants;
 import org.ljdp.ui.bootstrap.TablePage;
 import org.ljdp.ui.bootstrap.TablePageImpl;
+import org.ljdp.util.CheckPwdStrength;
 import org.ljdp.util.DateFormater;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,6 +46,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +59,7 @@ import com.openjava.admin.user.domain.SysUser;
 import com.openjava.admin.user.service.SysUserOrgService;
 import com.openjava.admin.user.service.SysUserRoleService;
 import com.openjava.admin.user.service.SysUserService;
+import com.openjava.admin.user.vo.ModifyPwdReqBody;
 import com.openjava.framework.sys.domain.LmMemberToken;
 import com.openjava.framework.sys.service.LmMemberTokenService;
 
@@ -64,6 +67,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import com.openjava.admin.user.query.SysUserDBParam;
 
@@ -183,7 +187,7 @@ public class SysUserAction {
 			}
 			sysUserService.doSave(db);
 		}
-		DataApiResponse resp = new DataApiResponse();
+		ApiResponse resp = new BasicApiResponse(200);
 		return resp;
 	}
 	
@@ -355,6 +359,37 @@ public class SysUserAction {
 		user.setTokenId(SsoContext.getToken());
 		LoginResp resp = new LoginResp();
 		resp.setUser(user);
+		return resp;
+	}
+	
+	@ApiOperation(value = "修改我的密码", nickname="modifyPwd")
+	@Security(session=true)
+	@RequestMapping(value="/modifyPwd",method=RequestMethod.POST)
+	public ApiResponse modifyPwd(@RequestBody ModifyPwdReqBody body) throws Exception{
+		ApiResponse resp = new BasicApiResponse(200);
+		BaseUserInfo user = (BaseUserInfo)SsoContext.getUser();
+		
+		SysUser u = sysUserService.get(new Long(user.getUserId()));
+		if(!u.getPassword().equals(SHA256.encodeAsBase64(body.getOldpassword()))) {
+			throw new APIException(5001, "密码不正确");
+		}
+		int checkpwd = CheckPwdStrength.checkPasswordStrength(body.getNewpassword());
+		if(checkpwd < 4) {
+			throw new APIException(5002, "密码强度不足，建议密码大于6位并包含大写，小写字母，数字，特殊字符");
+		}
+		u.setPassword(SHA256.encodeAsBase64(body.getNewpassword()));
+		sysUserService.doSave(u);
+		resp.setMessage("修改成功");
+		return resp;
+	}
+	
+	@ApiOperation(value = "获取密码强度",notes="EASY, MIDIUM, STRONG, VERY_STRONG, EXTREMELY_STRONG", nickname="getPasswordLevel")
+	@Security(session=false)
+	@RequestMapping(value="/passwordLevel",method=RequestMethod.GET)
+	public DataApiResponse<String> passwordLevel(@ApiParam(name="password",value="密码",required=true) @RequestParam String password) throws Exception{
+		String strength = CheckPwdStrength.getPasswordLevel(password).name();
+		DataApiResponse<String> resp = new DataApiResponse<>(200);
+		resp.setData(strength);
 		return resp;
 	}
 
