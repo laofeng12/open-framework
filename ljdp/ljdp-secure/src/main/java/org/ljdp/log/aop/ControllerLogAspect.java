@@ -49,6 +49,8 @@ public class ControllerLogAspect {
 	
 	public static Map<String,LogConfig> annomap = new HashMap<String,LogConfig>();
 	
+	private SequenceService mySequenceService;
+	
 	static {
 		String logcfg = Env.getCurrent().getConfigFile().getValue("request.log.entity");
 		if(logcfg != null) {
@@ -71,6 +73,14 @@ public class ControllerLogAspect {
 		queue = new LinkedBlockingQueue<>(Service_Max_Capacity);
 	}
 	
+	public ControllerLogAspect() {
+		
+	}
+	
+	public ControllerLogAspect(SequenceService mySequenceService) {
+		this.mySequenceService = mySequenceService;
+	}
+
 	public Object doAudit(ProceedingJoinPoint point) throws Throwable
 	{
 		RequestAttributes ra = RequestContextHolder.getRequestAttributes();
@@ -291,6 +301,9 @@ public class ControllerLogAspect {
 					logreq.setTub3(theTubs[2]);
 				}
 				SequenceService ss = ConcurrentSequence.getInstance();
+				if(mySequenceService != null) {
+					ss = mySequenceService;
+				}
 				logreq.setAccount(loginId);
 				logreq.setClientIp(clientIp);
 				logreq.setFromChannel(fromChannel);
@@ -397,5 +410,13 @@ public class ControllerLogAspect {
 			return true;
 		}
 		return false;
+	}
+
+	public SequenceService getMySequenceService() {
+		return mySequenceService;
+	}
+
+	public void setMySequenceService(SequenceService mySequenceService) {
+		this.mySequenceService = mySequenceService;
 	}
 }
