@@ -105,18 +105,18 @@ public class RedisSessionVaidator implements SessionValidator {
 					if(StringUtils.isNumeric(user.getUserId())) {
 						SsoContext.setUserId(new Long(user.getUserId()));
 					}
-					String method = request.getMethod();
-					String userAgent = request.getParameter("userAgent");
-					if(StringUtils.isEmpty(userAgent)){
-						userAgent = request.getHeader("user-agent");
-					}
+//					String method = request.getMethod();
+					String userAgent = request.getHeader("user-agent");
+//					if(StringUtils.isEmpty(userAgent)){
+//						userAgent = request.getParameter("userAgent");
+//						if("GET".equals(method)) {
+//							userAgent = URLDecoder.decode(userAgent, "utf-8");
+//						}
+//					}
 					if(StringUtils.isEmpty(userAgent)){
 						result.setCode(APIConstants.CODE_AUTH_FAILD);
 						result.setMessage("缺少设备信息");
 					} else {
-						if("GET".equals(method)) {
-							userAgent = URLDecoder.decode(userAgent, "utf-8");
-						}
 						String memUa = user.getUserAgent();
 						if(!memUa.equals(userAgent)) {
 							int vi = userAgent.lastIndexOf(" v");
@@ -127,8 +127,14 @@ public class RedisSessionVaidator implements SessionValidator {
 									result.setMessage("设备认证失败");
 								}
 							} else {
-								result.setCode(APIConstants.CODE_AUTH_FAILD);
-								result.setMessage("设备认证失败");
+								//看是否浏览器对user-agent做了特殊处理
+								String qihu360Ua = memUa + " QIHU 360SE";
+								if(qihu360Ua.equals(userAgent)) {
+									//是360浏览器在后面添加的标志，可以认为也是同一个设备，认证通过
+								} else {
+									result.setCode(APIConstants.CODE_AUTH_FAILD);
+									result.setMessage("设备认证失败");
+								}
 							}
 						} else {
 //							System.out.println("[RedisSessionVaidator]session有效："+user);
