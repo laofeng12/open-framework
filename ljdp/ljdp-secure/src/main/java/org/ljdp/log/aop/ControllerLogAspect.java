@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.ljdp.common.bean.MyBeanUtils;
 import org.ljdp.common.config.Env;
 import org.ljdp.common.json.JacksonTools;
+import org.ljdp.common.spring.SpringContextManager;
 import org.ljdp.component.bean.TubTools;
 import org.ljdp.component.result.APIConstants;
 import org.ljdp.component.result.ApiResponse;
@@ -44,12 +46,13 @@ public class ControllerLogAspect {
 	
 	public static int Service_Max_Capacity = 5000;
 	public static final BlockingQueue<RequestLog> queue;
-	public static Class logCls;
+	public static Class<?> logCls;
 	private Logger log = LoggerFactory.getLogger("API-Access");
 	
 	public static Map<String,LogConfig> annomap = new HashMap<String,LogConfig>();
 	
 	private SequenceService mySequenceService;
+	private String sequenceServiceName;
 	
 	static {
 		String logcfg = Env.getCurrent().getConfigFile().getValue("request.log.entity");
@@ -91,6 +94,7 @@ public class ControllerLogAspect {
 			return point.proceed();
 		}
 		Object returnVal = null;
+		Class<?> bodyClass = null;
 		try {
 			
 			String tub = request.getParameter("tub");
@@ -166,7 +170,6 @@ public class ControllerLogAspect {
 			Map<String, Object> inMap = new HashMap<>();
 			boolean isRequestBody = false;
 			Object bodyValue = null;
-			Class bodyClass = null;
 			Parameter[] params = method.getParameters();
 			for (int i = 0; i < params.length; i++) {
 				Parameter p = params[i];
@@ -234,7 +237,7 @@ public class ControllerLogAspect {
 			String reqParams;
 			if(isRequestBody) {
 				boolean isList = false;
-				if(bodyClass.equals(List.class)) {
+				if(bodyClass.equals(ArrayList.class)) {
 					isList = true;
 				} else {
 					Class<?>[] clss = bodyClass.getInterfaces();
@@ -303,6 +306,17 @@ public class ControllerLogAspect {
 				SequenceService ss = ConcurrentSequence.getInstance();
 				if(mySequenceService != null) {
 					ss = mySequenceService;
+				} else {
+					if(sequenceServiceName != null) {
+						//查找自定义的序列
+						mySequenceService = (SequenceService)SpringContextManager.getBean(sequenceServiceName);
+						if(mySequenceService != null) {
+							ss = mySequenceService;
+							log.info("LogSequenceInit: use "+sequenceServiceName);
+						} else {
+							log.info("LogSequenceInit: can not find "+sequenceServiceName);
+						}
+					}
 				}
 				logreq.setAccount(loginId);
 				logreq.setClientIp(clientIp);
@@ -383,6 +397,7 @@ public class ControllerLogAspect {
 			}
 //			System.out.println("结束：ControllerLogAspect");
 		} catch (Exception e) {
+			log.error("bodyClass:"+bodyClass);
 			e.printStackTrace();
 		} finally {
 			SsoContext.clearContext();//防止由于使用servlet的线程池导致的bug
@@ -418,5 +433,16 @@ public class ControllerLogAspect {
 
 	public void setMySequenceService(SequenceService mySequenceService) {
 		this.mySequenceService = mySequenceService;
+		if(null == mySequenceService) {
+			log.info("LogSequenceInit: mySequenceService is null");
+		}
+	}
+
+	public String getSequenceServiceName() {
+		return sequenceServiceName;
+	}
+
+	public void setSequenceServiceName(String sequenceServiceName) {
+		this.sequenceServiceName = sequenceServiceName;
 	}
 }
