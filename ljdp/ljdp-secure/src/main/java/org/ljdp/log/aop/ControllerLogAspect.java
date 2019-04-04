@@ -435,6 +435,8 @@ public class ControllerLogAspect {
 		this.mySequenceService = mySequenceService;
 		if(null == mySequenceService) {
 			log.info("LogSequenceInit: mySequenceService is null");
+		} else {
+			log.info("LogSequenceInit: "+mySequenceService);
 		}
 	}
 
