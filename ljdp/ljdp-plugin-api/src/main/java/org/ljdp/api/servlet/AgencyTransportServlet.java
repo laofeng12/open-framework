@@ -93,6 +93,7 @@ public class AgencyTransportServlet extends HttpServlet {
 //		System.out.println("[AgencyTransportServlet]GET "+requestUrl);
 		HttpGet get = client.createGetRequest(requestUrl);
 		get.addHeader("x-forwarded-for", ApiClient.getClientIP(req));
+		get.setHeader("user-agent", ApiClient.getUserAgent(req, false));
 		HttpResponse apiResp = client.execute(get);
 		writeApiResponse(resp, apiResp);
 	}
@@ -153,6 +154,7 @@ public class AgencyTransportServlet extends HttpServlet {
 			
 			HttpPost post = client.createPostRequest(requestUrl, params);
 			post.addHeader("x-forwarded-for", clientIP);
+			post.setHeader("user-agent", ApiClient.getUserAgent(req, false));
 			HttpResponse apiResp = client.execute(post);
 			writeApiResponse(resp, apiResp);
 		} else {
@@ -207,6 +209,7 @@ public class AgencyTransportServlet extends HttpServlet {
 				}
 				HttpPost post = client.createPostRequest(requestUrl, builder.build());
 				post.addHeader("x-forwarded-for", clientIP);
+				post.setHeader("user-agent", ApiClient.getUserAgent(req, false));
 				HttpResponse apiResp = client.execute(post);
 				writeApiResponse(resp, apiResp);
 			} catch (FileUploadException e) {
