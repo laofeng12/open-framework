@@ -57,7 +57,9 @@ public class SysUser extends BasicApiResponse implements ApiResponse {
 	@ApiModelProperty("来源类型")
 	private Short fromtype;//来源类型
 	private String fromtypeName;
-	
+	@ApiModelProperty("短信验证码")
+	private String scode;
+
 	@Id
 	@Column(name = "USERID")
 	public Long getUserid() {
@@ -230,5 +232,13 @@ public class SysUser extends BasicApiResponse implements ApiResponse {
 	}
 	public void setFromtypeName(String fromtypeName) {
 		this.fromtypeName = fromtypeName;
+	}
+
+	@Transient
+	public String getScode() {
+		return scode;
+	}
+	public void setScode(String scode) {
+		this.scode = scode;
 	}
 }

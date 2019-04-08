@@ -26,4 +26,6 @@ public interface SysUserService {
 	public void doRemove(String ids);
 	
 	public SysUser findByAccount(String account);
+
+	SysUser findByMobile(String mobile);
 }

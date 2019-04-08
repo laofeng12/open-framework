@@ -136,4 +136,8 @@ public class SysUserServiceImpl implements SysUserService {
 	public SysUser findByAccount(String account) {
 		return sysUserRepository.findByAccount(account);
 	}
+
+	public SysUser findByMobile(String mobile){
+		return sysUserRepository.findByMobile(mobile);
+	};
 }

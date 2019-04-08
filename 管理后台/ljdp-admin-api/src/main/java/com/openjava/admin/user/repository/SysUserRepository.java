@@ -21,4 +21,6 @@ public interface SysUserRepository extends DynamicJpaRepository<SysUser, Long>, 
 	public int deleteByPkId(@Param("userid")Long userid);
 	
 	public SysUser findByAccount(String account);
+
+	public SysUser findByMobile(String mobile);
 }
