@@ -109,6 +109,7 @@ public class SysUserAction {
 		if(m == null) {
 			throw new APIException(404, "数据不存在");
 		}
+		m.setPassword(null);
 		return m;
 	}
 	
@@ -133,6 +134,9 @@ public class SysUserAction {
 			params.setLike_fullname("%"+params.getLike_fullname()+"%");
 		}
 		Page<SysUser> result =  sysUserService.query(params, pageable);
+		result.getContent().forEach(u -> {
+			u.setPassword(null);
+		});
 		
 //		BaseVO.setKey(result.getContent(), "userid");//为每条数据设置一个唯一key值，主要在react中使用，如果对接其他前端可以省略
 		return new TablePageImpl<>(result);

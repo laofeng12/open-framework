@@ -49,4 +49,16 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+  <distributionManagement>
+    <repository>
+        <id>local_nexus_releases</id>
+        <name>core Release Repository</name>
+        <url>https://nexus.alltosea.com/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+        <id>local_nexus_snapshots</id>
+        <name>core Snapshots Repository</name>
+        <url>https://nexus.alltosea.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

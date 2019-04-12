@@ -44,6 +44,7 @@
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
+			<classifier>jdk15</classifier>
 			<type>jar</type>
 			<scope>provided</scope>
 			<exclusions>
@@ -52,6 +53,12 @@
 	                <artifactId>commons-beanutils</artifactId>
 	            </exclusion>
 	        </exclusions>
+		</dependency>
+		<dependency>
+		  <groupId>dom4j</groupId>
+		  <artifactId>dom4j</artifactId>
+		  <version>1.6.1</version>
+		  <scope>provided</scope>
 		</dependency>
 		
 		<!-- httpclient -->
@@ -172,4 +179,16 @@
 		</dependency>
 
   </dependencies>
+  <distributionManagement>
+    <repository>
+        <id>local_nexus_releases</id>
+        <name>core Release Repository</name>
+        <url>https://nexus.alltosea.com/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+        <id>local_nexus_snapshots</id>
+        <name>core Snapshots Repository</name>
+        <url>https://nexus.alltosea.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
