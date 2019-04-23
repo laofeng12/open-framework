@@ -268,6 +268,8 @@ public class LjdpUploadController extends FileUploadController {
 					busiPath = fileuploadConfig.getVedioBucket();
 				} else if(type.equals("audio")) {
 					busiPath = fileuploadConfig.getAudioBucket();
+				} else if(type.equals("image")) {
+					busiPath = fileuploadConfig.getImageBucket();
 				}
 			}
 		}
@@ -286,6 +288,8 @@ public class LjdpUploadController extends FileUploadController {
 				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getVedioServerUrl()));
 			} else if(type.equals("audio")) {
 				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getAudioServerUrl()));
+			} else if(type.equals("image")) {
+				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getImageServerUrl()));
 			}
 		}
 		return result;
