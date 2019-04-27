@@ -20,8 +20,23 @@ public interface HwObsService extends BsImageFileService{
 	 */
 	public BsImageFile relationObject(String objectkey, String btype, String bid, Integer seqno, Long userid) throws Exception;
 	
+	/**
+	 * 持久化保存临时存储在redis的文件对象
+	 * @param objectkey
+	 * @param btype
+	 * @param bid
+	 * @param seqno
+	 * @param userid
+	 * @return
+	 * @throws Exception
+	 */
+	public BsImageFile saveUploadFromRedis(String objectkey, String btype, String bid, Integer seqno, Long userid) throws Exception;
+	
 	public String uploadOnly(Part file, String bucketName) throws Exception;
+	public BsImageFile uploadOnly(Part fileItem, String btype, String bid, Integer seqno, Long userid) throws Exception;
+	
 	public BsImageFile upload(String filename, InputStream inputStream, String btype, String bid, Integer seqno, Long userid) throws Exception;
+	
 	
 	public String downloadByObsKey(String key, String bucketName) throws Exception;
 	

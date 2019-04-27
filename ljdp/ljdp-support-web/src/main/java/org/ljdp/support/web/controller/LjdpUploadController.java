@@ -261,7 +261,8 @@ public class LjdpUploadController extends FileUploadController {
 	public Result uploadObs(@RequestParam("file") Part file,
 			@RequestParam(value="busiPath",required=false) String busiPath,
 			@RequestParam(value="bid",required=false) String bid,
-			@RequestParam(value="type",required=false) String type) throws Exception{
+			@RequestParam(value="type",required=false) String type,
+			@RequestParam(value="persistent",required=false) String persistent) throws Exception{
 		if(StringUtils.isBlank(busiPath)) {
 			if(StringUtils.isNotBlank(type)) {
 				if(type.equals("vedio")) {
@@ -273,7 +274,18 @@ public class LjdpUploadController extends FileUploadController {
 				}
 			}
 		}
-		BsImageFile imgFile = hwObsService.upload(file, busiPath, bid, null, SsoContext.getUserId());
+		if(StringUtils.isBlank(persistent)) {
+			persistent = "database";//默认保存数据库
+		}
+		BsImageFile imgFile = null;
+		if(persistent.equalsIgnoreCase("redis")) {
+			imgFile = hwObsService.uploadOnly(file, busiPath, bid, null, SsoContext.getUserId());
+			
+			RedisTemplate<String, Object> redisTemplate = (RedisTemplate)SpringContextManager.getBean("redisTemplate");
+			redisTemplate.boundValueOps(imgFile.getId().toString()).set(imgFile, 10, java.util.concurrent.TimeUnit.MINUTES);
+		} else {
+			imgFile = hwObsService.upload(file, busiPath, bid, null, SsoContext.getUserId());
+		}
 		
 		ImageResult result = new ImageResult(true);
 		result.setCode(200);

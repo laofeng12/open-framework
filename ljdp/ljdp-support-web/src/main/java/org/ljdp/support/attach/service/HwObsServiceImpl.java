@@ -16,6 +16,7 @@ import org.ljdp.common.ehcache.MemoryCache;
 import org.ljdp.common.http.LjdpHttpClient;
 import org.ljdp.common.oss.HwObsClient;
 import org.ljdp.common.oss.PicUrlUtils;
+import org.ljdp.common.spring.SpringContextManager;
 import org.ljdp.component.exception.APIException;
 import org.ljdp.component.result.APIConstants;
 import org.ljdp.component.sequence.ConcurrentSequence;
@@ -31,6 +32,7 @@ import org.ljdp.util.ByteUtil;
 import org.ljdp.util.PicResize;
 import org.ljdp.util.VedioUtil;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,32 +84,38 @@ public class HwObsServiceImpl implements HwObsService {
 	}
 	
 	public BsImageFile upload(Part fileItem, String btype, String bid, Integer seqno, Long userid) throws Exception {
-//		if(StringUtils.isBlank(btype)){
-//			throw new APIException(-10001, "业务类型不能为空");
-//		}
 		if(fileItem == null){
 			throw new APIException(-10002, "上传文件不能为空");
 		}
-		
 		String filename = fileItem.getSubmittedFileName();
-		int lastIndex = filename.lastIndexOf(".");
-		if(lastIndex <= 0){
-			throw new APIException(-10004, "上传文件名称格式有误");
-		}
-		String extName = org.ljdp.util.FileUtils.getExtName_(filename);
-		
-		SequenceService cs = ConcurrentSequence.getInstance();
-		String ossName = cs.getSequence("")+"."+extName;
+		String ossName = getOssName(filename);
 		
 		byte[] uploadContents = ByteUtil.input2byte(fileItem.getInputStream());
 		
 		return doRemoteUpload(null, btype, bid, seqno, userid, filename, ossName, uploadContents);
 	}
 	
+	public BsImageFile uploadOnly(Part fileItem, String btype, String bid, Integer seqno, Long userid) throws Exception {
+		if(fileItem == null){
+			throw new APIException(-10002, "上传文件不能为空");
+		}
+		String filename = fileItem.getSubmittedFileName();
+		String ossName = getOssName(filename);
+		
+		byte[] uploadContents = ByteUtil.input2byte(fileItem.getInputStream());
+		
+		return doRemoteUploadOnly(null, btype, bid, seqno, userid, filename, ossName, uploadContents);
+	}
+	
 	public BsImageFile upload(String filename, InputStream inputStream, String btype, String bid, Integer seqno, Long userid) throws Exception {
-//		if(StringUtils.isBlank(btype)){
-//			throw new APIException(-10001, "业务类型不能为空");
-//		}
+		String ossName = getOssName(filename);
+		
+		byte[] uploadContents = ByteUtil.input2byte(inputStream);
+		
+		return doRemoteUpload(null, btype, bid, seqno, userid, filename, ossName, uploadContents);
+	}
+
+	private String getOssName(String filename) throws APIException {
 		if(filename == null){
 			throw new APIException(-10002, "上传文件不能为空");
 		}
@@ -118,12 +126,39 @@ public class HwObsServiceImpl implements HwObsService {
 		}
 		String extName = org.ljdp.util.FileUtils.getExtName_(filename);
 		
-		SequenceService cs = ConcurrentSequence.getInstance();
+		SequenceService cs = ConcurrentSequence.getCentumInstance();
 		String ossName = cs.getSequence("")+"."+extName;
-		
-		byte[] uploadContents = ByteUtil.input2byte(inputStream);
-		
-		return doRemoteUpload(null, btype, bid, seqno, userid, filename, ossName, uploadContents);
+		return ossName;
+	}
+	
+	/**
+	 * 持久化保存临时存储在redis的文件对象
+	 * @param objectkey
+	 * @param btype
+	 * @param bid
+	 * @param seqno
+	 * @param userid
+	 * @return
+	 * @throws Exception
+	 */
+	public BsImageFile saveUploadFromRedis(String objectkey, String btype, String bid, Integer seqno, Long userid) throws Exception {
+		if(StringUtils.isBlank(objectkey)) {
+			System.out.println("objectkey=空，可能漏了上传？btype="+btype);
+			return null;
+		}
+		RedisTemplate<String, Object> redisTemplate = (RedisTemplate)SpringContextManager.getBean("redisTemplate");
+		BsImageFile imgFile = (BsImageFile)redisTemplate.boundValueOps(objectkey).get();
+		imgFile.setBid(bid);
+		imgFile.setUserid(userid);//上传人
+		if(StringUtils.isBlank(imgFile.getBtype())) {
+			imgFile.setBtype(btype);
+		}
+		if(seqno != null){
+			imgFile.setSeqno(seqno);//显示顺序
+		}
+		imgFile.setIsNew(false);
+		bsImageFileRepository.save(imgFile);
+		return imgFile;
 	}
 	
 	/**
@@ -195,6 +230,13 @@ public class HwObsServiceImpl implements HwObsService {
 
 	private BsImageFile doRemoteUpload(String btype, String bucket, String bid, Integer seqno, Long userid, String filename,
 			String ossName, byte[] uploadContents) throws APIException {
+		BsImageFile img = doRemoteUploadOnly(btype, bucket, bid, seqno, userid, filename, ossName, uploadContents);
+		bsImageFileRepository.save(img);
+		return img;
+	}
+
+	private BsImageFile doRemoteUploadOnly(String btype, String bucket, String bid, Integer seqno, Long userid,
+			String filename, String ossName, byte[] uploadContents) throws APIException {
 		HwObsClient client = config.getObsClient();
 		if(StringUtils.isNotBlank(bucket)) {
 			client = config.getObsClient(bucket);
@@ -225,7 +267,6 @@ public class HwObsServiceImpl implements HwObsService {
 			img.setDuration(second);
 			tempvedio.deleteOnExit();
 		}
-		bsImageFileRepository.save(img);
 		return img;
 	}
 	
