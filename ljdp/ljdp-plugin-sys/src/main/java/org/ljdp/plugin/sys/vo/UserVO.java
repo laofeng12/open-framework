@@ -40,6 +40,9 @@ public class UserVO implements Serializable, BaseUserInfo{
 	private String shopCode;
 	private String shopName;
 	private String platform;//访问的平台
+
+	private String statue;//账号状态
+	private String msg;//返回信息
 	
 	public UserVO() {
 		
@@ -424,5 +427,19 @@ public class UserVO implements Serializable, BaseUserInfo{
 		this.expireInMin = expireInMin;
 	}
 
-	
+	public String getStatue() {
+		return statue;
+	}
+
+	public void setStatue(String statue) {
+		this.statue = statue;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
 }

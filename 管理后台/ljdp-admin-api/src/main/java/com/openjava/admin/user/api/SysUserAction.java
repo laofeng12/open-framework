@@ -306,6 +306,11 @@ public class SysUserAction {
 				BaseUserInfo newUser = ui.onLogin(vo, null);
 				if(newUser != null) {
 					vo = (UserVO)newUser;
+					if(vo.getStatue().equals("0"))
+					{
+						throw new APIException(1008, vo.getMsg());
+					}
+
 				}
 			}
 		} catch (NoSuchBeanDefinitionException e) {
