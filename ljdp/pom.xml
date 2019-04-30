@@ -18,7 +18,7 @@
 	  <module>ljdp-plugin-sys</module>
 	  <module>ljdp-support-web</module>
   </modules>
-  <!-- <distributionManagement>
+  <distributionManagement>
     <repository>
         <id>local_nexus_releases</id>
         <name>core Release Repository</name>
@@ -29,5 +29,5 @@
         <name>core Snapshots Repository</name>
         <url>https://nexus.alltosea.com/repository/maven-snapshots/</url>
     </snapshotRepository>
-  </distributionManagement> -->
+  </distributionManagement>
 </project>
