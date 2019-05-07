@@ -157,7 +157,13 @@ public class BsImageFileServiceImpl implements BsImageFileService {
 		}
 		return list;
 	}
-	
+
+	@Override
+	public List<BsImageFile> queryByBidUndo(String bid) {
+		List<BsImageFile> list = bsImageFileRepository.queryByBid(bid);
+		return list;
+	}
+
 	/**
 	 * 上传指定规格的图片n0(最大图)、n1(350*350px)、n2(160*160px)、n3(130*130px)、n4(100*100px) 
 	 * @param img

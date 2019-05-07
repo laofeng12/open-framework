@@ -34,7 +34,9 @@ public interface BsImageFileService {
 	public List<BsImageFile> queryByBtypeAndBid(String btype, String bid);
 	
 	public List<BsImageFile> queryByBid(String bid);
-	
+
+	public List<BsImageFile> queryByBidUndo(String bid);
+
 	public void removeByTypeAndBId(String btype, String bid) throws Exception;
 	
 	public void removeByBId(String bid) throws Exception;
