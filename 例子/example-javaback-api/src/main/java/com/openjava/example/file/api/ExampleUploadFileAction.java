@@ -85,7 +85,12 @@ public class ExampleUploadFileAction {
 			//FTP
 			//这儿演示只显示第一个附件，如果是多个，应该用Table显示
 			List<BsImageFile> list = ftpImageFileService.queryByBid(m.getFid().toString());
+			//获取前端展示的地址
 			if(!list.isEmpty()) {
+//				for (BsImageFile bf : list) {
+//					String viewUrl = dfsUtils.getViewUrl(bf);//转换为客户端可以查看的地址
+//					String downloadUrl = dfsUtils.getDownloadUrl(bf);//转换为客户端可以下载的地址
+//				}
 				BsImageFile f1 = list.get(0);
 				m.setFurl(dfsUtils.getViewUrl(f1));//转换为客户端可以查看的地址
 				m.setDownloadUrl(dfsUtils.getDownloadUrl(f1));//转换为客户端可以下载的地址
@@ -159,7 +164,7 @@ public class ExampleUploadFileAction {
 	
 	/**
 	 * 保存
-	 
+	 */
 	@ApiOperation(value = "保存")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "fid", value = "文件id", required = false, dataType = "Long", paramType = "post"),
@@ -215,7 +220,7 @@ public class ExampleUploadFileAction {
 		DataApiResponse resp = new DataApiResponse();
 		return resp;
 	}
-	*/
+	
 	@ApiOperation(value = "删除")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "id", value = "主键编码", required = true, paramType = "post"),

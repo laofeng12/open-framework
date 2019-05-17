@@ -105,6 +105,9 @@ public class RedisSessionVaidator implements SessionValidator {
 					if(StringUtils.isNumeric(user.getUserId())) {
 						SsoContext.setUserId(new Long(user.getUserId()));
 					}
+					if(!secure.validateUserAgent()) {
+						return result;
+					}
 //					String method = request.getMethod();
 					String userAgent = request.getHeader("user-agent");
 //					if(StringUtils.isEmpty(userAgent)){

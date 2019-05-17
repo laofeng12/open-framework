@@ -110,7 +110,7 @@ public class BatchFileimportTaskAction {
 	/**
 	 * 导出Excel文件
 	 */
-	@Security(session=true)
+	@Security(session=true, validateUserAgent=false)
 	@RequestMapping(value="/export",method=RequestMethod.GET)
 	public void doExport(HttpServletRequest request, HttpServletResponse response,
 			BatchFileimportTaskDBParam params) throws Exception{
@@ -148,7 +148,7 @@ public class BatchFileimportTaskAction {
 	}
 	
 	@RequestMapping(value="/downloadErrorFile",method=RequestMethod.GET)
-	@Security(session=true)
+	@Security(session=true, validateUserAgent=false)
 	public void downloadErrorFile(HttpServletRequest request, 
 			HttpServletResponse response,
 			@RequestParam("taskId")String taskId) {
@@ -159,7 +159,7 @@ public class BatchFileimportTaskAction {
 			if(StringUtils.isNotBlank(task.getServerIp()) && !hostAddress.equals(task.getServerIp())) {
 				//转到此任务实际执行的服务器处理
 				String serverUrl = "http://"+task.getServerIp()+":"+request.getLocalPort();
-				String newDownUrl = serverUrl + "/api/admin/batch/batchFileimportTask/downloadErrorFile?taskId="+taskId;
+				String newDownUrl = serverUrl+request.getContextPath() + "/admin/batch/batchFileimportTask/downloadErrorFile?taskId="+taskId;
 				System.out.println("转发下载请求："+newDownUrl);
 				LjdpHttpClient httpclient = new LjdpHttpClient();
 				HttpResponse apiResp = httpclient.get(newDownUrl);

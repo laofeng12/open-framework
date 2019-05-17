@@ -25,4 +25,10 @@ public @interface Security {
 	String authorityPersistent() default "authorityPersistent";//把session中的授权信息持久化保存接口
 	
 	String[] excludes() default {"queryString"};//排除的字段
+	
+	/**
+	 * 是否验证userAgent与登录一致
+	 * @return
+	 */
+	boolean validateUserAgent() default true;
 }
