@@ -2,6 +2,8 @@ package org.ljdp.component.result;
 
 public class GeneralResult implements Result{
 	private static final long serialVersionUID = -940139127925466172L;
+	
+	private Integer code;
 
 	private String msg;
 
@@ -18,10 +20,20 @@ public class GeneralResult implements Result{
     
     public GeneralResult(boolean succ) {
     	success = succ;
+    	if(success) {
+    		this.code = 200;
+    	} else {
+    		this.code = 1001;
+    	}
     }
 
     public void setSuccess(boolean ok) {
         this.success = ok;
+        if(success) {
+    		this.code = 200;
+    	} else {
+    		this.code = 1001;
+    	}
     }
 
     public boolean isSuccess() {
@@ -58,5 +70,21 @@ public class GeneralResult implements Result{
 
 	public void setData(Object data) {
 		this.data = data;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+	
+	public String getMessage() {
+		return msg;
+	}
+
+	public void setMessage(String msg) {
+		this.msg = msg;
 	}
 }

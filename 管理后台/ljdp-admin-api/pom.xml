@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openjava</groupId>
   		<artifactId>springboot-parent</artifactId>
-		<version>2.0.6.R03</version>
+		<version>2.0.6.R04</version>
 	</parent>
 	<artifactId>ljdp-admin-api</artifactId>
 	<properties>
@@ -14,7 +14,7 @@
 		<dependency>
 	        <groupId>org.openjava</groupId>
 	        <artifactId>ljdp-admin-model</artifactId>
-	        <version>2.0.6.R03</version>
+	        <version>2.0.6.R04</version>
 	    </dependency>
 	
 		<dependency>

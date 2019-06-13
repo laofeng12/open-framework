@@ -48,7 +48,7 @@ import com.openjava.framework.validate.RedisSessionVaidator;
 				"com.openjava.**.api",
 				"org.openjava.boot.conf"
 				})
-@ServletComponentScan(basePackages= {"org.ljdp.support.web.listener"})
+@ServletComponentScan(basePackages= {"org.ljdp.support.web.listener2"})
 @ImportResource("classpath:springconfig/transaction.xml")
 @EnableCaching
 public class Application {

@@ -14,4 +14,11 @@ public interface Result extends Serializable{
 	
 	public Object getData();
 	public void setData(Object data);
+	
+	public Integer getCode();
+	
+	public void setCode(Integer code);
+	
+	public String getMessage();
+	public void setMessage(String msg);
 }

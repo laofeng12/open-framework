@@ -5,6 +5,8 @@ package org.ljdp.component.result;
 public class GeneralBatchResult implements BatchResult {
 
 	private static final long serialVersionUID = -2110195895091030143L;
+	
+	private Integer code;
     
     private int totalCount;
     
@@ -30,6 +32,11 @@ public class GeneralBatchResult implements BatchResult {
     
     public GeneralBatchResult() {
         success=false;
+        if(success) {
+    		this.code = 200;
+    	} else {
+    		this.code = 1001;
+    	}
     }
 
 	public int getTotalCount() {
@@ -54,6 +61,11 @@ public class GeneralBatchResult implements BatchResult {
 
 	public void setSuccess(boolean success) {
 		this.success = success;
+		if(success) {
+    		this.code = 200;
+    	} else {
+    		this.code = 1001;
+    	}
 	}
 
 	public String getMsg() {
@@ -118,5 +130,21 @@ public class GeneralBatchResult implements BatchResult {
 
 	public void setSuccessFileName(String successFileName) {
 		this.successFileName = successFileName;
+	}
+	
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+	
+	public String getMessage() {
+		return msg;
+	}
+
+	public void setMessage(String msg) {
+		this.msg = msg;
 	}
 }
