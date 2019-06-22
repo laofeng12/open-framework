@@ -65,6 +65,8 @@ public class GeneratorMojo {
 	public String frameType;//框架类型
 	public BaseFunctionVO baseFunVO;
 	
+	private String codeType;
+	
 	private File outputDirectoryFile;
 	public int randomCode;
 	
@@ -158,27 +160,33 @@ public class GeneratorMojo {
 		} else if(!templateDirectoryFile.isDirectory()){
 			throw new Exception("ERROR:templateDirectory:" + templateDirectoryFile + " 不是文件夹");
 		}
+		codeType = "java";
 		excuteTemplate(templateDirectoryFile);
 		
 		//导入java代码生成
 		if(importJavaTplDir != null) {
 			File importJavaTplFile = new File(importJavaTplDir);
+			codeType = "java";
 			excuteTemplate(importJavaTplFile);
 		}
 		//spring mvc controller代码生成
 		if(mvcJavaTplDir != null) {
 			File mvcJavaTplFile = new File(mvcJavaTplDir);
+			codeType = "java";
 			excuteTemplate(mvcJavaTplFile);
 		}
 		if(mvcBackTplDir != null) {
+			codeType = "java";
 			excuteTemplate(new File(mvcBackTplDir));
 		}
 		if(mvcFrontTplDir != null) {
+			codeType = null;
 			excuteTemplate(new File(mvcFrontTplDir));
 		}
 		//生成查询条件的java对象
 		if(queryTplDir != null) {
 			File queryTplDirFile = new File(queryTplDir);
+			codeType = "java";
 			excuteTemplate(queryTplDirFile);
 		}
 		
@@ -190,6 +198,7 @@ public class GeneratorMojo {
 			}else if(!pageTemplateDirectoryFile.isDirectory()){
 				throw new Exception("ERROR:pagetemplateDirectory:" + pageTemplateDirectoryFile + " 不是文件夹");
 			}
+			codeType = null;
 			excuteTemplate(pageTemplateDirectoryFile);
 		}
 		
@@ -211,7 +220,7 @@ public class GeneratorMojo {
 		Properties p = new Properties();
 		p.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("freemarker.properties"));		
 		configuration.setSettings(p);
-		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER); 
+		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
 		recursionFile(configuration, templateFile, templateFile);
 	}
@@ -224,7 +233,19 @@ public class GeneratorMojo {
 			}	
 		} else {
 			String relativePath = currentFile.getCanonicalPath().substring(templateDir.getCanonicalPath().length());
-			String relativePath1 = relativePath.replace(PLACEHOLDER_CORP, corpName);
+			String relativePath0 = relativePath;
+			if(codeType != null) {
+				if(codeType.equals("java")) {
+					//把多个java目录代码合并
+					int secondpath = relativePath.indexOf("/", 1);
+					if(secondpath == -1) {
+						secondpath = relativePath.indexOf("\\", 1);
+					}
+					relativePath0 = relativePath.substring(secondpath, relativePath.length());
+				}
+			}
+			
+			String relativePath1 = relativePath0.replace(PLACEHOLDER_CORP, corpName);
 			relativePath1 = relativePath1.replace(PLACEHOLDER_SYS, sysName);
 			relativePath1 = relativePath1.replace(PLACEHOLDER_MODULE, moduleName);
 			//二级模块包名可以空

@@ -18,9 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.bean.MyBeanUtils;
 import org.ljdp.common.file.ContentType;
 import org.ljdp.common.file.POIExcelBuilder;
-import org.ljdp.component.result.ApiResponse;
-import org.ljdp.component.result.BasicApiResponse;
-import org.ljdp.component.result.DataApiResponse;
+import org.ljdp.component.result.SuccessMessage;
 import org.ljdp.component.sequence.SequenceService;
 import org.ljdp.component.sequence.TimeSequence;
 import org.ljdp.component.sequence.ConcurrentSequence;
@@ -65,7 +63,7 @@ import com.${corp}.${sys}.${module}.${model}.query.${table.modelName}DBParam;
  * @author ${author}
  *
  */
-@Api(tags="${resName}")
+@Api(tags="${tableModelName}")
 @RestController
 <#if model == "">
 @RequestMapping("/${sys}/${module}/${table.modelName2}")
@@ -123,7 +121,7 @@ public class ${table.modelName}Action {
 	@ApiOperation(value = "保存", nickname="save", notes = "报文格式：content-type=application/json")
 	@Security(session=true)
 	@RequestMapping(method=RequestMethod.POST)
-	public ApiResponse doSave(@RequestBody ${table.modelName} body
+	public SuccessMessage doSave(@RequestBody ${table.modelName} body
 			<#if enableAttach==true>
 			,@RequestParam(value="attachIds",required=false)String attachIds</#if>
 			) {
@@ -158,37 +156,28 @@ public class ${table.modelName}Action {
 		
 		<#if enableAttach==true>
 		</#if>
-		BasicApiResponse resp = new BasicApiResponse();
-		resp.setMessage("保存成功");
-		return resp;
+		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
+		return new SuccessMessage("保存成功");
 	}
 	</#if>
 	
 	<#if baseFun.delete == "on">
 	@ApiOperation(value = "删除", nickname="delete")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "id", value = "主键编码", required = true, paramType = "post"),
+		@ApiImplicitParam(name = "id", value = "主键编码", required = false, paramType = "delete"),
+		@ApiImplicitParam(name = "ids", value = "批量删除用，多个主键编码用,分隔", required = false, paramType = "delete"),
 	})
 	@Security(session=true)
-	@RequestMapping(value="/delete",method=RequestMethod.POST)
-	public ApiResponse doDelete(@RequestParam("id")${table.keyFieldType} id) {
-		${table.modelName2}Service.doDelete(id);
-		ApiResponse resp = new BasicApiResponse();
-		resp.setMessage("删除成功");
-		return resp;
-	}
-	
-	@ApiOperation(value = "批量删除", nickname="remove")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "ids", value = "主键编码用,分隔", required = true, paramType = "post"),
-	})
-	@Security(session=true)
-	@RequestMapping(value="/remove",method=RequestMethod.POST)
-	public ApiResponse doRemove(@RequestParam("ids")String ids) {
-		${table.modelName2}Service.doRemove(ids);
-		ApiResponse resp = new BasicApiResponse();
-		resp.setMessage("删除成功");
-		return resp;
+	@RequestMapping(method=RequestMethod.DELETE)
+	public SuccessMessage doDelete(
+			@RequestParam(value="id",required=false)${table.keyFieldType} id,
+			@RequestParam(value="ids",required=false)String ids) {
+		if(id != null) {
+			${table.modelName2}Service.doDelete(id);
+		} else if(ids != null) {
+			${table.modelName2}Service.doRemove(ids);
+		}
+		return new SuccessMessage("删除成功");//没有需要返回的数据，就直接返回一条消息
 	}
 	</#if>
 	

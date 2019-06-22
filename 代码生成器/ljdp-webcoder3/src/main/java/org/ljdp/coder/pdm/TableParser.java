@@ -86,6 +86,12 @@ public class TableParser {
 					c.setUserDict(true);
 					c.setDictDefined(dictMap.get(name));
 				}
+				//获取数字类型最大的值
+				if(c.getIsNumber()) {
+					Double t = Math.pow(10, c.getPrecision());
+					long t2 = t.longValue()-1;
+					c.setMaxnumber(t2);
+				}
 				columnList.add(c);
 				System.out.println(name+":"+typeName+"("+c.getPrecision()+","+c.getScale()+")"+" - "+c.getJavaDataType());
 			}

@@ -20,6 +20,8 @@ public class Column  extends BaseVO{
 	private int scale = 0;
 	private int precision = 10;
 	
+	private long maxnumber;//数字类型可以保存的最大值
+	
 	public String getName() {
 		return name;
 	}
@@ -145,5 +147,23 @@ public class Column  extends BaseVO{
 		String temp = dictDefined;
 		temp = temp.replaceAll("\\.", "");
 		return temp;
+	}
+	public long getMaxnumber() {
+		return maxnumber;
+	}
+	public void setMaxnumber(long maxnumber) {
+		this.maxnumber = maxnumber;
+	}
+	
+	public boolean getIsNumber() {
+		String javaType = getJavaDataType();
+		if(javaType.equals(DataType.INTEGER)
+				|| javaType.equals(DataType.LONG)
+				|| javaType.equals(DataType.FLOAT)
+				|| javaType.equals(DataType.DOUBLE)
+				|| javaType.equals(DataType.SHORT)) {
+			return true;
+		}
+		return false;
 	}
 }

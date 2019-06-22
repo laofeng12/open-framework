@@ -1,0 +1,81 @@
+# 开发环境配置
+debug: false
+server:
+  port: 8081 #tomcat运行端口
+  servlet: 
+    context-path: /api
+#  tomcat: 
+#    max-connections: 200
+#    accept-count: 10
+#    max-threads: 200
+#    basedir: /temp/tomcat
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@192.168.6.251:1521:orcl
+    username: c##ljdp
+    password: ch#123456
+    druid:
+      initial-size: 1
+      max-active: 100
+      min-idle: 1
+      max-wait: 20000 # 配置获取连接等待超时的时间
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+      max-open-prepared-statements: 20 #和上面的等价
+     # validation-query: SELECT 'x'
+      validation-query: SELECT 'x' FROM DUAL
+      validation-query-timeout: 1
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      filters: stat
+      
+  redis:
+      # redis数据库索引（默认为0），我们使用索引为3的数据库，避免和其他数据库冲突
+      database: 0
+      # redis服务器地址（默认为localhost）
+      host: 192.168.6.251
+      # redis端口（默认为6379）
+      port: 6379
+      # redis访问密码（默认为空）
+      password: Chjy@0769
+      # redis连接超时时间（单位为毫秒）
+      timeout: 10000
+      # redis连接池配置
+      jedis: 
+        pool:
+          # 最大可用连接数（默认为8，负数表示无限）
+          max-active: 100
+          # 最大空闲连接数（默认为8，负数表示无限）
+          max-idle: 8
+          # 最小空闲连接数（默认为0，该值只有为正数才有作用）
+          min-idle: 0
+          # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+          max-wait: 5000
+        
+  servlet: 
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+ljdp: 
+  ftpserver: 
+    url: 192.168.6.251
+    username: chjykj
+    password: ljdp0769
+    remote-path: /
+    local-temp-path: /temp/ftp
+  dfs: 
+    ftp2http-proxy: http://183.6.55.26:8081/api/ljdp/dfs/
+    ftp2http-download: http://183.6.55.26:8081/api/ljdp/dfs/downloadByFid.act?fid=
+  fileupload: 
+    # 覆盖batch.fileupload.path配置
+    local-path: /temp/ftp
+  security:
+    api:
+      skey: abdefghijklmnopqrstuvwxyz1234567890

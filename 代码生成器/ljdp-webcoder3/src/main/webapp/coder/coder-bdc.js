@@ -51,7 +51,7 @@ Ext.onReady(function(){
 	var resNameField = new Ext.form.TextField({
 		fieldLabel: '菜单名称',
 		name: 'resName',
-		allowBlank: false
+		allowBlank: true
 		//,value:'hzy'
 	});
 	var dbNameField = new Ext.form.TextField({
@@ -92,7 +92,7 @@ Ext.onReady(function(){
 		   store: new Ext.data.SimpleStore({
 			   fields: ['value', 'text'],
 			   data: [
-				   ['LJDP5.2','LJDP5.2(code合并至HTTP header)'],
+				   ['LJDP5.2','LJDP5.2(restful风格)'],
 				   ['LJDP5.1','LJDP5.1(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP5.0','LJDP5.0(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP4.0','LJDP4.0(springboot1+antDesignPro(前后端分离))'],
@@ -107,7 +107,7 @@ Ext.onReady(function(){
 		   triggerAction: 'all',
 		   allowBlank: false,
 		   editable : false,
-		   value:'LJDP5.1'
+		   value:'LJDP5.2'
 		});
 	
 	var styleComboBox = new Ext.form.ComboBox({
@@ -179,13 +179,13 @@ Ext.onReady(function(){
 	            items: [
 	                /*{boxLabel: 'MVC控制', name: 'mvc'},*/
 	                {boxLabel: '后端API', name: 'mvc_api'},
-	                {boxLabel: '前端MVC', name: 'mvc_web'},
+	                /*{boxLabel: '前端MVC', name: 'mvc_web'},*/
 	                {boxLabel: '查询', name: 'query'},
 	                {boxLabel: '新增/修改', name: 'add'},
 	                {boxLabel: '删除', name: 'delete'},
 	                {boxLabel: '导入', name: 'importFun'},
 	                {boxLabel: '导出', name: 'export'},
-	                {boxLabel: '手机页面', name: 'mobilepage'}
+	                /*{boxLabel: '手机页面', name: 'mobilepage'}*/
 	            ]
 	        }]
 		}],

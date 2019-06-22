@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<memcached>
+    
+    <!-- sessionPool-->
+    <socketpool name="sessionPool" failover="true" initConn="1" minConn="1" maxConn="1" maintSleep="0"
+        nagle="false" socketTO="3000" aliveCheck="true">
+        <servers>121.40.196.247:11211</servers>
+    </socketpool>
+   
+    <client name="sessionCache" defaultEncoding="UTF-8" socketpool="sessionPool">
+        <errorHandler></errorHandler>
+    </client>
+    
+    <!-- commonPool-->
+    <socketpool name="commonPool" failover="true" initConn="1" minConn="1" maxConn="1" maintSleep="0"
+        nagle="false" socketTO="3000" aliveCheck="true">
+        <servers>121.40.196.247:11211</servers>
+    </socketpool>
+   
+    <client name="commonCache" command="binary" defaultEncoding="UTF-8" socketpool="commonPool">
+        <errorHandler></errorHandler>
+    </client>
+</memcached>
