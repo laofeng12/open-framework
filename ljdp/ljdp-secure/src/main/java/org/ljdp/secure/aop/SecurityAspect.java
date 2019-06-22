@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.ljdp.common.json.JacksonTools;
 import org.ljdp.common.spring.SpringContextManager;
+import org.ljdp.component.exception.APIException;
 import org.ljdp.component.result.APIConstants;
 import org.ljdp.component.result.ApiResponse;
 import org.ljdp.secure.annotation.IgnoreEscape;
@@ -34,7 +34,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class SecurityAspect {
 	
 	public static Map<String,Security> annomap = new HashMap<String,Security>();
-	public int resultPosition = APIConstants.HTTP_POSITION_BODY;
+//	public int resultPosition = APIConstants.HTTP_POSITION_BODY;
 	
 	public Object doAudit(ProceedingJoinPoint point) throws Throwable {
 		String iden = point.getSignature().toString();
@@ -74,13 +74,14 @@ public class SecurityAspect {
 							result.setCode(APIConstants.ACCESS_NO_USER);//改为不需要强制登录
 						}
 						SsoContext.setApiResponse(result);
-						if(APIConstants.HTTP_POSITION_HEAD == resultPosition) {
-							response.setStatus(result.getCode());
-							response.addHeader("message", result.getMessage());
-						} else {
-						}
-						JacksonTools.writePage(result, response);
-						return null;
+						throw new APIException(result.getCode(), result.getMessage());
+//						if(APIConstants.HTTP_POSITION_HEAD == resultPosition) {
+//							response.setStatus(result.getCode());
+////							response.addHeader("message", result.getMessage());
+//						} else {
+//						}
+//						JacksonTools.writePage(result, response);
+//						return null;
 					}
 				}
 			}
@@ -121,11 +122,11 @@ public class SecurityAspect {
 		return result;
 	}
 
-	public int getResultPosition() {
-		return resultPosition;
-	}
-
-	public void setResultPosition(int resultPosition) {
-		this.resultPosition = resultPosition;
-	}
+//	public int getResultPosition() {
+//		return resultPosition;
+//	}
+//
+//	public void setResultPosition(int resultPosition) {
+//		this.resultPosition = resultPosition;
+//	}
 }

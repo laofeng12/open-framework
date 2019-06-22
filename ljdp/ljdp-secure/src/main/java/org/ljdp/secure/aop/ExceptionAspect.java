@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.ljdp.common.config.Env;
+import org.ljdp.common.json.JacksonTools;
 import org.ljdp.component.exception.APIException;
 import org.ljdp.component.exception.BusinessException;
 import org.ljdp.component.exception.MServiceCallException;
@@ -29,6 +30,8 @@ import org.ljdp.component.sequence.SequenceService;
 import org.ljdp.log.aop.ControllerLogAspect;
 import org.ljdp.log.model.RequestErrorLog;
 import org.ljdp.secure.sso.SsoContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -119,11 +122,38 @@ public class ExceptionAspect {
 	private Object getReturnObject(Class retCls, APIException ae, BusinessException be, MServiceCallException ce) {
 		boolean isApiRet = false;
 		boolean isApiImplRet = false;
+		boolean isVoidRet = false;
+//		boolean isRespEntity = false;
+		boolean isCustomRet = false;//返回对象没有实现ApiResponse接口，是自定义对象
 		ApiResponse retResp = null;
 		Object retObj = null;
 //		System.out.println("[retCls]"+retCls);
 		if(retCls.equals(ApiResponse.class) || retCls.equals(BasicApiResponse.class)) {
 			isApiRet = true;
+		} else if(retCls.equals(Void.class) || retCls.toString().equals("void")) {
+			isVoidRet = true;
+		} else if(retCls.equals(ResponseEntity.class)) {
+//			isRespEntity = true;
+			ApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
+			if(ae != null) {
+				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+			} else if(be != null) {
+				resp = new BasicApiResponse(be.getCode(), be.getMessage());
+			} else if(ce != null) {
+				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			}
+			ResponseEntity entity;
+			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
+				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
+			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
+				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
+			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
+				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
+			} else {
+				entity = ResponseEntity.badRequest().body(resp);
+			}
+			
+			retObj = entity;
 		} else {
 			isApiImplRet = hasInterface(retCls, ApiResponse.class);
 			try {
@@ -172,19 +202,18 @@ public class ExceptionAspect {
 							s.add(ce.getMessage());
 						}
 						retObj = s;
-					} else if(retCls.equals(String.class)) {
-						if(ae != null) {
-							retObj = ae.getMessage();
-						} else if(be != null) {
-							retObj = be.getMessage();
-						} else if(ce != null) {
-							retObj = ce.getMessage();
-						}
 					}
-				} else if(retCls.equals(Void.class)) {
-					
+				} else if(retCls.equals(String.class)) {
+					if(ae != null) {
+						retObj = ae.getMessage();
+					} else if(be != null) {
+						retObj = be.getMessage();
+					} else if(ce != null) {
+						retObj = ce.getMessage();
+					}
 				} else {
-					retObj = retCls.newInstance();
+//					retObj = retCls.newInstance();
+					isCustomRet = true;
 				}
 			} catch (Exception e2) {
 				e2.printStackTrace();
@@ -192,22 +221,24 @@ public class ExceptionAspect {
 		}
 //		System.out.println("[isApiRet]="+isApiRet);
 //		System.out.println("[isApiImplRet]="+isApiImplRet);
+//		System.out.println("[isVoidRet]="+isVoidRet);
+//		System.out.println("[isRespEntity]="+isRespEntity);
 		if(APIConstants.HTTP_POSITION_HEAD == resultPosition) {
 			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
 			//返回错误信息需要放到head
 			if(ae != null) {
 				response.setStatus(ae.getCode());
-				response.addHeader("message", ae.getMessage());
+//				response.addHeader("message", ae.getMessage());
 			} else if(be != null) {
 				response.setStatus(be.getCode());
-				response.addHeader("message", be.getMessage());
+//				response.addHeader("message", be.getMessage());
 			} else if(ce != null) {
 				response.setStatus(ce.getCode());
-				response.addHeader("message", ce.getMessage());
+//				response.addHeader("message", ce.getMessage());
 			} else {
 				response.setStatus(APIConstants.CODE_SERVER_ERR);
-				response.addHeader("message", "服务异常");
+//				response.addHeader("message", "服务异常");
 			}
 		}
 		{
@@ -246,10 +277,51 @@ public class ExceptionAspect {
 				}
 				return retResp;
 			}
-		} else {
-			return retObj;
+		} else if(isVoidRet) {
+			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
+			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
+			if(ae != null) {
+				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+			} else if(be != null) {
+				resp = new BasicApiResponse(be.getCode(), be.getMessage());
+			} else if(ce != null) {
+				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			}
+			try {
+				JacksonTools.writePage(resp, response);
+				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if(isCustomRet) {
+			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
+			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
+			if(ae != null) {
+				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+			} else if(be != null) {
+				resp = new BasicApiResponse(be.getCode(), be.getMessage());
+			} else if(ce != null) {
+				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			}
+			try {
+				if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
+					response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
+					response.setStatus(HttpStatus.FORBIDDEN.value());
+				} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
+					response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				} else {
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+				}
+				JacksonTools.writePage(resp, response);
+				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		return null;
+		return retObj;
 	}
 	
 	public boolean hasInterface(Class myClass, Class intfCls) {

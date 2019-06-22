@@ -1,0 +1,6 @@
+#!/bin/sh
+rm -f tpid
+nohup java -jar card-app-api.war --spring.profiles.active=prod > log/card-app-api_$(date +%Y%m%d).log 2>&1 &
+
+echo $! > tpid
+echo start success!

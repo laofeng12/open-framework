@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+    <springProfile name="test,dev,multids">
+        <logger name="org.springframework" level="INFO" />
+        <logger name="org.openjava" level="DEBUG" />
+        <logger name="org.ljdp" level="DEBUG" />
+    </springProfile>
+
+    <!-- 生产环境. -->
+    <springProfile name="prod">
+        <logger name="org.springframework" level="INFO" />
+        <logger name="org.openjava" level="INFO" />
+    </springProfile>
+
+</configuration>

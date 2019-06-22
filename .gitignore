@@ -15,6 +15,7 @@ gen
 *.eml
 *.iml
 .idea
+target
 
 .settings
 .project

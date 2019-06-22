@@ -271,6 +271,8 @@ public class LjdpUploadController extends FileUploadController {
 					busiPath = fileuploadConfig.getAudioBucket();
 				} else if(type.equals("image")) {
 					busiPath = fileuploadConfig.getImageBucket();
+				} else if(type.equals("chat")){
+					busiPath = fileuploadConfig.getChatBucket();
 				}
 			}
 		}
