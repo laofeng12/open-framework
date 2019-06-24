@@ -107,7 +107,7 @@ Ext.onReady(function(){
 		   triggerAction: 'all',
 		   allowBlank: false,
 		   editable : false,
-		   value:'LJDP5.2'
+		   value:'LJDP5.1'
 		});
 	
 	var styleComboBox = new Ext.form.ComboBox({

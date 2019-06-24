@@ -10,7 +10,7 @@
 	<%@ include file="/page/iwork/iwork.jsp" %>
 	<script type="text/javascript" src="<%=path %>/lib/extux/CheckColumn.js"></script>
 	
-	<script type="text/javascript" src="<%=path %>/coder/coder-bdc.js?v=30"></script>
+	<script type="text/javascript" src="<%=path %>/coder/coder-bdc.js?v=31"></script>
 	<script type="text/javascript">
 	
 	</script>
