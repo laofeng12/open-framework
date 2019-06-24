@@ -11,6 +11,7 @@ public class LjdpFileuploadConfig {
 	private String vedioBucket;
 	private String audioBucket;
 	private String imageBucket;
+	private String chatBucket;
 
 	public String getLocalPath() {
 		return localPath;
@@ -42,5 +43,13 @@ public class LjdpFileuploadConfig {
 
 	public void setImageBucket(String imageBucket) {
 		this.imageBucket = imageBucket;
+	}
+
+	public String getChatBucket() {
+		return chatBucket;
+	}
+
+	public void setChatBucket(String chatBucket) {
+		this.chatBucket = chatBucket;
 	}
 }
