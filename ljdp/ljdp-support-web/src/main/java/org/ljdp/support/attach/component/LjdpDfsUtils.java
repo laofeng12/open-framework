@@ -27,6 +27,7 @@ public class LjdpDfsUtils {
 	private String vedioServerUrl;//视频服务地址
 	private String audioServerUrl;//音频服务地址
 	private String imageServerUrl;//圈子图片地址
+	private String chatServerUrl;//聊天图片地址
 	
 	public String getFtp2httpDownload() {
 		return ftp2httpDownload;
@@ -260,5 +261,13 @@ public class LjdpDfsUtils {
 
 	public void setImageServerUrl(String imageServerUrl) {
 		this.imageServerUrl = imageServerUrl;
+	}
+
+	public String getChatServerUrl() {
+		return chatServerUrl;
+	}
+
+	public void setChatServerUrl(String chatServerUrl) {
+		this.chatServerUrl = chatServerUrl;
 	}
 }
