@@ -92,12 +92,12 @@ Ext.onReady(function(){
 		   store: new Ext.data.SimpleStore({
 			   fields: ['value', 'text'],
 			   data: [
-				   ['LJDP5.2','LJDP5.2(restful风格)'],
-				   ['LJDP5.1','LJDP5.1(springboot2+antDesignPro(前后端分离))'],
-				   ['LJDP5.0','LJDP5.0(springboot2+antDesignPro(前后端分离))'],
-				   ['LJDP4.0','LJDP4.0(springboot1+antDesignPro(前后端分离))'],
-				   ['LJDP3.0','LJDP3.0(spring+jsp+bootstrap(前后端分离))'],
-			       ['LJDP2.0','LJDP2.0(Java7+JQuery)']
+				   ['LJDP5.2','5.2(restful风格)'],
+				   ['LJDP5.1','5.1(springboot2+antDesignPro(前后端分离))'],
+				   ['LJDP5.0','5.0(springboot2+antDesignPro(前后端分离))'],
+				   ['LJDP4.0','4.0(springboot1+antDesignPro(前后端分离))'],
+				   ['LJDP3.0','3.0(spring+jsp+bootstrap(前后端分离))'],
+			       ['LJDP2.0','2.0(Java7+JQuery)']
 			   ]
 		   }),
 		   displayField:'text',
@@ -107,7 +107,7 @@ Ext.onReady(function(){
 		   triggerAction: 'all',
 		   allowBlank: false,
 		   editable : false,
-		   value:'LJDP5.1'
+		   value:'LJDP5.2'
 		});
 	
 	var styleComboBox = new Ext.form.ComboBox({
