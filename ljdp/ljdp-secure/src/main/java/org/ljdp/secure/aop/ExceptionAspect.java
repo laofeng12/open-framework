@@ -78,13 +78,13 @@ public class ExceptionAspect {
 			//打印错误日志
 			System.out.println("APIException["+iden+"]"+e.getCode()+":"+e.getMessage());
 			
-			return getReturnObject(retCls, e, null, null);
+			return getReturnObject(retCls, e, null, null, exp);
 		} else if(exp instanceof MServiceCallException){
 			MServiceCallException ce = (MServiceCallException) exp;
 			//打印错误日志
 			System.out.println("MServiceCallException["+iden+"]"+ce.getCode()+":"+ce.getMessage());
 			
-			return getReturnObject(retCls, null, null, ce);
+			return getReturnObject(retCls, null, null, ce, exp);
 			
 			
 		} else if(exp instanceof BusinessException){
@@ -92,7 +92,7 @@ public class ExceptionAspect {
 			//打印错误日志
 			System.out.println("["+iden+"]"+e.getCode()+":"+e.getMessage());
 			
-			return getReturnObject(retCls, null, e, null);
+			return getReturnObject(retCls, null, e, null, exp);
 		} else {
 			System.out.println("[Error]["+iden+"]:"+exp.getMessage());
 			exp.printStackTrace();
@@ -116,10 +116,10 @@ public class ExceptionAspect {
 					e.printStackTrace();
 				}
 			}
-			return getReturnObject(retCls, null, null, null);
+			return getReturnObject(retCls, null, null, null, exp);
 		}
 	}
-	private Object getReturnObject(Class retCls, APIException ae, BusinessException be, MServiceCallException ce) {
+	private Object getReturnObject(Class retCls, APIException ae, BusinessException be, MServiceCallException ce, Throwable exp) {
 		boolean isApiRet = false;
 		boolean isApiImplRet = false;
 		boolean isVoidRet = false;
@@ -141,6 +141,8 @@ public class ExceptionAspect {
 				resp = new BasicApiResponse(be.getCode(), be.getMessage());
 			} else if(ce != null) {
 				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			} else {
+				resp = new BasicApiResponse(500, exp.getMessage());
 			}
 			ResponseEntity entity;
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
@@ -165,8 +167,9 @@ public class ExceptionAspect {
 					} else {
 						retResp = (ApiResponse)retCls.newInstance();
 					}
-				}  else if(retCls.isInterface()) {
-					if(retCls.equals(Map.class)) {
+				} else if(retCls.isInterface()) {
+					isCustomRet = true;
+					/*if(retCls.equals(Map.class)) {
 						HashMap<String, Object> m = new HashMap<>();
 						if(ae != null) {
 							m.put("code", ae.getCode());
@@ -177,6 +180,9 @@ public class ExceptionAspect {
 						} else if(ce != null) {
 							m.put("code", ce.getCode());
 							m.put("message", ce.getMessage());
+						} else {
+							m.put("code", 500);
+							m.put("message", exp.getMessage());
 						}
 						retObj = m;
 					} else if(retCls.equals(List.class)) {
@@ -187,6 +193,8 @@ public class ExceptionAspect {
 							al.add(be);
 						} else if(ce != null) {
 							al.add(ce);
+						} else {
+							al.add("服务异常");
 						}
 						retObj = al;
 					} else if(retCls.equals(Set.class)) {
@@ -200,17 +208,23 @@ public class ExceptionAspect {
 						} else if(ce != null) {
 							s.add(ce.getCode());
 							s.add(ce.getMessage());
+						} else {
+							s.add(500);
+							s.add(exp.getMessage());
 						}
 						retObj = s;
-					}
+					}*/
 				} else if(retCls.equals(String.class)) {
-					if(ae != null) {
-						retObj = ae.getMessage();
-					} else if(be != null) {
-						retObj = be.getMessage();
-					} else if(ce != null) {
-						retObj = ce.getMessage();
-					}
+					isCustomRet = true;
+//					if(ae != null) {
+//						retObj = ae.getMessage();
+//					} else if(be != null) {
+//						retObj = be.getMessage();
+//					} else if(ce != null) {
+//						retObj = ce.getMessage();
+//					} else {
+//						retObj = exp.getMessage();
+//					}
 				} else {
 //					retObj = retCls.newInstance();
 					isCustomRet = true;
@@ -271,6 +285,9 @@ public class ExceptionAspect {
 				} else if(be != null) {
 					retResp.setCode(be.getCode());
 					retResp.setMessage(be.getMessage());
+				}  else if(ce != null) {
+					retResp.setCode(ce.getCode());
+					retResp.setMessage(ce.getMessage());
 				} else {
 					retResp.setCode(APIConstants.CODE_SERVER_ERR);
 					retResp.setMessage("服务异常");
@@ -298,27 +315,29 @@ public class ExceptionAspect {
 			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
 			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
-			if(ae != null) {
-				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
-			} else if(be != null) {
-				resp = new BasicApiResponse(be.getCode(), be.getMessage());
-			} else if(ce != null) {
-				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			} else {
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
-			try {
-				if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
-					response.setStatus(HttpStatus.UNAUTHORIZED.value());
-				} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
-					response.setStatus(HttpStatus.FORBIDDEN.value());
-				} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
-					response.setStatus(HttpStatus.UNAUTHORIZED.value());
-				} else {
-					response.setStatus(HttpStatus.BAD_REQUEST.value());
+			if(null == retObj) {
+				try {
+					if(ae != null) {
+						resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+					} else if(be != null) {
+						resp = new BasicApiResponse(be.getCode(), be.getMessage());
+					} else if(ce != null) {
+						resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+					}
+					JacksonTools.writePage(resp, response);
+//					return null;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				JacksonTools.writePage(resp, response);
-				return null;
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		return retObj;

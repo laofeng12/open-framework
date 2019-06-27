@@ -50,6 +50,24 @@ public class TestAction {
 	}
 	
 	@Security(session=false)
+	@RequestMapping(value="/test5",method=RequestMethod.GET)
+	public String test5() throws Exception{
+		if(true) {
+			throw new Exception("测试出现异常");
+		}
+		return "success";
+	}
+	
+	@Security(session=false)
+	@RequestMapping(value="/test6",method=RequestMethod.GET)
+	public ExampleOrder test6() throws Exception{
+		if(true) {
+			throw new Exception("测试出现异常");
+		}
+		return new ExampleOrder();
+	}
+	
+	@Security(session=false)
 	@RequestMapping(value="/test1b",method=RequestMethod.GET)
 	public ExampleOrder test1b() throws Exception{
 		if(true) {
