@@ -1,15 +1,24 @@
 package com.openjava.framework.validate;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.json.JacksonTools;
 import org.ljdp.common.secure.AES;
@@ -26,6 +35,9 @@ import org.ljdp.secure.validate.AuthorityPersistent;
 import org.ljdp.secure.validate.SessionValidator;
 import org.ljdp.util.LocalDateTimeUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class RedisSessionVaidator implements SessionValidator {
 	private static final String TOKEN_NAME = "authority-token";
@@ -88,7 +100,7 @@ public class RedisSessionVaidator implements SessionValidator {
 			if(StringUtils.isEmpty(tokenid) || tokenid.equalsIgnoreCase("undefined")) {
 				tokenid = request.getParameter("tokenid");
 			}
-			if(StringUtils.isNotEmpty(tokenid) && null == aes) {
+			if(StringUtils.isNotEmpty(tokenid)) {
 				SsoContext.setToken(tokenid);
 				//验证session
 				BaseUserInfo user = (BaseUserInfo)redisTemplate.opsForValue().get(tokenid);
@@ -177,23 +189,14 @@ public class RedisSessionVaidator implements SessionValidator {
 							
 						}
 					}
+				} else if(aes != null){
+					validateRPCofNoUser(request, result);
 				} else {
 					result.setCode(APIConstants.CODE_AUTH_FAILD);
 					result.setMessage("会话失效");
 				}
 			} else if(aes != null) {
-				String authHead = request.getHeader(Authorization);
-				if(StringUtils.isNotEmpty(authHead)) {
-					authHead = authHead.replaceFirst("Bearer ", "");
-					String userJson = aes.decryptBase64(authHead);
-					UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
-					SsoContext.setUser(user);
-					SsoContext.setAccount(user.getUserAccount());
-					SsoContext.setToken(authHead);
-				} else {
-					result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
-					result.setMessage("请登录后操作");
-				}
+				validateRPCofNoUser(request, result);
 			} else {
 				result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
 				result.setMessage("请登录后操作");
@@ -205,6 +208,40 @@ public class RedisSessionVaidator implements SessionValidator {
 		}
 		
 		return result;
+	}
+
+	/**
+	 * 后台定时任务无登录用户的请求验证方式
+	 * @param request
+	 * @param result
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws DecoderException
+	 * @throws UnsupportedEncodingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IOException
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 */
+	private void validateRPCofNoUser(HttpServletRequest request, ApiResponse result)
+			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+			BadPaddingException, DecoderException, UnsupportedEncodingException, InvalidAlgorithmParameterException,
+			IOException, JsonParseException, JsonMappingException {
+		String authHead = request.getHeader(Authorization);
+		if(StringUtils.isNotEmpty(authHead)) {
+			authHead = authHead.replaceFirst("Bearer ", "");
+			String userJson = aes.decryptBase64(authHead);
+			UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
+			SsoContext.setUser(user);
+			SsoContext.setAccount(user.getUserAccount());
+			SsoContext.setToken(authHead);
+		} else {
+			result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+			result.setMessage("请登录后操作2");
+		}
 	}
 
 	public boolean isDebug() {
