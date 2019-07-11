@@ -2,7 +2,7 @@ package org.ljdp.common.timer.thread;
 
 import java.util.Date;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.ljdp.common.timer.ScheduleManager;
 import org.ljdp.common.timer.ScheduleMemoryPool;
 import org.ljdp.common.timer.model.ScheduleInstance;

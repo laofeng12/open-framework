@@ -14,7 +14,7 @@ import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.WritableCell;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.ljdp.util.DateFormater;
 
 public class JxlUtil {

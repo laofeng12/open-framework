@@ -2,7 +2,7 @@ package org.ljdp.common.file.nameservice;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.ljdp.component.namespace.FileNameService;
 import org.ljdp.util.DateFormater;
 import org.ljdp.util.FileUtils;

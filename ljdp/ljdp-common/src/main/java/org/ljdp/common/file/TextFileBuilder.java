@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.bean.DynamicField;
 import org.ljdp.common.bean.FieldType;
 import org.ljdp.util.DateFormater;

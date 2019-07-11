@@ -1,6 +1,6 @@
 package org.ljdp.common.timer.model;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * 定时任务规则。<br/>

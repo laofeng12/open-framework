@@ -17,7 +17,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.bean.DynamicField;
 import org.ljdp.common.bean.MyBeanUtils;
 import org.ljdp.common.bean.TableHead;

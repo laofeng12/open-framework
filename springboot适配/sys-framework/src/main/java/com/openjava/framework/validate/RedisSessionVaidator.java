@@ -1,6 +1,5 @@
 package com.openjava.framework.validate;
 
-import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -35,10 +34,17 @@ public class RedisSessionVaidator implements SessionValidator {
 	@Resource
 	private RedisTemplate<String, Object> redisTemplate;
 	private AES aes = null;
+	private boolean debug = false;
 	
 	public RedisSessionVaidator() {
 		
 	}
+	
+	public RedisSessionVaidator(boolean debug) {
+		super();
+		this.debug = debug;
+	}
+
 	public RedisSessionVaidator(String apiSkey) {
 		try {
 			aes = new AES(apiSkey);
@@ -74,12 +80,18 @@ public class RedisSessionVaidator implements SessionValidator {
 				tokenid = getTokenFromCookies(request);
 			}
 			if(StringUtils.isEmpty(tokenid) || tokenid.equalsIgnoreCase("undefined")) {
+				tokenid = request.getHeader(Authorization);
+				if(tokenid != null) {
+					tokenid = tokenid.replaceFirst("Bearer ", "");
+				}
+			}
+			if(StringUtils.isEmpty(tokenid) || tokenid.equalsIgnoreCase("undefined")) {
 				tokenid = request.getParameter("tokenid");
 			}
 			if(StringUtils.isNotEmpty(tokenid)) {
 				SsoContext.setToken(tokenid);
 				//验证session
-				BaseUserInfo user = (BaseUserInfo)redisTemplate.boundValueOps(tokenid).get();
+				BaseUserInfo user = (BaseUserInfo)redisTemplate.opsForValue().get(tokenid);
 				if(authPersist != null && user == null) {
 					//尝试从数据库获取
 					AuthInfo a = authPersist.findByTokenid(tokenid);
@@ -95,7 +107,7 @@ public class RedisSessionVaidator implements SessionValidator {
 							vo.setUserAgent(a.getUserAgent());
 							vo.setLoginTime(a.getLoginTime());
 							
-							redisTemplate.boundValueOps(tokenid).set(user, 7, TimeUnit.DAYS);
+							redisTemplate.opsForValue().set(tokenid, user, 7, TimeUnit.DAYS);
 						}
 					}
 				}
@@ -121,6 +133,10 @@ public class RedisSessionVaidator implements SessionValidator {
 						result.setMessage("缺少设备信息");
 					} else {
 						String memUa = user.getUserAgent();
+						if(debug) {
+							System.out.println("[Token-Agent]"+memUa);
+							System.out.println("[Request-Agent]"+userAgent);
+						}
 						if(!memUa.equals(userAgent)) {
 							int vi = userAgent.lastIndexOf(" v");
 							if(vi > 0) {
@@ -154,7 +170,7 @@ public class RedisSessionVaidator implements SessionValidator {
 								if(lastRefreshTime > halfTimeout) {
 									//刷新token的有效期限
 									user.setRefreshTime(new Date());
-									redisTemplate.boundValueOps(tokenid).set(user, user.getExpireInMin(), TimeUnit.MINUTES);
+									redisTemplate.opsForValue().set(tokenid, user, user.getExpireInMin(), TimeUnit.MINUTES);
 								}
 								
 							}
@@ -188,6 +204,14 @@ public class RedisSessionVaidator implements SessionValidator {
 		}
 		
 		return result;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
 }

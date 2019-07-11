@@ -2,7 +2,7 @@ package org.ljdp.common.timer.model;
 
 import java.util.Date;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.ljdp.common.timer.ScheduleMemoryPool;
 import org.ljdp.common.timer.thread.ScheduleThread;
 import org.ljdp.component.result.BatchResult;
