@@ -3,13 +3,7 @@ package org.ljdp.secure.aop;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -41,6 +35,7 @@ public class ExceptionAspect {
 	public static final BlockingQueue<RequestErrorLog> queue;
 	public static Class logCls;
 	public int resultPosition = APIConstants.HTTP_POSITION_BODY;//Body: code和message存放在报文区域。Head：code和message存放在http head，code共用http status
+	private SequenceService mySequenceService;
 	
 	static {
 		String logcfg = Env.getCurrent().getConfigFile().getValue("request.errorlog.entity");
@@ -55,6 +50,16 @@ public class ExceptionAspect {
 		queue = new LinkedBlockingQueue<>(ControllerLogAspect.Service_Max_Capacity);
 	}
 	
+	public ExceptionAspect() {
+		super();
+	}
+	
+	
+	public ExceptionAspect(SequenceService mySequenceService) {
+		super();
+		this.mySequenceService = mySequenceService;
+	}
+
 	public Object doException(ProceedingJoinPoint point) throws Throwable {
 		try {
 			if(ControllerLogAspect.isInMaxCapacity()) {
@@ -98,11 +103,16 @@ public class ExceptionAspect {
 			exp.printStackTrace();
 			if(logCls != null) {//保存错误日志
 				try {
-					SequenceService cs = ConcurrentSequence.getCentumInstance();
 					RequestErrorLog log = (RequestErrorLog)logCls.newInstance();
-					log.setErrorId(cs.getSequence(""));
-					
-					Long reqId = cs.getSequence();
+					Long reqId = null;
+					if(this.mySequenceService != null) {
+						log.setErrorId(mySequenceService.getSequence(""));
+						reqId = mySequenceService.getSequence();
+					} else {
+						SequenceService cs = ConcurrentSequence.getCentumInstance();
+						log.setErrorId(cs.getSequence(""));
+						reqId = cs.getSequence();
+					}
 					log.setRequestId(reqId.toString());
 					SsoContext.setRequestId(reqId);
 					
@@ -361,6 +371,16 @@ public class ExceptionAspect {
 	}
 	public void setResultPosition(int resultPosition) {
 		this.resultPosition = resultPosition;
+	}
+
+
+	public SequenceService getMySequenceService() {
+		return mySequenceService;
+	}
+
+
+	public void setMySequenceService(SequenceService mySequenceService) {
+		this.mySequenceService = mySequenceService;
 	}
 	
 }

@@ -88,7 +88,7 @@ public class RedisSessionVaidator implements SessionValidator {
 			if(StringUtils.isEmpty(tokenid) || tokenid.equalsIgnoreCase("undefined")) {
 				tokenid = request.getParameter("tokenid");
 			}
-			if(StringUtils.isNotEmpty(tokenid)) {
+			if(StringUtils.isNotEmpty(tokenid) && null == aes) {
 				SsoContext.setToken(tokenid);
 				//验证session
 				BaseUserInfo user = (BaseUserInfo)redisTemplate.opsForValue().get(tokenid);
@@ -184,6 +184,7 @@ public class RedisSessionVaidator implements SessionValidator {
 			} else if(aes != null) {
 				String authHead = request.getHeader(Authorization);
 				if(StringUtils.isNotEmpty(authHead)) {
+					authHead = authHead.replaceFirst("Bearer ", "");
 					String userJson = aes.decryptBase64(authHead);
 					UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
 					SsoContext.setUser(user);
