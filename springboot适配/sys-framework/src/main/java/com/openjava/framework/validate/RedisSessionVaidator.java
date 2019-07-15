@@ -190,13 +190,21 @@ public class RedisSessionVaidator implements SessionValidator {
 						}
 					}
 				} else if(aes != null){
-					validateRPCofNoUser(request, result);
+					boolean validresult = validateRPCofNoUser(request);
+					if(!validresult) {
+						result.setCode(APIConstants.CODE_AUTH_FAILD);
+						result.setMessage("会话失效2");
+					}
 				} else {
 					result.setCode(APIConstants.CODE_AUTH_FAILD);
 					result.setMessage("会话失效");
 				}
 			} else if(aes != null) {
-				validateRPCofNoUser(request, result);
+				boolean validresult = validateRPCofNoUser(request);
+				if(!validresult) {
+					result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+					result.setMessage("请登录后操作2");
+				}
 			} else {
 				result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
 				result.setMessage("请登录后操作");
@@ -226,22 +234,22 @@ public class RedisSessionVaidator implements SessionValidator {
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 */
-	private void validateRPCofNoUser(HttpServletRequest request, ApiResponse result)
-			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
-			BadPaddingException, DecoderException, UnsupportedEncodingException, InvalidAlgorithmParameterException,
-			IOException, JsonParseException, JsonMappingException {
+	private boolean validateRPCofNoUser(HttpServletRequest request) {
 		String authHead = request.getHeader(Authorization);
 		if(StringUtils.isNotEmpty(authHead)) {
-			authHead = authHead.replaceFirst("Bearer ", "");
-			String userJson = aes.decryptBase64(authHead);
-			UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
-			SsoContext.setUser(user);
-			SsoContext.setAccount(user.getUserAccount());
-			SsoContext.setToken(authHead);
-		} else {
-			result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
-			result.setMessage("请登录后操作2");
+			try {
+				authHead = authHead.replaceFirst("Bearer ", "");
+				String userJson = aes.decryptBase64(authHead);
+				UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
+				SsoContext.setUser(user);
+				SsoContext.setAccount(user.getUserAccount());
+				SsoContext.setToken(authHead);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		return false;
 	}
 
 	public boolean isDebug() {
