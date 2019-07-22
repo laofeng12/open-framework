@@ -88,7 +88,7 @@ public class EhcacheSessionValidator implements SessionValidator {
 						userAgent = request.getHeader("user-agent");
 					}
 					if(StringUtils.isEmpty(userAgent)){
-						result.setCode(APIConstants.CODE_AUTH_FAILD);
+						result.setCode(APIConstants.CODE_AUTH_FAILED);
 						result.setMessage("缺少设备信息");
 					} else {
 						if("GET".equals(method)) {
@@ -100,11 +100,11 @@ public class EhcacheSessionValidator implements SessionValidator {
 							if(vi > 0) {
 								String userAgentNoVer = userAgent.substring(0, vi);
 								if(!memUa.startsWith(userAgentNoVer)) {
-									result.setCode(APIConstants.CODE_AUTH_FAILD);
+									result.setCode(APIConstants.CODE_AUTH_FAILED);
 									result.setMessage("设备认证失败");
 								}
 							} else {
-								result.setCode(APIConstants.CODE_AUTH_FAILD);
+								result.setCode(APIConstants.CODE_AUTH_FAILED);
 								result.setMessage("设备认证失败");
 							}
 						} else {
@@ -112,7 +112,7 @@ public class EhcacheSessionValidator implements SessionValidator {
 						}
 					}
 				} else {
-					result.setCode(APIConstants.CODE_AUTH_FAILD);
+					result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
 					result.setMessage("会话失效");
 				}
 			} else {

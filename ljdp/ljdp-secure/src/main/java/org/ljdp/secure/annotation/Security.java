@@ -31,4 +31,20 @@ public @interface Security {
 	 * @return
 	 */
 	boolean validateUserAgent() default true;
+	
+	/**
+	 * 允许访问的身份，如果没有设置表示不做限制，默认空。
+	 * @return
+	 */
+	String[] allowIdentitys() default {};
+	/**
+	 * 允许访问的角色，如果没有设置表示不做限制，默认空。
+	 * @return
+	 */
+	String[] allowRoles() default {};
+	/**
+	 * 允许访问的用户账号，如果没有设置表示不做限制，默认空。
+	 * @return
+	 */
+	String[] allowUserAccounts() default {};
 }

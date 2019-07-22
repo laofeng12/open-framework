@@ -140,8 +140,9 @@ public class RedisSessionVaidator implements SessionValidator {
 //							userAgent = URLDecoder.decode(userAgent, "utf-8");
 //						}
 //					}
-					if(StringUtils.isEmpty(userAgent)){
-						result.setCode(APIConstants.CODE_AUTH_FAILD);
+					boolean validateUserAgent = secure.validateUserAgent();//是否验证userAgent
+					if(validateUserAgent && StringUtils.isEmpty(userAgent)){
+						result.setCode(APIConstants.CODE_AUTH_FAILED);
 						result.setMessage("缺少设备信息");
 					} else {
 						String memUa = user.getUserAgent();
@@ -149,12 +150,12 @@ public class RedisSessionVaidator implements SessionValidator {
 							System.out.println("[Token-Agent]"+memUa);
 							System.out.println("[Request-Agent]"+userAgent);
 						}
-						if(!memUa.equals(userAgent)) {
+						if(validateUserAgent && !memUa.equals(userAgent)) {
 							int vi = userAgent.lastIndexOf(" v");
 							if(vi > 0) {
 								String userAgentNoVer = userAgent.substring(0, vi);
 								if(!memUa.startsWith(userAgentNoVer)) {
-									result.setCode(APIConstants.CODE_AUTH_FAILD);
+									result.setCode(APIConstants.CODE_AUTH_FAILED);
 									result.setMessage("设备认证失败");
 								}
 							} else {
@@ -163,50 +164,81 @@ public class RedisSessionVaidator implements SessionValidator {
 								if(qihu360Ua.equals(userAgent)) {
 									//是360浏览器在后面添加的标志，可以认为也是同一个设备，认证通过
 								} else {
-									result.setCode(APIConstants.CODE_AUTH_FAILD);
+									result.setCode(APIConstants.CODE_AUTH_FAILED);
 									result.setMessage("设备认证失败");
 								}
 							}
 						} else {
+							//session有效
 //							System.out.println("[RedisSessionVaidator]session有效："+user);
-							if(user.getRefreshTime() == null) {
-								user.setRefreshTime(user.getLoginTime());
-							}
-							if(user.getExpireInMin() != null && user.getExpireInMin().intValue() > 0) {
-								long halfTimeout = user.getExpireInMin() / 2;//超时时间的一半
-								//有多长时间没有刷新
-								long lastRefreshTime = LocalDateTimeUtils.betweenTwoTime(
-										LocalDateTimeUtils.convertDateToLDT(user.getRefreshTime()), 
-										LocalDateTime.now(), 
-										ChronoUnit.MINUTES);
-								if(lastRefreshTime > halfTimeout) {
-									//刷新token的有效期限
-									user.setRefreshTime(new Date());
-									redisTemplate.opsForValue().set(tokenid, user, user.getExpireInMin(), TimeUnit.MINUTES);
+							boolean allow = true;
+							if(secure.allowIdentitys() != null && secure.allowIdentitys().length > 0) {
+								allow = false;
+								for(String identity : secure.allowIdentitys()) {
+									if(identity.equalsIgnoreCase(user.getUserType())) {
+										allow = true;
+										break;
+									}
 								}
-								
 							}
-							
+							if(!allow) {
+								result.setCode(APIConstants.IDENTITY_NOTPASS);
+								result.setMessage("不允许此用户身份操作");
+							} else {
+								//允许访问，刷新session时间
+								if(user.getRefreshTime() == null) {
+									user.setRefreshTime(user.getLoginTime());
+								}
+								if(user.getExpireInMin() != null && user.getExpireInMin().intValue() > 0) {
+									long halfTimeout = user.getExpireInMin() / 2;//超时时间的一半
+									//有多长时间没有刷新
+									long lastRefreshTime = LocalDateTimeUtils.betweenTwoTime(
+											LocalDateTimeUtils.convertDateToLDT(user.getRefreshTime()), 
+											LocalDateTime.now(), 
+											ChronoUnit.MINUTES);
+									if(lastRefreshTime > halfTimeout) {
+										//刷新token的有效期限
+										user.setRefreshTime(new Date());
+										redisTemplate.opsForValue().set(tokenid, user, user.getExpireInMin(), TimeUnit.MINUTES);
+									}
+								}
+							}
 						}
 					}
 				} else if(aes != null){
 					boolean validresult = validateRPCofNoUser(request);
 					if(!validresult) {
-						result.setCode(APIConstants.CODE_AUTH_FAILD);
+						if(secure.redirectLogin()) {
+							result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+						} else {
+							result.setCode(APIConstants.ACCESS_NO_USER);
+						}
 						result.setMessage("会话失效2");
 					}
 				} else {
-					result.setCode(APIConstants.CODE_AUTH_FAILD);
+					if(secure.redirectLogin()) {
+						result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+					} else {
+						result.setCode(APIConstants.ACCESS_NO_USER);
+					}
 					result.setMessage("会话失效");
 				}
 			} else if(aes != null) {
 				boolean validresult = validateRPCofNoUser(request);
 				if(!validresult) {
-					result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+					if(secure.redirectLogin()) {
+						result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+					} else {
+						result.setCode(APIConstants.ACCESS_NO_USER);
+					}
 					result.setMessage("请登录后操作2");
 				}
 			} else {
-				result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+				if(secure.redirectLogin()) {
+					result.setCode(APIConstants.ACCOUNT_NO_LOGIN);
+				} else {
+					result.setCode(APIConstants.ACCESS_NO_USER);
+				}
 				result.setMessage("请登录后操作");
 			}
 		} catch (Exception e) {

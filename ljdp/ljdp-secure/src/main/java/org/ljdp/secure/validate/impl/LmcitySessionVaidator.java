@@ -61,7 +61,7 @@ public class LmcitySessionVaidator implements SessionValidator {
 					if(passObj == null) {
 						Object accountObj = c.get(ACCOUNT_CACHEKEY_PRE+tokenid);
 						if(accountObj == null) {
-							result.setCode(APIConstants.CODE_AUTH_FAILD);
+							result.setCode(APIConstants.CODE_AUTH_FAILED);
 							result.setMessage("会话失效");
 						} else {
 							//用户账户
@@ -81,7 +81,7 @@ public class LmcitySessionVaidator implements SessionValidator {
 					String userAgent = request.getParameter("userAgent");
 					
 					if(StringUtils.isEmpty(userAgent)){
-						result.setCode(APIConstants.CODE_AUTH_FAILD);
+						result.setCode(APIConstants.CODE_AUTH_FAILED);
 						result.setMessage("缺少设备信息");
 					} else {
 						if("GET".equals(method)) {
@@ -103,11 +103,11 @@ public class LmcitySessionVaidator implements SessionValidator {
 								if(vi > 0) {
 									String userAgentNoVer = userAgent.substring(0, vi);
 									if(!memUa.startsWith(userAgentNoVer)) {
-										result.setCode(APIConstants.CODE_AUTH_FAILD);
+										result.setCode(APIConstants.CODE_AUTH_FAILED);
 										result.setMessage("设备认证失败");
 									}
 								} else {
-									result.setCode(APIConstants.CODE_AUTH_FAILD);
+									result.setCode(APIConstants.CODE_AUTH_FAILED);
 									result.setMessage("设备认证失败");
 								}
 							}

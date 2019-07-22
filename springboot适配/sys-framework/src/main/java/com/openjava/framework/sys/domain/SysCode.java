@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class SysCode extends BasicApiResponse implements ApiResponse {
 	private static final long serialVersionUID = -5155152631172811605L;
 	
-	private Integer codeid;//CODEID
+	private Long codeid;//CODEID
 	@ApiModelProperty("数据编码")
 	private String codeDef;//CODE
 	private String codetype;//CODETYPE
@@ -30,7 +30,7 @@ public class SysCode extends BasicApiResponse implements ApiResponse {
 	private String codename;//CODENAME
 	private String codevalue;//CODEVALUE
 	@ApiModelProperty("父编码")
-	private Integer pcodeid;//PCODEID
+	private Long pcodeid;//PCODEID
 	@ApiModelProperty("状态")
 	private Integer status;
 	@ApiModelProperty("图标")
@@ -41,10 +41,10 @@ public class SysCode extends BasicApiResponse implements ApiResponse {
 	
 	@Id
 	@Column(name = "CODEID")
-	public Integer getCodeid() {
+	public Long getCodeid() {
 		return codeid;
 	}
-	public void setCodeid(Integer codeid) {
+	public void setCodeid(Long codeid) {
 		this.codeid = codeid;
 	}
 	
@@ -82,10 +82,10 @@ public class SysCode extends BasicApiResponse implements ApiResponse {
 	}
 
 	@Column(name = "PCODEID")
-	public Integer getPcodeid() {
+	public Long getPcodeid() {
 		return pcodeid;
 	}
-	public void setPcodeid(Integer pcodeid) {
+	public void setPcodeid(Long pcodeid) {
 		this.pcodeid = pcodeid;
 	}
 	

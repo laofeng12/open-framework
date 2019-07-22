@@ -157,7 +157,7 @@ public class ExceptionAspect {
 			ResponseEntity entity;
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
-			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
+			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
 				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
@@ -327,7 +327,7 @@ public class ExceptionAspect {
 			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILD) {
+			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());

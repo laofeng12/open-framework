@@ -13,8 +13,11 @@ public class APIConstants {
 	public static final int CODE_SERVICE_BUSY = 20000;//服务器繁忙
 	
 	public static final int ACCOUNT_NO_LOGIN = 20019;//需要登录
-	public static final int CODE_AUTH_FAILD = 20020;//认证失败
+	public static final int CODE_AUTH_FAILED = 20020;//认证失败
 	public static final int ACCESS_NO_USER = 20021;//没有登录用户，返回空数据，不强制跳转登录页
+	public static final int IDENTITY_NOTPASS = 20022;//身份验证不通过
+	public static final int ROLE_NOTPASS = 20023;//角色验证不通过
+	public static final int USER_NOTPASS = 20024;//用户验证不通过
 	
 	public static final int OSS_UPLOAD_FAIL = 20030;//OSS上传失败
 	public static final int FTP_UPLOAD_FAIL = 20031;//ftp上传失败
