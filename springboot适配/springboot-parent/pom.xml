@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.openjava</groupId>
 	<artifactId>springboot-parent</artifactId>
-	<version>2.0.6.R04</version>
+	<version>2.0.6.R05</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -29,24 +29,24 @@
 		<dependency>
 			<groupId>org.openjava</groupId>
 			<artifactId>sys-framework</artifactId>
-			<version>2.0.5</version>
+			<version>2.1.0</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.googlecode.xmemcached</groupId>
 			<artifactId>xmemcached</artifactId>
 			<version>2.4.5</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- 轻量级JavaEE开发平台 2.0 -->
 		<dependency>
@@ -57,12 +57,12 @@
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-component</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-common</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-secure</artifactId>
-			<version>2.2.3</version>
+			<version>2.2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
@@ -131,7 +131,7 @@
 		<dependency>
 			<groupId>com.github.xiaoymin</groupId>
 			<artifactId>swagger-bootstrap-ui</artifactId>
-			<version>1.8.8</version>
+			<version>1.9.4</version>
 		</dependency>
 
 		<dependency>
