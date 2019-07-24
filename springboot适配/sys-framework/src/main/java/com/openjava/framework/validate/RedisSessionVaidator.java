@@ -7,7 +7,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -47,6 +50,7 @@ public class RedisSessionVaidator implements SessionValidator {
 	private RedisTemplate<String, Object> redisTemplate;
 	private AES aes = null;
 	private boolean debug = false;
+	private List<String> defaultAllowIdentitys = new ArrayList<>();//默认全局允许的身份
 	
 	public RedisSessionVaidator() {
 		
@@ -63,6 +67,10 @@ public class RedisSessionVaidator implements SessionValidator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void addAllowIdentity(String identity) {
+		defaultAllowIdentitys.add(identity);
 	}
 	
 	private String getTokenFromCookies(HttpServletRequest request) {
@@ -178,6 +186,17 @@ public class RedisSessionVaidator implements SessionValidator {
 									if(identity.equalsIgnoreCase(user.getUserType())) {
 										allow = true;
 										break;
+									}
+								}
+								if(!allow) {
+									//检查默认的全局允许身份
+									Iterator<String> it = defaultAllowIdentitys.iterator();
+									while (it.hasNext()) {
+										String identity = (String) it.next();
+										if(identity.equalsIgnoreCase(user.getUserType())) {
+											allow = true;
+											break;
+										}
 									}
 								}
 							}
