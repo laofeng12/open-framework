@@ -151,8 +151,6 @@ public class ExceptionAspect {
 				resp = new BasicApiResponse(be.getCode(), be.getMessage());
 			} else if(ce != null) {
 				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
-			} else {
-				resp = new BasicApiResponse(500, exp.getMessage());
 			}
 			ResponseEntity entity;
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
@@ -161,6 +159,8 @@ public class ExceptionAspect {
 				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
+			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
+				entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
 			} else {
 				entity = ResponseEntity.badRequest().body(resp);
 			}
@@ -251,18 +251,24 @@ public class ExceptionAspect {
 			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
 			//返回错误信息需要放到head
+			int errorCode = APIConstants.CODE_SERVER_ERR;
 			if(ae != null) {
-				response.setStatus(ae.getCode());
-//				response.addHeader("message", ae.getMessage());
+				errorCode = ae.getCode();
 			} else if(be != null) {
-				response.setStatus(be.getCode());
-//				response.addHeader("message", be.getMessage());
+				errorCode = be.getCode();
 			} else if(ce != null) {
-				response.setStatus(ce.getCode());
-//				response.addHeader("message", ce.getMessage());
+				errorCode = ce.getCode();
+			}
+			if(errorCode == APIConstants.ACCOUNT_NO_LOGIN) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			} else if(errorCode == APIConstants.CODE_AUTH_FAILED) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+			} else if(errorCode == APIConstants.ACCESS_NO_USER) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			} else if(errorCode == APIConstants.CODE_SERVER_ERR) {
+				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			} else {
-				response.setStatus(APIConstants.CODE_SERVER_ERR);
-//				response.addHeader("message", "服务异常");
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
 		}
 		{
@@ -331,6 +337,8 @@ public class ExceptionAspect {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
+				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
