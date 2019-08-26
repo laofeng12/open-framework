@@ -232,7 +232,8 @@ public class RedisSessionVaidator implements SessionValidator {
 						} else {
 							result.setCode(APIConstants.ACCESS_NO_USER);
 						}
-						result.setMessage("会话失效2");
+						//会话失效2
+						result.setMessage("请重新登录");
 					}
 				} else {
 					if(secure.redirectLogin()) {
