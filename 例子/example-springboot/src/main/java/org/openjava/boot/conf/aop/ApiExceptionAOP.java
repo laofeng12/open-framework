@@ -23,7 +23,7 @@ public class ApiExceptionAOP {
 	
 	@Around("executeService()")
 	public Object doAround(ProceedingJoinPoint point) throws Throwable{
-//		aop.setResultPosition(APIConstants.HTTP_POSITION_HEAD);
+		aop.setResultPosition(APIConstants.HTTP_POSITION_HEAD);
 		return aop.doException(point);
 	}
 }

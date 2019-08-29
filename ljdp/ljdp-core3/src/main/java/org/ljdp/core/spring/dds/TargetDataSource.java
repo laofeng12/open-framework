@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface TargetDataSource {
 
-	String value();
+	String value() default "primary";
 }

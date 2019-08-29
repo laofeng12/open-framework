@@ -53,6 +53,7 @@ public class ControllerLogAspect {
 	
 	private SequenceService mySequenceService;
 	private String sequenceServiceName;
+	private boolean defaultPrintLog = true;
 	
 	static {
 		String logcfg = Env.getCurrent().getConfigFile().getValue("request.log.entity");
@@ -260,7 +261,12 @@ public class ControllerLogAspect {
 			} else {
 				reqParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);
 			}
-			if(logCfg == null || logCfg.print()) {
+			if(null == logCfg) {
+				//如果没有配置，那么看默认设置
+				if(defaultPrintLog) {
+					log.info(iden+" "+reqParams);
+				}
+			} else if(logCfg.print()) {
 				log.info(iden+" "+reqParams);
 			}
 			if(logCfg == null || logCfg.save()) {
@@ -446,5 +452,13 @@ public class ControllerLogAspect {
 
 	public void setSequenceServiceName(String sequenceServiceName) {
 		this.sequenceServiceName = sequenceServiceName;
+	}
+
+	public boolean isDefaultPrintLog() {
+		return defaultPrintLog;
+	}
+
+	public void setDefaultPrintLog(boolean defaultPrintLog) {
+		this.defaultPrintLog = defaultPrintLog;
 	}
 }

@@ -1,6 +1,7 @@
 package com.openjava.test.api;
 
 import org.ljdp.component.exception.APIException;
+import org.ljdp.component.result.BasicApiResponse;
 import org.ljdp.secure.annotation.Security;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,11 +79,11 @@ public class TestAction {
 	
 	@Security(session=false)
 	@RequestMapping(value="/test2b",method=RequestMethod.GET)
-	public ExampleOrder test2b() throws Exception{
+	public BasicApiResponse test2b() throws Exception{
 		if(true) {
 			throw new APIException(30002, "测试出现异常");
 		}
-		return new ExampleOrder();
+		return new BasicApiResponse(30002,"失败");
 	}
 	
 	@Security(session=true)
