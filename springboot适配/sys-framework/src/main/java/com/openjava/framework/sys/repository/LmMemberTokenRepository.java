@@ -14,8 +14,8 @@ import com.openjava.framework.sys.domain.LmMemberToken;
  * @author hzy
  *
  */
-public interface LmMemberTokenRepository extends DynamicJpaRepository<LmMemberToken, String>, LmMemberTokenRepositoryCustom{
-	
-	@Query("from LmMemberToken where passId=:passId and userAgent=:userAgent and state='1'")
-	public List<LmMemberToken> findByPassIdAndAgent(@Param("passId")Long passId, @Param("userAgent")String userAgent);
-}
+//public interface LmMemberTokenRepository extends DynamicJpaRepository<LmMemberToken, String>, LmMemberTokenRepositoryCustom{
+//	
+//	@Query("from LmMemberToken where passId=:passId and userAgent=:userAgent and state='1'")
+//	public List<LmMemberToken> findByPassIdAndAgent(@Param("passId")Long passId, @Param("userAgent")String userAgent);
+//}

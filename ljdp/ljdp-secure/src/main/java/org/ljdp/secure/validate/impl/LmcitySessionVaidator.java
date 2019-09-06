@@ -23,7 +23,7 @@ import net.rubyeye.xmemcached.MemcachedClient;
 /**
  * 使用memcached进行登陆session验证
  * @author hzy
- *
+ * @deprecated
  */
 public class LmcitySessionVaidator implements SessionValidator {
 	private static String ACCOUNT_CACHEKEY_PRE = "AC_";//帐号在Cache中的key是PK_${tokenid}
@@ -47,17 +47,17 @@ public class LmcitySessionVaidator implements SessionValidator {
 				MemcachedClient c = manager.getCache(secure.cacheName());
 				if(c != null) {
 					Object passObj = c.get(PASSID_CACHEKEY_PRE + tokenid);
-					if(authPersist != null && passObj == null) {
-						//尝试从数据库获取
-						AuthInfo a = authPersist.findByTokenid(tokenid);
-						if(a != null) {
-							if("1".equals(a.getState())) {
-								passObj = a.getPassId();
-								boolean f = c.add(PASSID_CACHEKEY_PRE + tokenid, 0, passObj);
-								System.out.println("[LmcitySessionVaidator]从持久层重新载入token,pass="+a.getPassId()+",addCache="+f);
-							}
-						}
-					}
+//					if(authPersist != null && passObj == null) {
+//						//尝试从数据库获取
+//						AuthInfo a = authPersist.findByTokenid(tokenid);
+//						if(a != null) {
+//							if("1".equals(a.getState())) {
+//								passObj = a.getPassId();
+//								boolean f = c.add(PASSID_CACHEKEY_PRE + tokenid, 0, passObj);
+//								System.out.println("[LmcitySessionVaidator]从持久层重新载入token,pass="+a.getPassId()+",addCache="+f);
+//							}
+//						}
+//					}
 					if(passObj == null) {
 						Object accountObj = c.get(ACCOUNT_CACHEKEY_PRE+tokenid);
 						if(accountObj == null) {
@@ -88,15 +88,15 @@ public class LmcitySessionVaidator implements SessionValidator {
 							userAgent = URLDecoder.decode(userAgent, "utf-8");
 						}
 						String memUa = c.get(USERAGENT_PRE+tokenid);
-						if(authPersist != null && memUa == null) {
-							//尝试重新载入useragent
-							AuthInfo a = authPersist.findByTokenid(tokenid);
-							if(a != null) {
-								memUa = a.getUserAgent();
-								boolean f = c.add(USERAGENT_PRE+tokenid, 0, memUa);
-								System.out.println("[LmcitySessionVaidator]从持久层重新载入agent,pass="+a.getPassId()+",addCache="+f);
-							}
-						}
+//						if(authPersist != null && memUa == null) {
+//							//尝试重新载入useragent
+//							AuthInfo a = authPersist.findByTokenid(tokenid);
+//							if(a != null) {
+//								memUa = a.getUserAgent();
+//								boolean f = c.add(USERAGENT_PRE+tokenid, 0, memUa);
+//								System.out.println("[LmcitySessionVaidator]从持久层重新载入agent,pass="+a.getPassId()+",addCache="+f);
+//							}
+//						}
 						if(memUa != null) {
 							if(!memUa.equals(userAgent)) {
 								int vi = userAgent.lastIndexOf(" v");

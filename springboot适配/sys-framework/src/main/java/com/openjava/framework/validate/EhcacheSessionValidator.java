@@ -57,25 +57,25 @@ public class EhcacheSessionValidator implements SessionValidator {
 				SsoContext.setToken(tokenid);
 				//验证session
 				BaseUserInfo user = (BaseUserInfo)MemoryCache.getData(DictConstants.CACHE_SESSION, tokenid);
-				if(authPersist != null && user == null) {
-					//尝试从数据库获取
-					AuthInfo a = authPersist.findByTokenid(tokenid);
-					if(a != null) {
-						if("1".equals(a.getState())) {
-							BaseUserInfo vo = new UserVO();
-							vo.setUserId(a.getPassId().toString());
-//							vo.setUserAccount(a.get);
-//							vo.setUserName(u.getFullname());
-//							vo.setUserMobileno(a.get);
-//							vo.setHeadImg(a.get);
-							vo.setUserType("member");
-							vo.setUserAgent(a.getUserAgent());
-							vo.setLoginTime(a.getLoginTime());
-							
-							MemoryCache.putData(DictConstants.CACHE_SESSION, tokenid, vo);
-						}
-					}
-				}
+//				if(authPersist != null && user == null) {
+//					//尝试从数据库获取
+//					AuthInfo a = authPersist.findByTokenid(tokenid);
+//					if(a != null) {
+//						if("1".equals(a.getState())) {
+//							BaseUserInfo vo = new UserVO();
+//							vo.setUserId(a.getPassId().toString());
+////							vo.setUserAccount(a.get);
+////							vo.setUserName(u.getFullname());
+////							vo.setUserMobileno(a.get);
+////							vo.setHeadImg(a.get);
+//							vo.setUserType("member");
+//							vo.setUserAgent(a.getUserAgent());
+//							vo.setLoginTime(a.getLoginTime());
+//							
+//							MemoryCache.putData(DictConstants.CACHE_SESSION, tokenid, vo);
+//						}
+//					}
+//				}
 				if(user != null) {
 					SsoContext.setUser(user);
 					SsoContext.setAccount(user.getUserAccount());

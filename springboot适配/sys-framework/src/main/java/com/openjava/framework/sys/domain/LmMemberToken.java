@@ -7,7 +7,6 @@ import javax.persistence.*;
 import org.ljdp.component.result.ApiResponse;
 import org.ljdp.component.result.BasicApiResponse;
 import org.ljdp.secure.validate.AuthInfo;
-import org.ljdp.secure.validate.AuthorityPersistent;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author hzy
  *
  */
-@Entity
-@Table(name = "MS_MEMBER_TOKEN")
+//@Entity
+//@Table(name = "MS_MEMBER_TOKEN")
 public class LmMemberToken extends BasicApiResponse implements ApiResponse,AuthInfo {
 	
 	/**

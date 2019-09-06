@@ -33,7 +33,6 @@ import org.ljdp.component.user.BaseUserInfo;
 import org.ljdp.plugin.sys.vo.UserVO;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.secure.sso.SsoContext;
-import org.ljdp.secure.validate.AuthInfo;
 import org.ljdp.secure.validate.AuthorityPersistent;
 import org.ljdp.secure.validate.SessionValidator;
 import org.ljdp.util.LocalDateTimeUtils;
@@ -91,10 +90,6 @@ public class RedisSessionVaidator implements SessionValidator {
 	public ApiResponse validate(HttpServletRequest request, HttpServletResponse response, Security secure) {
 		ApiResponse result = new BasicApiResponse(APIConstants.CODE_SUCCESS);
 		try {
-			AuthorityPersistent authPersist = null;
-			if(StringUtils.isNotEmpty(secure.authorityPersistent())) {
-				authPersist = (AuthorityPersistent)SpringContextManager.getBean(secure.authorityPersistent());
-			}
 			String tokenid = request.getHeader(TOKEN_NAME);
 			if(StringUtils.isEmpty(tokenid) || tokenid.equalsIgnoreCase("undefined")) {
 				tokenid = getTokenFromCookies(request);
@@ -112,25 +107,21 @@ public class RedisSessionVaidator implements SessionValidator {
 				SsoContext.setToken(tokenid);
 				//验证session
 				BaseUserInfo user = (BaseUserInfo)redisTemplate.opsForValue().get(tokenid);
-				if(authPersist != null && user == null) {
+				if(user == null) {
 					//尝试从数据库获取
-					AuthInfo a = authPersist.findByTokenid(tokenid);
-					if(a != null) {
-						if("1".equals(a.getState())) {
-							BaseUserInfo vo = new UserVO();
-							vo.setUserId(a.getPassId().toString());
-//							vo.setUserAccount(a.get);
-//							vo.setUserName(u.getFullname());
-//							vo.setUserMobileno(a.get);
-//							vo.setHeadImg(a.get);
-							vo.setUserType("member");
-							vo.setUserAgent(a.getUserAgent());
-							vo.setLoginTime(a.getLoginTime());
-							
-							redisTemplate.opsForValue().set(tokenid, user, 7, TimeUnit.DAYS);
+					AuthorityPersistent authPersist = null;
+					if(StringUtils.isNotEmpty(secure.authorityPersistent())) {
+						authPersist = (AuthorityPersistent)SpringContextManager.getBean(secure.authorityPersistent());
+					}
+					if(authPersist != null) {
+						BaseUserInfo dbuser = authPersist.getUserByToken(tokenid);
+						if(dbuser != null) {
+							user = dbuser;
+							redisTemplate.opsForValue().set(tokenid, dbuser, dbuser.getExpireInMin(), TimeUnit.MINUTES);
 						}
 					}
 				}
+				
 				if(user != null) {
 					SsoContext.setUser(user);
 					SsoContext.setAccount(user.getUserAccount());
