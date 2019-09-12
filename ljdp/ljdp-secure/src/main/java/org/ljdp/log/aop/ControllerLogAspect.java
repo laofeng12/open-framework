@@ -1,6 +1,7 @@
 package org.ljdp.log.aop;
 
 import java.awt.List;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -355,25 +356,27 @@ public class ControllerLogAspect {
 				}
 				Long logReqId = SsoContext.getRequestId();
 				if(returnVal != null) {
-					if(returnVal instanceof ApiResponse) {
-						ApiResponse ar = (ApiResponse)returnVal;
-						if(logReqId != null) {
-							ar.setRequestId(logReqId.toString());//已经有请求ID了
-						} else {
-							if(StringUtils.isEmpty(ar.getRequestId())) {//没有ID
-								logReqId = ss.getSequence();
-								ar.setRequestId(logReqId.toString());
-							} 
+					if(returnVal instanceof Serializable) {
+						if(returnVal instanceof ApiResponse) {
+							ApiResponse ar = (ApiResponse)returnVal;
+							if(logReqId != null) {
+								ar.setRequestId(logReqId.toString());//已经有请求ID了
+							} else {
+								if(StringUtils.isEmpty(ar.getRequestId())) {//没有ID
+									logReqId = ss.getSequence();
+									ar.setRequestId(logReqId.toString());
+								} 
 //							else if(StringUtils.isNumeric(ar.getRequestId())){//接口返回时已经设置了ID
 //								logReqId = new Long(ar.getRequestId());
 //							}
+							}
+							if(ar.getCode() == null) {
+								ar.setCode(APIConstants.CODE_SUCCESS);
+							}
 						}
-						if(ar.getCode() == null) {
-							ar.setCode(APIConstants.CODE_SUCCESS);
-						}
+						String json = JacksonTools.getObjectMapper().writeValueAsString(returnVal);
+						logreq.setResponseData(json);
 					}
-					String json = JacksonTools.getObjectMapper().writeValueAsString(returnVal);
-					logreq.setResponseData(json);
 //					logreq.setResponseData(MyBeanUtils.reflectionToString(returnVal).toString());
 				} else {
 					ApiResponse result = SsoContext.getApiResponse();
