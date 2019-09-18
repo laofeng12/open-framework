@@ -265,17 +265,6 @@ public class RedisSessionVaidator implements SessionValidator {
 	 * 后台定时任务无登录用户的请求验证方式
 	 * @param request
 	 * @param result
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 * @throws DecoderException
-	 * @throws UnsupportedEncodingException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws IOException
-	 * @throws JsonParseException
-	 * @throws JsonMappingException
 	 */
 	private boolean validateRPCofNoUser(HttpServletRequest request) {
 		String authHead = request.getHeader(Authorization);
@@ -285,7 +274,9 @@ public class RedisSessionVaidator implements SessionValidator {
 				String userJson = aes.decryptBase64(authHead);
 				UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
 				SsoContext.setUser(user);
-				SsoContext.setUserId(new Long(user.getUserId()));
+				if(StringUtils.isNumeric(user.getUserId())) {
+					SsoContext.setUserId(new Long(user.getUserId()));
+				}
 				SsoContext.setAccount(user.getUserAccount());
 				SsoContext.setToken(authHead);
 				return true;
