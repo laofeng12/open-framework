@@ -12,15 +12,15 @@ public class UserVO implements Serializable, BaseUserInfo{
 	private static final long serialVersionUID = -2921703610045899709L;
 	
 	private String tokenId;
-	private String userId;
+	private String userId = "-9999";
 	private String userCode;
-	private String userAccount;
+	private String userAccount = "virtual";
 	private String userName;
 	private String userPwd;
 	private String userMobileno;
 	private String userEmail;
 	private String userRemark;
-	private String userType;
+	private String userType = "virtual";
 	private String registerWay;//注册方式
 	private String headImg;//头像
 	private Date loginTime;//登录时间
