@@ -1,10 +1,6 @@
 package com.openjava.framework.validate;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -14,14 +10,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.json.JacksonTools;
 import org.ljdp.common.secure.AES;
@@ -266,18 +258,13 @@ public class RedisSessionVaidator implements SessionValidator {
 	 * @param request
 	 * @param result
 	 */
-	private boolean validateRPCofNoUser(HttpServletRequest request) {
+	protected boolean validateRPCofNoUser(HttpServletRequest request) {
 		String authHead = request.getHeader(Authorization);
 		if(StringUtils.isNotEmpty(authHead)) {
 			try {
 				authHead = authHead.replaceFirst("Bearer ", "");
 				String userJson = aes.decryptBase64(authHead);
-				UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
-				SsoContext.setUser(user);
-				if(StringUtils.isNumeric(user.getUserId())) {
-					SsoContext.setUserId(new Long(user.getUserId()));
-				}
-				SsoContext.setAccount(user.getUserAccount());
+				parseUser(userJson);
 				SsoContext.setToken(authHead);
 				return true;
 			} catch (Exception e) {
@@ -285,6 +272,15 @@ public class RedisSessionVaidator implements SessionValidator {
 			}
 		}
 		return false;
+	}
+
+	protected void parseUser(String userJson) throws IOException, JsonParseException, JsonMappingException {
+		UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
+		SsoContext.setUser(user);
+		if(StringUtils.isNumeric(user.getUserId())) {
+			SsoContext.setUserId(new Long(user.getUserId()));
+		}
+		SsoContext.setAccount(user.getUserAccount());
 	}
 
 	public boolean isDebug() {
