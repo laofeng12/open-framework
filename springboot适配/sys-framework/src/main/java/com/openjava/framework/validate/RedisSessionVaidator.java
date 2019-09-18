@@ -285,7 +285,7 @@ public class RedisSessionVaidator implements SessionValidator {
 				String userJson = aes.decryptBase64(authHead);
 				UserVO user = JacksonTools.getObjectMapper().readValue(userJson, UserVO.class);
 				SsoContext.setUser(user);
-				SsoContext.setUserId(user.getUserId());
+				SsoContext.setUserId(new Long(user.getUserId()));
 				SsoContext.setAccount(user.getUserAccount());
 				SsoContext.setToken(authHead);
 				return true;
