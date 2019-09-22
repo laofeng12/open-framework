@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.ljdp.component.exception.APIException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -137,8 +138,12 @@ public class ExampleOrderServiceImpl implements ExampleOrderService {
 	}
 	
 	@Override
-	public List<ExampleOrder> selectAll(){
-		return orderMapper.selectAll();
+	public List<ExampleOrder> queryAll() throws Exception{
+		List<ExampleOrder> list = orderMapper.selectAll();
+		if(true) {
+			throw new APIException(10001, "测试异常");
+		}
+		return list;
 	}
 	
 	@Override

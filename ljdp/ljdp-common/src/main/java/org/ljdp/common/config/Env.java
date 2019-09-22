@@ -46,6 +46,8 @@ public class Env {
     //使用的spring配置文件 默认为：/ljdp/ApplicationContext.xml
     private String springCfg = "/ljdp/applicationContext.xml";
     
+    private ConfigFile configFile;
+    
     public Env() {
     	run = Constant.Run.FORMAL.toString();
     	sessionFactoryGeter = Constant.SessionFactoryGeter.NEW;
@@ -229,9 +231,11 @@ public class Env {
 	}
 	
 	public ConfigFile getConfigFile() {
-		ConfigFileFactory cfgFactory = ConfigFileFactory.getInstance();
-    	ConfigFile cfg = cfgFactory.get(this.coreCfg);
-    	return cfg;
+		if(configFile == null) {
+			ConfigFileFactory cfgFactory = ConfigFileFactory.getInstance();
+			configFile = cfgFactory.get(this.coreCfg);
+		}
+    	return configFile;
 	}
 	
 	public static synchronized void rebuildCurrentEnv(Env env) {

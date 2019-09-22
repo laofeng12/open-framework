@@ -114,6 +114,9 @@ public class ApiLogSaveRunner implements Runnable {
 					service.doBatchCreate(logList);
 					System.out.println("Save Error Log:"+logList.size());
 				}
+				if(processer != null) {
+					processer.doBatch(logList);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -132,12 +135,10 @@ public class ApiLogSaveRunner implements Runnable {
 			int processNum = 0;
 			while(size > 0) {
 				List<Serializable> logList = new ArrayList<>(1000);
-				List<RequestLog> logList2 = new ArrayList<>(1000);
 				try {
 					for(int i=0; i < size && i < 1000; i++) {
 						RequestLog r = queue.take();
 						logList.add(r);
-						logList2.add(r);
 					}
 					if(needSave) {
 						service.doBatchCreate(logList);
@@ -150,7 +151,7 @@ public class ApiLogSaveRunner implements Runnable {
 						}
 					}*/
 					if(processer != null) {
-						processer.doBatch(logList2);
+						processer.doBatch(logList);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

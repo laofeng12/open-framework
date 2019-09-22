@@ -17,23 +17,23 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@192.168.6.251:1521:orcl
-    username: c##ljdp
+    username: C##CDZ
     password: ch#123456
-    druid:
-      initial-size: 1
-      max-active: 100
-      min-idle: 1
-      max-wait: 20000 # 配置获取连接等待超时的时间
-      pool-prepared-statements: false
-      max-pool-prepared-statement-per-connection-size: 20
-      max-open-prepared-statements: 20 #和上面的等价
-     # validation-query: SELECT 'x'
-      validation-query: SELECT 'x' FROM DUAL
-      validation-query-timeout: 1
-      test-on-borrow: false
-      test-on-return: false
-      test-while-idle: true
-      filters: stat
+#    druid:
+#      initial-size: 1
+#      max-active: 100
+#      min-idle: 1
+#      max-wait: 20000 # 配置获取连接等待超时的时间
+#      pool-prepared-statements: false
+#      max-pool-prepared-statement-per-connection-size: 20
+#      max-open-prepared-statements: 20 #和上面的等价
+#     # validation-query: SELECT 'x'
+#      validation-query: SELECT 'x' FROM DUAL
+#      validation-query-timeout: 1
+#      test-on-borrow: false
+#      test-on-return: false
+#      test-while-idle: true
+#      filters: stat
       
   redis:
       # redis数据库索引（默认为0），我们使用索引为3的数据库，避免和其他数据库冲突

@@ -108,11 +108,11 @@ public class ExampleOrderAction {
 	@ApiResponses({
 		@io.swagger.annotations.ApiResponse(code=20020, message="会话失效")
 	})
-	@Security(session=true)
+	@Security(session=false)
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
-	public ExampleOrder get(@PathVariable("id")Long id) {
-		System.out.println("SSO-user");
-		System.out.println(ToStringBuilder.reflectionToString(SsoContext.getUser(), ToStringStyle.MULTI_LINE_STYLE));
+	public ExampleOrder get(@PathVariable("id")Long id) throws Exception{
+//		System.out.println("SSO-user");
+//		System.out.println(ToStringBuilder.reflectionToString(SsoContext.getUser(), ToStringStyle.MULTI_LINE_STYLE));
 		ExampleOrder m = exampleOrderService.get(id);
 		return m;
 	}
@@ -162,7 +162,7 @@ public class ExampleOrderAction {
 	})
 	@Security(session=true)
 	@RequestMapping(method=RequestMethod.POST)
-	public ApiResponse doSave(ExampleOrder model, @RequestParam("isNew")Boolean isNew) {
+	public ApiResponse doSave(ExampleOrder model, @RequestParam("isNew")Boolean isNew) throws Exception{
 		if(isNew) {
 			//新增，记录创建时间等
 			//设置主键(请根据实际情况修改)
@@ -257,8 +257,8 @@ public class ExampleOrderAction {
 	}
 	
 	@RequestMapping(value="/selectAll",method=RequestMethod.GET)
-	public DataApiResponse<ExampleOrder> selectAll() {
-		List<ExampleOrder> list = exampleOrderService.selectAll();
+	public DataApiResponse<ExampleOrder> selectAll() throws Exception{
+		List<ExampleOrder> list = exampleOrderService.queryAll();
 		DataApiResponse<ExampleOrder> resp = new DataApiResponse<>();
 		resp.setRows(list);
 		return resp;

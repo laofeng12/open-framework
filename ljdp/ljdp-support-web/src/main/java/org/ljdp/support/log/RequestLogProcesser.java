@@ -1,8 +1,7 @@
 package org.ljdp.support.log;
 
+import java.io.Serializable;
 import java.util.List;
-
-import org.ljdp.log.model.RequestLog;
 
 /**
  * 请求日志处理器
@@ -11,5 +10,5 @@ import org.ljdp.log.model.RequestLog;
  */
 public interface RequestLogProcesser {
 
-	public void doBatch(List<RequestLog> logList);
+	public void doBatch(List<Serializable> logList);
 }

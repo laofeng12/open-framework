@@ -68,7 +68,7 @@ public class Application {
 	private String apiSkey;
 	@Bean
 	public SessionValidator sessionValidator() {
-		return new RedisSessionVaidator(apiSkey);
+		return new ExampleRedisSessionVaidator(apiSkey);
 //		return new EhcacheSessionValidator();
 	}
 	

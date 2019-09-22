@@ -137,7 +137,9 @@ public class ConfigFile {
 	 */
 	public synchronized String getValue(String name) {
 		try {
-			loadConfigFile();
+			if(properties == null) {
+				loadConfigFile();
+			}
 			return properties.getProperty(name);
 		} catch (Exception e) {
 			return null;
@@ -152,7 +154,9 @@ public class ConfigFile {
 	 */
 	public synchronized String getValue(String name, String defaultValue) {
 		try {
-			loadConfigFile();
+			if(properties == null) {
+				loadConfigFile();
+			}
 			String result = properties.getProperty(name);
 			if (defaultValue != null && StringUtils.isBlank(result)) {
 				result = defaultValue;
@@ -161,6 +165,10 @@ public class ConfigFile {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public synchronized void setValue(String key, String value) {
+		properties.setProperty(key, value);
 	}
 	
 }

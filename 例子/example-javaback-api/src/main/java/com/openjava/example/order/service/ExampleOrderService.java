@@ -44,6 +44,6 @@ public interface ExampleOrderService {
 			String operAccount, Date submitTime, String shopName,
 			Pageable pageable);
 	
-	public List<ExampleOrder> selectAll();
+	public List<ExampleOrder> queryAll() throws Exception;
 	List<ExampleOrder> selectAll2();
 }
