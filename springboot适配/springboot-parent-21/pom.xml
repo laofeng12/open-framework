@@ -9,13 +9,26 @@
 	</parent>
 	<groupId>org.openjava</groupId>
 	<artifactId>springboot-parent</artifactId>
-	<version>2.1.6.R08</version>
+	<version>2.1.6.R09</version>
 	<packaging>pom</packaging>
 
-	<!-- <properties>
-		<mybatis.version>3.4.6</mybatis.version>
-		<mybatis-spring.version>1.3.2</mybatis-spring.version>
-	</properties> -->
+	<properties>
+		<mybatisplus.version>3.2.0</mybatisplus.version>
+		<sys-framework.version>2.1.6</sys-framework.version>
+		<ljdp-util.version>2.0.0</ljdp-util.version>
+		<ljdp-component.version>2.0.3</ljdp-component.version>
+		<ljdp-common.version>2.0.7</ljdp-common.version>
+		<ljdp-core3.version>5.0.8</ljdp-core3.version>
+		<ljdp-module.version>2.0.0</ljdp-module.version>
+		<ljdp-ui.version>2.0.5</ljdp-ui.version>
+		<ljdp-secure.version>2.3.2</ljdp-secure.version>
+		<ljdp-plugin-batch.version>2.0.4</ljdp-plugin-batch.version>
+		<ljdp-plugin-sys.version>5.0.9</ljdp-plugin-sys.version>
+		<ljdp-support-web.version>2.0.7</ljdp-support-web.version>
+		<swagger-models.version>1.5.21</swagger-models.version>
+		<springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+		<swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+	</properties>
 
 	<dependencies>
 		<!-- <dependency>
@@ -26,98 +39,100 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency> -->
-		<dependency>
+		<!-- <dependency>
 	        <groupId>org.mybatis.spring.boot</groupId>
 	        <artifactId>mybatis-spring-boot-starter</artifactId>
-	        <version>1.3.4</version>
-	    </dependency>
+	        <version>2.1.0</version>
+	    </dependency> -->
+	    <!-- <dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency> -->
+	    <dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>${mybatisplus.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.baomidou</groupId>
+					<artifactId>mybatis-plus-generator</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	    
 		<dependency>
 			<groupId>org.openjava</groupId>
 			<artifactId>sys-framework</artifactId>
-			<version>2.1.6</version>
+			<version>${sys-framework.version}</version>
 		</dependency>
-
-		<!-- <dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
-		</dependency> -->
-
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-		</dependency>
-		<!-- <dependency>
-			<groupId>com.googlecode.xmemcached</groupId>
-			<artifactId>xmemcached</artifactId>
-			<version>2.4.5</version>
-		</dependency> -->
 
 		<!-- 轻量级JavaEE开发平台 2.0 -->
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-util</artifactId>
-			<version>2.0.0</version>
+			<version>${ljdp-util.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-component</artifactId>
-			<version>2.0.3</version>
+			<version>${ljdp-component.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-common</artifactId>
-			<version>2.0.5</version>
+			<version>${ljdp-common.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-core3</artifactId>
-			<version>5.0.8</version>
+			<version>${ljdp-core3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-module</artifactId>
-			<version>2.0.0</version>
+			<version>${ljdp-module.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-ui</artifactId>
-			<version>2.0.4</version>
+			<version>${ljdp-ui.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-secure</artifactId>
-			<version>2.3.1</version>
+			<version>${ljdp-secure.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
 			<artifactId>ljdp-plugin-batch</artifactId>
-			<version>2.0.4</version>
+			<version>${ljdp-plugin-batch.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
 			<artifactId>ljdp-plugin-sys</artifactId>
-			<version>5.0.9</version>
+			<version>${ljdp-plugin-sys.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.support</groupId>
 			<artifactId>ljdp-support-web</artifactId>
-			<version>2.0.6</version>
+			<version>${ljdp-support-web.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models 
-			<dependency> <groupId>io.swagger.core.v3</groupId> <artifactId>swagger-models</artifactId> 
-			<version>2.0.5</version> </dependency> -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-models</artifactId>
-			<version>1.5.21</version>
+			<version>${swagger-models.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
+			<version>${springfox-swagger2.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>io.swagger</groupId>
@@ -137,20 +152,13 @@
 		<dependency>
 			<groupId>com.github.xiaoymin</groupId>
 			<artifactId>swagger-bootstrap-ui</artifactId>
-			<version>1.9.6</version>
+			<version>${swagger-bootstrap-ui.version}</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>${mybatis.version}</version>
-		</dependency>
 		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>${mybatis-spring.version}</version>
-		</dependency> -->
-
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 

@@ -10,8 +10,8 @@ server:
 #    max-threads: 3
 #    basedir: C:/temp/tomcat
 
-mybatis:
-  config-location: classpath:mybatis-config.xml
+#mybatis:
+#  config-location: classpath:mybatis-config.xml
 #  typeAliasesPackage: com.openjava.example.mybatis.domain
 #  mapperLocations: 
 #    -classpath:com.openjava.example.*.mapper/*.xml

@@ -3,14 +3,14 @@ package org.ljdp.ui.bootstrap;
 import java.util.List;
 
 import org.ljdp.component.result.BasicApiResponse;
-import org.springframework.data.domain.Page;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TablePageImpl<T> extends BasicApiResponse implements TablePage<T> {
-	private static final long serialVersionUID = -7232710708767097630L;
+public class IBatisPage<T> extends BasicApiResponse implements TablePage<T> {
+	private static final long serialVersionUID = 1L;
 	
 	private long total;
 	private List<T> rows;
@@ -18,19 +18,19 @@ public class TablePageImpl<T> extends BasicApiResponse implements TablePage<T> {
 	private long size;
 	private long number;
 	
-	public TablePageImpl() {
+	public IBatisPage() {
 		
 	}
 	
-	public TablePageImpl(Page<T> page) {
-		this.total = page.getTotalElements();
-		this.rows = page.getContent();
-		this.totalPage = page.getTotalPages();
+	public IBatisPage(IPage<T> page) {
+		this.total = page.getTotal();
+		this.rows = page.getRecords();
+		this.totalPage = page.getPages();
 		this.size = page.getSize();
-		this.number = page.getNumber();
+		this.number = page.getCurrent();
 	}
 	
-	public TablePageImpl(long total, List<T> rows) {
+	public IBatisPage(long total, List<T> rows) {
 		this.total = total;
 		this.rows = rows;
 	}
@@ -71,5 +71,4 @@ public class TablePageImpl<T> extends BasicApiResponse implements TablePage<T> {
 	public void setNumber(long number) {
 		this.number = number;
 	}
-
 }

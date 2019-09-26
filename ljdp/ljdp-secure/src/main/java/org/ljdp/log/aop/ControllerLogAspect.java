@@ -43,6 +43,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 public class ControllerLogAspect {
 	
 	public static int Service_Max_Capacity = 5000;
@@ -253,11 +255,15 @@ public class ControllerLogAspect {
 				if(isList) {
 					reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
 				} else {
-					Object myvalue = bodyClass.newInstance();
-//					BeanUtils.copyProperties(myvalue, bodyValue);
-					PropertyUtils.copyProperties(myvalue, bodyValue);
-//					MyBeanUtils.copyProperties(myvalue, bodyValue);
-					reqParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
+					try {
+						//对象如果用了lombok后，用不了PropertyUtils这个工具
+						reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+					} catch (JsonProcessingException e) {
+//						System.out.println("解析参数失败："+e.getMessage());
+						Object myvalue = bodyClass.newInstance();
+						PropertyUtils.copyProperties(myvalue, bodyValue);
+						reqParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
+					}
 				}
 			} else {
 				reqParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);

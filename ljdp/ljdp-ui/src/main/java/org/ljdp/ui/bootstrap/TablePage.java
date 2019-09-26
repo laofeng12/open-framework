@@ -15,9 +15,9 @@ public interface TablePage<T> extends ApiResponse{
 	@ApiModelProperty("数据集")
 	public List<T> getRows();
 	@ApiModelProperty("总页数")
-	public int getTotalPage();
+	public long getTotalPage();
 	@ApiModelProperty("每页显示数量")
-	public int getSize();
+	public long getSize();
 	@ApiModelProperty("当前页码（从0开始）")
-	public int getNumber();
+	public long getNumber();
 }
