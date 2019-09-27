@@ -87,8 +87,8 @@ public class ExampleOrder2Action {
 		if(body.getIsNew() == null || body.getIsNew()) {
 			//新增，记录创建时间等
 			//设置主键(请根据实际情况修改)
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.setOrderId(ss.getSequence(""));
+//			SequenceService ss = ConcurrentSequence.getInstance();
+//			body.setOrderId(ss.getSequence(""));
 			res = exampleOrderService.save(body);
 		} else {
 			//修改，记录更新时间等

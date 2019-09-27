@@ -30,7 +30,7 @@ public class ExampleOrderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@ApiModelProperty("订单id")
-	@TableId(type=IdType.INPUT)
+	@TableId(type=IdType.ID_WORKER_STR)
 	@TableField("order_id")
 	private String orderId;
 	
@@ -70,6 +70,7 @@ public class ExampleOrderEntity implements Serializable {
 	private String orderStatusName;
 	
 	@ApiModelProperty("是否新增")
+	@JsonIgnore
 	@TableField(exist=false)
     private Boolean isNew;
 	

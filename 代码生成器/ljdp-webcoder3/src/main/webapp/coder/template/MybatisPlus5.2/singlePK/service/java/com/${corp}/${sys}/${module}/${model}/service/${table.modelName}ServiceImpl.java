@@ -50,7 +50,8 @@ public class ${table.modelName}ServiceImpl extends ServiceImpl<${table.modelName
 	
 	<#if baseFun.query == "on">
 	public IPage<${table.modelName}> query(${table.modelName}DBParam params, Pageable pageable){
-		IPage<${table.modelName}> mypage = new Page<>(pageable.getPageNumber(), pageable.getPageSize());
+		//JPA的page从0开始，MyBatisPlus的page从1开始。前端统一用从0开始。所以这里需+1
+		IPage<${table.modelName}> mypage = new Page<>(pageable.getPageNumber()+1, pageable.getPageSize());
 		
 		IPage<${table.modelName}> page = this.page(
 				mypage,

@@ -75,6 +75,7 @@ public class ExampleOrder implements Persistable<String>,Serializable {
 	
 	
 	@ApiModelProperty("是否新增")
+	@JsonIgnore
 	@Transient
     private Boolean isNew;
 	

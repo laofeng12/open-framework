@@ -25,8 +25,8 @@ public class ExampleOrder2ServiceImpl extends ServiceImpl<ExampleOrderMapper, Ex
 	private SysCodeService sysCodeService;
 	
 	public IPage<ExampleOrderEntity> query(ExampleOrderDBParam params, Pageable pageable){
-		
-		IPage<ExampleOrderEntity> mypage = new Page<>(pageable.getPageNumber(), pageable.getPageSize());
+		//JPA的page从0开始，MyBatisPlus的page从1开始。前端统一用从0开始。所以这里需+1
+		IPage<ExampleOrderEntity> mypage = new Page<>(pageable.getPageNumber()+1, pageable.getPageSize());
 		
 		IPage<ExampleOrderEntity> page = this.page(
 				mypage,
