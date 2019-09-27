@@ -60,6 +60,7 @@ public class RbcCoderAction {
 			@RequestParam(value="attachClass", required=false)String attachClass,
 			@RequestParam("frameType")String frameType,
 			@RequestParam("styleType")String styleType,
+			@RequestParam("ormType")String ormType,
 			@RequestParam("dbName")String dbName,
 			BaseFunctionVO baseFunVO) {
 		String coderPath = request.getSession().getServletContext().getRealPath("/coder");
@@ -78,6 +79,7 @@ public class RbcCoderAction {
 		System.out.println("attachClass="+attachClass);
 		System.out.println("frameType="+frameType);
 		System.out.println("styleType="+styleType);
+		System.out.println("ormType="+ormType);
 		System.out.println("BaseFunction="+baseFunVO.toStringShortPrefix());
 		
 		String templatePath = coderPath +"/template/bdc";
@@ -92,8 +94,8 @@ public class RbcCoderAction {
 			templatePath = coderPath +"/template/LJDP5";
 		} else if(frameType.equals("LJDP5.1")) {
 			templatePath = coderPath +"/template/LJDP5.1";
-		} else if(frameType.equals("LJDP5.2")) {
-			templatePath = coderPath +"/template/LJDP5.2";
+		} else {
+			templatePath = coderPath +"/template/"+ormType+frameType;
 		}
 		String pageTemplatePath = null;
 		String mobilePageTemplateDirectory = null;

@@ -1,26 +1,26 @@
 Ext.onReady(function(){
 	Ext.QuickTips.init();
 	
-	var corpNameField = new Ext.form.Hidden({
-		fieldLabel: '企业编码',
+	var corpNameField = new Ext.form.TextField({
+		fieldLabel: '公司包名',
 		name: 'corpName',
 		allowBlank: false
 		,value:'openjava'
 	});
 	var sysNameField = new Ext.form.TextField({
-		fieldLabel: '系统包编码',
+		fieldLabel: '系统/项目包名',
 		name: 'sysName',
 		allowBlank: false
 		,value:''
 	});
 	var moduleNameField = new Ext.form.TextField({
-		fieldLabel: '一级模块包编码',
+		fieldLabel: '业务模块包名',
 		name: 'moduleName',
 		allowBlank: false
 		//,value:'order'
 	});
 	var moduleName2Field = new Ext.form.TextField({
-		fieldLabel: '二级模块包编码',
+		fieldLabel: '二级模块包名',
 		name: 'model'
 	});
 	
@@ -58,7 +58,8 @@ Ext.onReady(function(){
 		fieldLabel: '数据库名',
 		name: 'dbName',
 		allowBlank: false
-		,value:'default'
+		,value:'default',
+		hidden: true
 	});
 	
 	var attachBox = new Ext.form.Checkbox({
@@ -86,13 +87,13 @@ Ext.onReady(function(){
 	})
 	
 	var frameComboBox = new Ext.form.ComboBox({
-	 	   fieldLabel: '开发框架',
+	 	   fieldLabel: '框架版本',
 		   name: 'frameType',
 		   hiddenName: 'frameType',
 		   store: new Ext.data.SimpleStore({
 			   fields: ['value', 'text'],
 			   data: [
-				   ['LJDP5.2','5.2(restful风格)'],
+				   ['5.2','5.2(restful)'],
 				   ['LJDP5.1','5.1(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP5.0','5.0(springboot2+antDesignPro(前后端分离))'],
 				   ['LJDP4.0','4.0(springboot1+antDesignPro(前后端分离))'],
@@ -107,7 +108,7 @@ Ext.onReady(function(){
 		   triggerAction: 'all',
 		   allowBlank: false,
 		   editable : false,
-		   value:'LJDP5.2'
+		   value:'5.2'
 		});
 	
 	var styleComboBox = new Ext.form.ComboBox({
@@ -132,6 +133,28 @@ Ext.onReady(function(){
 		   value:''
 		});
 	
+	var ormComboBox = new Ext.form.ComboBox({
+	 	   fieldLabel: 'ORM框架',
+		   name: 'ormType',
+		   hiddenName: 'ormType',
+		   store: new Ext.data.SimpleStore({
+			   fields: ['value', 'text'],
+			   data: [
+			          ['JPA','JPA'],
+			          ['MyBatisPlus','MyBatis-Plus'],
+			          ['MyBatis','MyBatis（暂不支持）']
+			   ]
+		   }),
+		   displayField:'text',
+		   valueField	: 'value',
+		   typeAhead: true,
+		   mode: 'local',
+		   triggerAction: 'all',
+		   allowBlank: false,
+		   editable : false,
+		   value:'JPA'
+		});
+	
 	var form = new Ext.form.FormPanel({
 		title: '代码生成器（增删改查）',
 		region: 'north',
@@ -153,27 +176,27 @@ Ext.onReady(function(){
 				border 		: false,
 				defaultType	: 'textfield',
 				defaults	: {anchor: '95%'},
-				items	: [sysNameField,tableNameField,sysidField,tableModelNameField,attachBox]
+				items	: [corpNameField,tableNameField,sysidField,tableModelNameField/*,attachBox*/]
 			},{
 				columnWidth : .3,
 				layout 		: 'form',
 				border 		: false,
 				defaultType	: 'textfield',
 				defaults	: {anchor: '95%'},
-				items	: [moduleNameField,authorNameField,resNameField,attachClsField]
+				items	: [sysNameField,authorNameField,resNameField,attachClsField]
 			},{
 				columnWidth : .3,
 				layout 		: 'form',
 				border 		: false,
 				defaultType	: 'textfield',
 				defaults	: {anchor: '95%'},
-				items: [moduleName2Field,frameComboBox, styleComboBox, dbNameField]
+				items: [moduleNameField,/*moduleName2Field,*/frameComboBox,ormComboBox, styleComboBox, dbNameField]
 			}]
 		},{
 			xtype : 'panel',
 			layout: 'form',
 			defaults	: {anchor: '60%'},
-			items: [corpNameField,{
+			items: [{
 	            xtype: 'checkboxgroup',
 	            fieldLabel: '可选功能',
 	            items: [
