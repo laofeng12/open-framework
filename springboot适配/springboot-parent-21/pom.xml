@@ -5,23 +5,23 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.6.RELEASE</version>
+		<version>2.1.8.RELEASE</version>
 	</parent>
 	<groupId>org.openjava</groupId>
 	<artifactId>springboot-parent</artifactId>
-	<version>2.1.6.R09</version>
+	<version>2.1.8.R01</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<mybatisplus.version>3.2.0</mybatisplus.version>
 		<sys-framework.version>2.1.6</sys-framework.version>
-		<ljdp-util.version>2.0.0</ljdp-util.version>
+		<ljdp-util.version>2.0.1</ljdp-util.version>
 		<ljdp-component.version>2.0.3</ljdp-component.version>
 		<ljdp-common.version>2.0.7</ljdp-common.version>
 		<ljdp-core3.version>5.0.8</ljdp-core3.version>
 		<ljdp-module.version>2.0.0</ljdp-module.version>
 		<ljdp-ui.version>2.0.5</ljdp-ui.version>
-		<ljdp-secure.version>2.3.2</ljdp-secure.version>
+		<ljdp-secure.version>2.3.3</ljdp-secure.version>
 		<ljdp-plugin-batch.version>2.0.4</ljdp-plugin-batch.version>
 		<ljdp-plugin-sys.version>5.0.9</ljdp-plugin-sys.version>
 		<ljdp-support-web.version>2.0.7</ljdp-support-web.version>
@@ -54,7 +54,7 @@
 			<artifactId>mybatis-spring</artifactId>
 			<version>${mybatis-spring.version}</version>
 		</dependency> -->
-	    <dependency>
+	    <!-- <dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>${mybatisplus.version}</version>
@@ -64,7 +64,7 @@
 					<artifactId>mybatis-plus-generator</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> -->
 	    
 		<dependency>
 			<groupId>org.openjava</groupId>

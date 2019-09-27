@@ -18,12 +18,12 @@ public class ValidationUtils {
 	
 	private static Map<Class<?>, Map<String, String>> clsModelPropertyMap = new ConcurrentHashMap<>();
 	
-    public static <T> ValidationResult validateEntity(T obj) {
+    public static <T> ValidationResult validateEntity(T obj, Class<?>... groups) {
     	praseModelProperty(obj);
     	Map<String, String> fieldNames = clsModelPropertyMap.get(obj.getClass());
     	
         ValidationResult result = new ValidationResult();
-        Set<ConstraintViolation<T>> set = validator.validate(obj, Default.class);
+        Set<ConstraintViolation<T>> set = validator.validate(obj, groups);
         // if( CollectionUtils.isNotEmpty(set) ){
         if (set != null && set.size() != 0) {
             result.setHasErrors(true);
@@ -59,11 +59,14 @@ public class ValidationUtils {
     	}
 	}
  
-    public static <T> ValidationResult validateProperty(T obj, String propertyName) {
+	public static <T> ValidationResult validateProperty(T obj, String propertyName) {
+		return validateProperty(obj, propertyName, Default.class);
+	}
+    public static <T> ValidationResult validateProperty(T obj, String propertyName, Class<?>... groups) {
     	praseModelProperty(obj);
     	Map<String, String> fieldNames = clsModelPropertyMap.get(obj.getClass());
         ValidationResult result = new ValidationResult();
-        Set<ConstraintViolation<T>> set = validator.validateProperty(obj, propertyName, Default.class);
+        Set<ConstraintViolation<T>> set = validator.validateProperty(obj, propertyName, groups);
         if (set != null && set.size() != 0) {
             result.setHasErrors(true);
             Map<String, String> errorMsg = new HashMap<String, String>();
