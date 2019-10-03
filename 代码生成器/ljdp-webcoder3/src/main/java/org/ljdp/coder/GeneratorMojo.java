@@ -95,6 +95,12 @@ public class GeneratorMojo {
 						if(p.getJavaDataType() == null) {
 							p.setJavaDataType(c.getJavaDataType());
 						}
+						p.setUseJavaType(c.getJavaDataType2());
+						if(p.getCondition().equals("in") || p.getCondition().equals("nin")) {
+							p.setUseJavaType("List<"+p.getUseJavaType()+">");
+						} else if(p.getCondition().equals("null")) {
+							p.setUseJavaType("Boolean");
+						}
 						if(p.getExtJsFieldType() == null) {
 							p.setExtJsFieldType(c.getExtJsFieldType());
 						}

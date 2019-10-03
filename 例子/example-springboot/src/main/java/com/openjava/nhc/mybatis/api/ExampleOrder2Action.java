@@ -6,8 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.ljdp.component.result.SuccessMessage;
-import org.ljdp.component.sequence.ConcurrentSequence;
-import org.ljdp.component.sequence.SequenceService;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.ui.bootstrap.IBatisPage;
 import org.ljdp.ui.bootstrap.TablePage;
@@ -21,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.openjava.nhc.mybatis.domain.ExampleOrderEntity;
+import com.openjava.nhc.mybatis.query.TestOrderDBParam;
 import com.openjava.nhc.mybatis.service.IExampleOrderService;
-import com.openjava.nhc.test.query.ExampleOrderDBParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -67,7 +65,7 @@ public class ExampleOrder2Action {
 	})
 	@Security(session=false)
 	@RequestMapping(value="/search",method=RequestMethod.GET)
-	public TablePage<ExampleOrderEntity> doSearch(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
+	public TablePage<ExampleOrderEntity> doSearch(@ApiIgnore() TestOrderDBParam params, @ApiIgnore() Pageable pageable){
 		IPage<ExampleOrderEntity> result =  exampleOrderService.query(params, pageable);
 		
 		
@@ -95,11 +93,11 @@ public class ExampleOrder2Action {
 			ExampleOrderEntity db = exampleOrderService.getById(body.getOrderId());
 //			MyBeanUtils.copyPropertiesNotBlank(db, body);
 			set(body.getOperAccount() != null, ()->db.setOperAccount(body.getOperAccount()));
-			db.setUserName(body.getUserName());
-			db.setUserAddress(body.getUserAddress());
-			db.setSubmitTime(body.getSubmitTime());
-			db.setTotalPrice(body.getTotalPrice());
-			db.setOrderStatus(body.getOrderStatus());
+			set(body.getSubmitTime() != null, ()->db.setSubmitTime(body.getSubmitTime()));
+			set(body.getTotalPrice() != null, ()->db.setTotalPrice(body.getTotalPrice()));
+			set(body.getUserName() != null, ()->db.setUserName(body.getUserName()));
+			set(body.getUserAddress() != null, ()->db.setUserAddress(body.getUserAddress()));
+			set(body.getOrderStatus() != null, ()->db.setOrderStatus(body.getOrderStatus()));
 			res = exampleOrderService.updateById(db);
 		}
 		

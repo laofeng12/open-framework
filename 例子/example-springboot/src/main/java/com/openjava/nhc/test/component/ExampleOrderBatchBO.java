@@ -50,14 +50,14 @@ public class ExampleOrderBatchBO extends BaseFileImportBO {
 			Float totalPrice = new Float(items[i++]);
 			String userName = items[i++];
 			String userAddress = items[i++];
-			Float orderStatus = new Float(items[i++]);
+			Integer orderStatus = new Integer(items[i++]);
 			
 			//新增记录
 			ExampleOrder j = new ExampleOrder();
 			SequenceService ss = TimeSequence.getInstance();
 			j.setOrderId(ss.getSequence(""));
 			j.setOperAccount(operAccount);
-			j.setSubmitTime(submitTime);
+//			j.setSubmitTime(submitTime);
 			j.setTotalPrice(totalPrice);
 			j.setUserName(userName);
 			j.setUserAddress(userAddress);

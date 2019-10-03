@@ -1,7 +1,7 @@
 package com.openjava.nhc.test.domain;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -46,9 +46,8 @@ public class ExampleOrder implements Persistable<String>,Serializable {
 	@ApiModelProperty("下单时间")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "submit_time")
-	private Date submitTime;
+	private LocalDateTime submitTime;
 	
 	@ApiModelProperty("订单总额")
 	@Max(99999999L)
@@ -68,7 +67,7 @@ public class ExampleOrder implements Persistable<String>,Serializable {
 	@ApiModelProperty("订单状态")
 	@Max(99L)
 	@Column(name = "order_status")
-	private Float orderStatus;
+	private Integer orderStatus;
 	@ApiModelProperty("订单状态名称")
 	@Transient
 	private String orderStatusName;

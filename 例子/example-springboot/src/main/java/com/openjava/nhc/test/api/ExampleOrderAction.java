@@ -95,7 +95,13 @@ public class ExampleOrderAction {
 		return new TablePageImpl<>(result);
 	}
 	
-
+	@Security(session=false)
+	@RequestMapping(value="/search2",method=RequestMethod.GET)
+	public TablePage<ExampleOrder> doSearch2(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
+		Page<ExampleOrder> result =  exampleOrderService.query2(params, pageable);
+		
+		return new TablePageImpl<>(result);
+	}
 	
 	/**
 	 * 保存

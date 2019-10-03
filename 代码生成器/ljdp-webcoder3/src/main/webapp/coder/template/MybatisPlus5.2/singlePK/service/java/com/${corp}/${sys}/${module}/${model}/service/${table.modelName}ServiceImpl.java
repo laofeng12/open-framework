@@ -57,10 +57,10 @@ public class ${table.modelName}ServiceImpl extends ServiceImpl<${table.modelName
 				mypage,
 				new QueryWrapper<${table.modelName}>()
 				<#list dbParamList as item>
-				<#if item.javaDataType == "String">
-					.${item.condition}(StringUtils.isNotBlank(params.get${item.condition?cap_first}_${item.columnName}()),"${item.name}", params.get${item.condition?cap_first}_${item.columnName}())
+				<#if item.useJavaType == "String">
+					.${item.condition}(StringUtils.isNotBlank(params.get${item.condition?cap_first}_${item.columnName}()),"${item.code}", params.get${item.condition?cap_first}_${item.columnName}())
 				<#else>
-					.${item.condition}(params.get${item.condition?cap_first}_${item.columnName}() != null,"${item.name}", params.get${item.condition?cap_first}_${item.columnName}())
+					.${item.condition}(params.get${item.condition?cap_first}_${item.columnName}() != null,"${item.code}", params.get${item.condition?cap_first}_${item.columnName}())
 				</#if>
 				</#list>
 			);

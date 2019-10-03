@@ -16,6 +16,7 @@ public class DbParam extends BaseVO{
 	private String symbol;//查询条件的符合
 	
 	private String javaDataType;//java的字段类型
+	private String useJavaType;//对应查询参数使用的类型
 	private String extJsFieldType;//ExtJs的字段类型
 	private String columnName;//java的字段名
 	
@@ -70,4 +71,11 @@ public class DbParam extends BaseVO{
 	public void setDictDefined(String dictDefined) {
 		this.dictDefined = dictDefined;
 	}
+	public String getUseJavaType() {
+		return useJavaType;
+	}
+	public void setUseJavaType(String useJavaType) {
+		this.useJavaType = useJavaType;
+	}
+	
 }

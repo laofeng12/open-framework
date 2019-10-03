@@ -1,5 +1,6 @@
 package com.openjava.nhc.test.query;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.ljdp.core.db.RoDBQueryParam;
@@ -15,9 +16,9 @@ public class ExampleOrderDBParam extends RoDBQueryParam {
 	
 	private String like_operAccount;//下单账号 like ?
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private Date le_submitTime;//下单时间 <= ?
+	private LocalDateTime le_submitTime;//下单时间 <= ?
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private Date ge_submitTime;//下单时间 >= ?
+	private LocalDateTime ge_submitTime;//下单时间 >= ?
 	private Float eq_totalPrice;//订单总额 = ?
 	private String like_userName;//用户名称 like ?
 	private Float eq_orderStatus;//订单状态 = ?
@@ -35,16 +36,16 @@ public class ExampleOrderDBParam extends RoDBQueryParam {
 	public void setLike_operAccount(String operAccount) {
 		this.like_operAccount = operAccount;
 	}
-	public Date getLe_submitTime() {
+	public LocalDateTime getLe_submitTime() {
 		return le_submitTime;
 	}
-	public void setLe_submitTime(Date submitTime) {
+	public void setLe_submitTime(LocalDateTime submitTime) {
 		this.le_submitTime = submitTime;
 	}
-	public Date getGe_submitTime() {
+	public LocalDateTime getGe_submitTime() {
 		return ge_submitTime;
 	}
-	public void setGe_submitTime(Date submitTime) {
+	public void setGe_submitTime(LocalDateTime submitTime) {
 		this.ge_submitTime = submitTime;
 	}
 	public Float getEq_totalPrice() {

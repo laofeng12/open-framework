@@ -70,6 +70,14 @@ public class Column  extends BaseVO{
 		}
 		return JdbcDataType.forType(type.toLowerCase(), precision);
 	}
+	public String getJavaDataType2(){
+		String jdt = getJavaDataType();
+		if(jdt.equals(DataType.DATE)) {
+			//改用新的日期类型
+			return "LocalDateTime";
+		}
+		return jdt;
+	}
 	
 	/**
 	 * 数据库类型转换为ExtJs的类型

@@ -8,11 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface DynamicJpaRepository<T, ID extends Serializable> extends
-			JpaRepository<T, ID>  {
+			JpaRepository<T, ID>,JpaSpecificationExecutor<T>  {
 	
 	/**
 	 * 单表动态参数查询（查询条件不固定）
