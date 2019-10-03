@@ -25,7 +25,6 @@ import com.openjava.framework.sys.service.SysCodeService;
 import com.openjava.nhc.test.domain.ExampleOrder;
 import com.openjava.nhc.test.query.ExampleOrderDBParam;
 import com.openjava.nhc.test.repository.ExampleOrderRepository;
-import com.openjava.nhc.test.repository.SpecificationOrderRepository;
 
 
 /**
@@ -39,8 +38,8 @@ public class ExampleOrderServiceImpl implements ExampleOrderService {
 	
 	@Resource
 	private ExampleOrderRepository exampleOrderRepository;
-	@Resource
-	private SpecificationOrderRepository specificationOrderRepository;
+//	@Resource
+//	private SpecificationOrderRepository specificationOrderRepository;
 	@Resource
 	private SysCodeService sysCodeService;
 	
@@ -60,7 +59,7 @@ public class ExampleOrderServiceImpl implements ExampleOrderService {
 	
 	public Page<ExampleOrder> query2(ExampleOrderDBParam params, Pageable pageable){
 		
-		Page<ExampleOrder> pageresult = specificationOrderRepository.findAll(new Specification<ExampleOrder>() {
+		Page<ExampleOrder> pageresult = exampleOrderRepository.findAll(new Specification<ExampleOrder>() {
 			
 			@Override
 			public Predicate toPredicate(Root<ExampleOrder> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
