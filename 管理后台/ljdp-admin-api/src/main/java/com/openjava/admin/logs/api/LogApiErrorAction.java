@@ -57,7 +57,7 @@ public class LogApiErrorAction {
 	@ApiResponses({
 		@io.swagger.annotations.ApiResponse(code=20020, message="会话失效")
 	})
-	@LogConfig(save=false)
+	@LogConfig(save=false,print = false)
 	@Security(session=true)
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	public DataApiResponse<SysApiLogVO> get(@PathVariable("id")String id) {
@@ -90,7 +90,7 @@ public class LogApiErrorAction {
 		@ApiImplicitParam(name = "size", value = "每页显示数量", required = false, dataType = "int", paramType = "query"),
 		@ApiImplicitParam(name = "page", value = "页码", required = false, dataType = "int", paramType = "query"),
 	})
-	@LogConfig(save=false)
+	@LogConfig(save=false,print = false)
 	@Security(session=true)
 	@RequestMapping(value="/search",method=RequestMethod.GET)
 	public TablePage<SysLogApiError> doSearch(@ApiIgnore() LogApiErrorDBParam params, @ApiIgnore() Pageable pageable){

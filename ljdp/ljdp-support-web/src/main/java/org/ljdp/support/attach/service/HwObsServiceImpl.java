@@ -276,7 +276,7 @@ public class HwObsServiceImpl implements HwObsService {
 	}
 
 	public void delete(BsImageFile img) {
-		if(StringUtils.isNotEmpty(img.getPicurl())) {
+		if(img!=null && StringUtils.isNotEmpty(img.getPicurl())) {
 			String key = dfsUtils.replaceUrlToEmpt(img.getPicurl());
 			if(key.startsWith("/")) {
 				key = key.substring(1, key.length());
