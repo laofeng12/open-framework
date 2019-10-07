@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -52,5 +53,10 @@ public class ExampleOrder2ServiceImpl extends ServiceImpl<ExampleOrderMapper, Ex
 		}
 		
 		return page;
+	}
+	
+	@DS("slave1")
+	public IPage<ExampleOrderEntity> querySlave(TestOrderDBParam params, Pageable pageable){
+		return query(params, pageable);
 	}
 }

@@ -94,11 +94,25 @@ public class ExampleOrderAction {
 		
 		return new TablePageImpl<>(result);
 	}
+	@Security(session=false)
+	@RequestMapping(value="/searchslave",method=RequestMethod.GET)
+	public TablePage<ExampleOrder> doSearchSlave(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
+		Page<ExampleOrder> result =  exampleOrderService.querySlave(params, pageable);
+		
+		return new TablePageImpl<>(result);
+	}
 	
 	@Security(session=false)
 	@RequestMapping(value="/search2",method=RequestMethod.GET)
 	public TablePage<ExampleOrder> doSearch2(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
 		Page<ExampleOrder> result =  exampleOrderService.query2(params, pageable);
+		
+		return new TablePageImpl<>(result);
+	}
+	@Security(session=false)
+	@RequestMapping(value="/search2slave",method=RequestMethod.GET)
+	public TablePage<ExampleOrder> doSearch2Slave(@ApiIgnore() ExampleOrderDBParam params, @ApiIgnore() Pageable pageable){
+		Page<ExampleOrder> result =  exampleOrderService.query2Slave(params, pageable);
 		
 		return new TablePageImpl<>(result);
 	}
@@ -109,25 +123,30 @@ public class ExampleOrderAction {
 	@ApiOperation(value = "保存", nickname="save", notes = "报文格式：content-type=application/json")
 	@Security(session=false)
 	@RequestMapping(method=RequestMethod.POST)
-	public SuccessMessage doSave(@RequestBody ExampleOrder body
-
-			) {
-		if(body.getIsNew() == null || body.getIsNew()) {
-			//新增，记录创建时间等
-			//设置主键(请根据实际情况修改)
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.setOrderId(ss.getSequence(""));
-			body.setIsNew(true);//执行insert
-			ExampleOrder dbObj = exampleOrderService.doSave(body);
-		} else {
-			//修改，记录更新时间等
-			ExampleOrder db = exampleOrderService.get(body.getOrderId());
-			MyBeanUtils.copyPropertiesNotBlank(db, body);
-			db.setIsNew(false);//执行update
-			exampleOrderService.doSave(db);
-		}
+	public SuccessMessage doSave(@RequestBody ExampleOrder body) {
+		//新增，记录创建时间等
+		//设置主键(请根据实际情况修改)
+		SequenceService ss = ConcurrentSequence.getInstance();
+		body.setOrderId(ss.getSequence(""));
+		body.setIsNew(true);//执行insert
+		ExampleOrder dbObj = exampleOrderService.doSave(body);
 		
 		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
+		return new SuccessMessage("保存成功");
+	}
+	
+	/**
+	 * 更新
+	 */
+	@ApiOperation(value = "更新", nickname="update", notes = "报文格式：content-type=application/json")
+	@Security(session=false)
+	@RequestMapping(method=RequestMethod.PATCH)
+	public SuccessMessage doUpdate(@RequestBody ExampleOrder body) {
+		//修改，记录更新时间等
+		ExampleOrder db = exampleOrderService.get(body.getOrderId());
+		MyBeanUtils.copyPropertiesNotBlank(db, body);
+		db.setIsNew(false);//执行update
+		exampleOrderService.doSave(db);
 		return new SuccessMessage("保存成功");
 	}
 	

@@ -7,9 +7,12 @@ import javax.annotation.Resource;
 
 import org.ljdp.component.result.SuccessMessage;
 import org.ljdp.secure.annotation.Security;
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.ljdp.ui.bootstrap.IBatisPage;
 import org.ljdp.ui.bootstrap.TablePage;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +35,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/nhc/mybatis/exampleOrder")
 public class ExampleOrder2Action {
-
+	
 	@Resource
 	private IExampleOrderService exampleOrderService;
 	
@@ -67,40 +70,49 @@ public class ExampleOrder2Action {
 	@RequestMapping(value="/search",method=RequestMethod.GET)
 	public TablePage<ExampleOrderEntity> doSearch(@ApiIgnore() TestOrderDBParam params, @ApiIgnore() Pageable pageable){
 		IPage<ExampleOrderEntity> result =  exampleOrderService.query(params, pageable);
-		
-		
+		return new IBatisPage<>(result);
+	}
+	@Security(session=false)
+	@RequestMapping(value="/searchslave",method=RequestMethod.GET)
+	public TablePage<ExampleOrderEntity> doSearchSlave(@ApiIgnore() TestOrderDBParam params, @ApiIgnore() Pageable pageable){
+		IPage<ExampleOrderEntity> result =  exampleOrderService.querySlave(params, pageable);
 		return new IBatisPage<>(result);
 	}
 	
 	/**
 	 * 保存
 	 */
-	@ApiOperation(value = "保存", nickname="save", notes = "报文格式：content-type=application/json")
+	@ApiOperation(value = "新增", nickname="add", notes = "报文格式：content-type=application/json")
 	@Security(session=false)
 	@RequestMapping(method=RequestMethod.POST)
-	public SuccessMessage doSave(@RequestBody ExampleOrderEntity body
-
-			) {
-		boolean res;
-		if(body.getIsNew() == null || body.getIsNew()) {
-			//新增，记录创建时间等
-			//设置主键(请根据实际情况修改)
-//			SequenceService ss = ConcurrentSequence.getInstance();
-//			body.setOrderId(ss.getSequence(""));
-			res = exampleOrderService.save(body);
-		} else {
-			//修改，记录更新时间等
-			ExampleOrderEntity db = exampleOrderService.getById(body.getOrderId());
-//			MyBeanUtils.copyPropertiesNotBlank(db, body);
-			set(body.getOperAccount() != null, ()->db.setOperAccount(body.getOperAccount()));
-			set(body.getSubmitTime() != null, ()->db.setSubmitTime(body.getSubmitTime()));
-			set(body.getTotalPrice() != null, ()->db.setTotalPrice(body.getTotalPrice()));
-			set(body.getUserName() != null, ()->db.setUserName(body.getUserName()));
-			set(body.getUserAddress() != null, ()->db.setUserAddress(body.getUserAddress()));
-			set(body.getOrderStatus() != null, ()->db.setOrderStatus(body.getOrderStatus()));
-			res = exampleOrderService.updateById(db);
-		}
+	public SuccessMessage doAdd(@RequestBody @Validated(AddGroup.class) ExampleOrderEntity body) {
+		//新增，记录创建时间等
+		//设置主键(请根据实际情况修改)
+//		SequenceService ss = ConcurrentSequence.getInstance();
+//		body.setOrderId(ss.getSequence(""));
+		boolean res = exampleOrderService.save(body);
 		
+		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
+		if(res) {
+			return new SuccessMessage("保存成功");
+		}
+		return new SuccessMessage("保存失败");
+	}
+	
+	@ApiOperation(value = "更新", nickname="update", notes = "报文格式：content-type=application/json")
+	@Security(session=false)
+	@RequestMapping(value="/{id}", method=RequestMethod.PATCH)
+	public SuccessMessage doUpdate(@PathVariable("id")String id, @RequestBody @Validated(UpdateGroup.class) ExampleOrderEntity body) {
+		//修改，记录更新时间等
+		ExampleOrderEntity db = exampleOrderService.getById(id);
+//		MyBeanUtils.copyPropertiesNotBlank(db, body);
+		set(body.getOperAccount() != null, ()->db.setOperAccount(body.getOperAccount()));
+		set(body.getSubmitTime() != null, ()->db.setSubmitTime(body.getSubmitTime()));
+		set(body.getTotalPrice() != null, ()->db.setTotalPrice(body.getTotalPrice()));
+		set(body.getUserName() != null, ()->db.setUserName(body.getUserName()));
+		set(body.getUserAddress() != null, ()->db.setUserAddress(body.getUserAddress()));
+		set(body.getOrderStatus() != null, ()->db.setOrderStatus(body.getOrderStatus()));
+		boolean res = exampleOrderService.updateById(db);
 		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
 		if(res) {
 			return new SuccessMessage("保存成功");

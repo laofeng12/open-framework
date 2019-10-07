@@ -21,4 +21,5 @@ public class APIConstants {
 	
 	public static final int OSS_UPLOAD_FAIL = 20030;//OSS上传失败
 	public static final int FTP_UPLOAD_FAIL = 20031;//ftp上传失败
+	public static final int PARAMS_NOT_Valid = 20032;//参数错误
 }

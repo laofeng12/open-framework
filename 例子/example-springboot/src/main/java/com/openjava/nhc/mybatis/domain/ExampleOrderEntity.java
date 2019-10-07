@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.validation.constraints.Max;
 
 import org.hibernate.validator.constraints.Length;
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -35,7 +37,7 @@ public class ExampleOrderEntity implements Serializable {
 	private String orderId;
 	
 	@ApiModelProperty("下单账号")
-	@Length(min=0, max=32)
+	@Length(min=0, max=12, groups= {AddGroup.class, UpdateGroup.class})
 	@TableField("oper_account")
 	private String operAccount;
 	
@@ -46,22 +48,22 @@ public class ExampleOrderEntity implements Serializable {
 	private Date submitTime;
 	
 	@ApiModelProperty("订单总额")
-	@Max(99999999L)
+	@Max(value=999L,groups= {AddGroup.class, UpdateGroup.class})
 	@TableField("total_price")
 	private Float totalPrice;
 	
 	@ApiModelProperty("用户名称")
-	@Length(min=0, max=32)
+	@Length(min=0, max=10, groups= {AddGroup.class, UpdateGroup.class})
 	@TableField("user_name")
 	private String userName;
 	
 	@ApiModelProperty("用户地址")
-	@Length(min=0, max=100)
+	@Length(min=0, max=20, groups= {AddGroup.class, UpdateGroup.class})
 	@TableField("user_address")
 	private String userAddress;
 	
 	@ApiModelProperty("订单状态")
-	@Max(99L)
+	@Max(value=9L, groups= {AddGroup.class, UpdateGroup.class})
 	@TableField("order_status")
 	private Long orderStatus;
 	

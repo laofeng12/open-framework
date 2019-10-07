@@ -21,6 +21,8 @@ import org.ljdp.component.result.SuccessMessage;
 import org.ljdp.component.sequence.SequenceService;
 import org.ljdp.component.sequence.TimeSequence;
 import org.ljdp.component.sequence.ConcurrentSequence;
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.ui.bootstrap.TablePage;
 import org.ljdp.ui.bootstrap.TablePageImpl;
@@ -28,6 +30,7 @@ import org.ljdp.util.DateFormater;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,7 +87,7 @@ public class ${table.modelName}Action {
 		@ApiImplicitParam(name = "id", value = "主标识编码", required = true, dataType = "string", paramType = "path"),
 	})
 	@ApiResponses({
-		@io.swagger.annotations.ApiResponse(code=20020, message="会话失效")
+		@io.swagger.annotations.ApiResponse(code=20019, message="会话失效")
 	})
 	@Security(session=true)
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
@@ -117,48 +120,38 @@ public class ${table.modelName}Action {
 	/**
 	 * 保存
 	 */
-	@ApiOperation(value = "保存", nickname="save", notes = "报文格式：content-type=application/json")
+	@ApiOperation(value = "新增", nickname="add", notes = "报文格式：content-type=application/json")
 	@Security(session=true)
 	@RequestMapping(method=RequestMethod.POST)
-	public SuccessMessage doSave(@RequestBody ${table.modelName} body
-			<#if enableAttach==true>
-			,@RequestParam(value="attachIds",required=false)String attachIds</#if>
-			) {
-		if(body.getIsNew() == null || body.getIsNew()) {
-			//新增，记录创建时间等
-			//设置主键(请根据实际情况修改)
-			<#if table.keyFieldType == "Long">
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.set${table.keyField?cap_first}(ss.getSequence());
-			<#else>
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.set${table.keyField?cap_first}(ss.getSequence(""));
-			</#if>
-			body.setIsNew(true);//执行insert
-			${table.modelName} dbObj = ${table.modelName2}Service.doSave(body);
-		} else {
-			//修改，记录更新时间等
-			${table.modelName} db = ${table.modelName2}Service.get(body.get${table.keyField?cap_first}());
-			<#list table.columnList as item>
-			<#if item.iskey == false>
-			set(body.get${item.columnName?cap_first}() != null, ()->db.set${item.columnName?cap_first}(body.get${item.columnName?cap_first}()));
-			</#if>
-			</#list>
-			db.setIsNew(false);//执行update
-			${table.modelName2}Service.doSave(db);
-		}
-		<#if enableAttach==true>
-		if(StringUtils.isNotEmpty(attachIds)) {
-			String[] attachItems = attachIds.split(",");
-			for (String fid : attachItems) {
-				//上传附件
-				
-			}
-		}
+	public SuccessMessage doAdd(@RequestBody @Validated(AddGroup.class) ${table.modelName} body) {
+		//新增，记录创建时间等
+		//设置主键(请根据实际情况修改)
+		<#if table.keyFieldType == "Long">
+		SequenceService ss = ConcurrentSequence.getInstance();
+		body.set${table.keyField?cap_first}(ss.getSequence());
+		<#else>
+		SequenceService ss = ConcurrentSequence.getInstance();
+		body.set${table.keyField?cap_first}(ss.getSequence(""));
 		</#if>
-		
-		<#if enableAttach==true>
+		body.setIsNew(true);//执行insert
+		${table.modelName} dbObj = ${table.modelName2}Service.doSave(body);
+		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
+		return new SuccessMessage("保存成功");
+	}
+	
+	@ApiOperation(value = "更新", nickname="update", notes = "报文格式：content-type=application/json")
+	@Security(session=true)
+	@RequestMapping(value="/{id}", method=RequestMethod.PATCH)
+	public SuccessMessage doUpdate(@PathVariable("id")${table.keyFieldType} id, @RequestBody @Validated(UpdateGroup.class) ${table.modelName} body) {
+		//修改，记录更新时间等
+		${table.modelName} db = ${table.modelName2}Service.get(id);
+		<#list table.columnList as item>
+		<#if item.iskey == false>
+		set(body.get${item.columnName?cap_first}() != null, ()->db.set${item.columnName?cap_first}(body.get${item.columnName?cap_first}()));
 		</#if>
+		</#list>
+		db.setIsNew(false);//执行update
+		${table.modelName2}Service.doSave(db);
 		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
 		return new SuccessMessage("保存成功");
 	}

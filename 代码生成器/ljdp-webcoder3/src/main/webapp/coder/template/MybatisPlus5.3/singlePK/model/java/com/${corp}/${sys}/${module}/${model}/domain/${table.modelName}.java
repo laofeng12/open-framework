@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Max;
 
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -42,8 +44,8 @@ public class ${table.modelName} implements Serializable {
 	<#list table.columnList as item>
 	@ApiModelProperty("${item.comment}")<#if item.iskey == true>
 	@TableId(type=IdType.INPUT)<#else><#if item.javaDataType == "String">
-	@Length(min=0, max=${item.precision})</#if><#if item.isNumber == true>
-	@Max(${item.maxnumber}L)</#if><#if item.javaDataType == "Date">
+	@Length(min=0, max=${item.precision}, groups= {AddGroup.class, UpdateGroup.class})</#if><#if item.isNumber == true>
+	@Max(value=${item.maxnumber}L, groups= {AddGroup.class, UpdateGroup.class})</#if><#if item.javaDataType == "Date">
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")</#if></#if>
 	@TableField("${item.name}")
@@ -55,21 +57,4 @@ public class ${table.modelName} implements Serializable {
 	</#if>
 	
 	</#list>
-	
-	@ApiModelProperty("是否新增")
-	@JsonIgnore
-	@TableField(exist=false)
-    private Boolean isNew;
-	
-    @JsonIgnore
-    public boolean isNew() {
-    	if(isNew != null) {
-    		return isNew;
-    	}
-    	if(this.${table.keyField} != null) {
-    		return false;
-    	}
-    	return true;
-    }
-    
 }

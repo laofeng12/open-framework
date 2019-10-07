@@ -15,8 +15,10 @@ import com.openjava.nhc.test.query.ExampleOrderDBParam;
  */
 public interface ExampleOrderService {
 	Page<ExampleOrder> query(ExampleOrderDBParam params, Pageable pageable);
+	Page<ExampleOrder> querySlave(ExampleOrderDBParam params, Pageable pageable);
 	
-	public Page<ExampleOrder> query2(ExampleOrderDBParam params, Pageable pageable);
+	Page<ExampleOrder> query2(ExampleOrderDBParam params, Pageable pageable);
+	Page<ExampleOrder> query2Slave(ExampleOrderDBParam params, Pageable pageable);
 	
 	List<ExampleOrder> queryDataOnly(ExampleOrderDBParam params, Pageable pageable);
 	

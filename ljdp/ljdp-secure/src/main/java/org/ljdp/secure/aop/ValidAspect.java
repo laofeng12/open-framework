@@ -3,6 +3,7 @@ package org.ljdp.secure.aop;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +12,7 @@ import org.ljdp.component.exception.APIException;
 import org.ljdp.secure.annotation.ValidateConfig;
 import org.ljdp.util.ValidationResult;
 import org.ljdp.util.ValidationUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -44,7 +46,9 @@ public class ValidAspect {
 					continue;
 				}
 				RequestBody rbody = p.getAnnotation(RequestBody.class);
-				if(rbody != null) {
+				Validated springValid = p.getAnnotation(Validated.class);
+				Valid jValid = p.getAnnotation(Valid.class);
+				if(rbody != null && springValid == null && jValid == null) {
 					Object bodyValue = args[i];
 					ValidationResult result = ValidationUtils.validateEntity(bodyValue, groups);
 					if(result.isHasErrors()) {

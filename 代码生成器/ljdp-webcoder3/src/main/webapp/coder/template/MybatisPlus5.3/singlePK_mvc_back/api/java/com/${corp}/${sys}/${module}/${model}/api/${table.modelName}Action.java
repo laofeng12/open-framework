@@ -22,12 +22,15 @@ import org.ljdp.common.file.POIExcelBuilder;
 import org.ljdp.component.result.SuccessMessage;
 import org.ljdp.component.sequence.ConcurrentSequence;
 import org.ljdp.component.sequence.SequenceService;
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.ui.bootstrap.IBatisPage;
 import org.ljdp.ui.bootstrap.TablePage;
 import org.ljdp.util.DateFormater;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -116,33 +119,40 @@ public class ${table.modelName}Action {
 	/**
 	 * 保存
 	 */
-	@ApiOperation(value = "保存", nickname="save", notes = "报文格式：content-type=application/json")
+	@ApiOperation(value = "新增", nickname="add", notes = "报文格式：content-type=application/json")
 	@Security(session=true)
 	@RequestMapping(method=RequestMethod.POST)
-	public SuccessMessage doSave(@RequestBody ${table.modelName} body) {
-		boolean res;
-		if(body.getIsNew() == null || body.getIsNew()) {
-			//新增，记录创建时间等
-			//设置主键(请根据实际情况修改)
-			<#if table.keyFieldType == "Long">
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.set${table.keyField?cap_first}(ss.getSequence());
-			<#else>
-			SequenceService ss = ConcurrentSequence.getInstance();
-			body.set${table.keyField?cap_first}(ss.getSequence(""));
-			</#if>
-			res = ${table.modelName2}Service.save(body);
-		} else {
-			//修改，记录更新时间等
-			${table.modelName} db = ${table.modelName2}Service.getById(body.get${table.keyField?cap_first}());
-			<#list table.columnList as item>
-			<#if item.iskey == false>
-			set(body.get${item.columnName?cap_first}() != null, ()->db.set${item.columnName?cap_first}(body.get${item.columnName?cap_first}()));
-			</#if>
-			</#list>
-			res = ${table.modelName2}Service.updateById(db);
-		}
+	public SuccessMessage doAdd(@RequestBody @Validated(AddGroup.class) ${table.modelName} body) {
+		//新增，记录创建时间等
+		//设置主键(请根据实际情况修改)
+		<#if table.keyFieldType == "Long">
+		SequenceService ss = ConcurrentSequence.getInstance();
+		body.set${table.keyField?cap_first}(ss.getSequence());
+		<#else>
+		SequenceService ss = ConcurrentSequence.getInstance();
+		body.set${table.keyField?cap_first}(ss.getSequence(""));
+		</#if>
+		boolean res = ${table.modelName2}Service.save(body);
 		
+		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
+		if(res) {
+			return new SuccessMessage("保存成功");
+		}
+		return new SuccessMessage("保存失败");
+	}
+	
+	@ApiOperation(value = "更新", nickname="update", notes = "报文格式：content-type=application/json")
+	@Security(session=true)
+	@RequestMapping(value="/{id}", method=RequestMethod.PATCH)
+	public SuccessMessage doUpdate(@PathVariable("id")${table.keyFieldType} id, @RequestBody @Validated(UpdateGroup.class) ${table.modelName} body) {
+		//修改，记录更新时间等
+		${table.modelName} db = ${table.modelName2}Service.getById(id);
+		<#list table.columnList as item>
+		<#if item.iskey == false>
+		set(body.get${item.columnName?cap_first}() != null, ()->db.set${item.columnName?cap_first}(body.get${item.columnName?cap_first}()));
+		</#if>
+		</#list>
+		boolean res = ${table.modelName2}Service.updateById(db);
 		//没有需要返回的数据，就直接返回一条消息。如果需要返回错误，可以抛异常：throw new APIException(错误码，错误消息)，如果涉及事务请在service层抛;
 		if(res) {
 			return new SuccessMessage("保存成功");

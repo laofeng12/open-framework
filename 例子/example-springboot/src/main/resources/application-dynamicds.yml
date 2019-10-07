@@ -1,0 +1,100 @@
+# 开发环境配置
+debug: false
+server:
+  port: 8080 #tomcat运行端口
+  servlet: 
+    context-path: /api
+#  tomcat: 
+#    max-connections: 100
+#    accept-count: 10
+#    max-threads: 3
+#    basedir: C:/temp/tomcat
+
+#mybatis:
+#  config-location: classpath:mybatis-config.xml
+#  typeAliasesPackage: com.openjava.example.mybatis.domain
+#  mapperLocations: 
+#    -classpath:com.openjava.example.*.mapper/*.xml
+
+spring:
+  datasource:
+    dynamic:
+      primary: master #设置默认的数据源或者数据源组,默认值即为master
+      strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源.
+      datasource:
+        master: 
+          driver-class-name: oracle.jdbc.OracleDriver
+          url: jdbc:oracle:thin:@nhc.smart-info.cn:8521:orcl
+          username: c##dgioc
+          password: bigdata@0769
+          hikari:
+            minimum-idle: 1
+            maximum-pool-size: 5
+            auto-commit: true
+            connection-test-query: SELECT 1 FROM DUAL
+        slave1: 
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://rm-wz9a1c8d803l35e2hio.mysql.rds.aliyuncs.com:3306/cloud?useUnicode=true&characterEncoding=utf-8&useSSL=false
+          username: alitest
+          password: Ch#123456
+          hikari:
+            minimum-idle: 1
+            maximum-pool-size: 5
+            auto-commit: true
+            connection-test-query: SELECT 1
+        slave2: 
+          driver-class-name: oracle.jdbc.OracleDriver
+          url: jdbc:oracle:thin:@nhc.smart-info.cn:8521:orcl
+          username: c##dgioc
+          password: bigdata@0769
+      
+  redis:
+      # redis数据库索引（默认为0），我们使用索引为3的数据库，避免和其他数据库冲突
+      database: 0
+      # redis服务器地址（默认为localhost）
+      host: 47.106.185.185
+      # redis端口（默认为6379）
+      port: 6379
+      # redis访问密码（默认为空）
+      password: Chjy123
+      # redis连接超时时间（单位为毫秒）
+      timeout: 10000
+      # redis连接池配置
+      jedis: 
+        pool:
+          # 最大可用连接数（默认为8，负数表示无限）
+          max-active: 8
+          # 最大空闲连接数（默认为8，负数表示无限）
+          max-idle: 8
+          # 最小空闲连接数（默认为0，该值只有为正数才有作用）
+          min-idle: 0
+          # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+          max-wait: 5000
+        
+  servlet: 
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  activiti:
+    check-process-definitions: false
+    database-schema-update: true
+
+ljdp: 
+  ftpserver: 
+    url: 120.78.211.36
+    username: chjykj
+    password: ljdp0769
+    remote-path: /
+    local-temp-path: C:/temp
+  dfs: 
+    ftp2http-proxy: http://127.0.0.1:8080/api/ftp
+    ftp2http-download: http://127.0.0.1:8080/api/ljdp/dfs/downloadByFid.act?fid=
+  fileupload: 
+    # 覆盖batch.fileupload.path配置
+    local-path: C:/temp/ftp
+  security:
+    api:
+      skey: abdefghijklmnopqrstuvwxyz1234567890
+
+
+

@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.openjava.framework.sys.domain.SysCode;
 import com.openjava.framework.sys.service.SysCodeService;
 import com.openjava.nhc.test.domain.ExampleOrder;
@@ -56,6 +57,10 @@ public class ExampleOrderServiceImpl implements ExampleOrderService {
 		}
 		return pageresult;
 	}
+	@DS("slave2")
+	public Page<ExampleOrder> querySlave(ExampleOrderDBParam params, Pageable pageable){
+		return query(params, pageable);
+	}
 	
 	public Page<ExampleOrder> query2(ExampleOrderDBParam params, Pageable pageable){
 		
@@ -86,6 +91,11 @@ public class ExampleOrderServiceImpl implements ExampleOrderService {
 			}
 		}, pageable);
 		return pageresult;
+	}
+	
+	@DS("slave1")
+	public Page<ExampleOrder> query2Slave(ExampleOrderDBParam params, Pageable pageable){
+		return query2(params, pageable);
 	}
 	
 	public List<ExampleOrder> queryDataOnly(ExampleOrderDBParam params, Pageable pageable){

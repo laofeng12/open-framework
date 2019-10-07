@@ -10,4 +10,5 @@ import com.openjava.nhc.mybatis.query.TestOrderDBParam;
 public interface IExampleOrderService extends IService<ExampleOrderEntity>{
 
 	IPage<ExampleOrderEntity> query(TestOrderDBParam params, Pageable pageable);
+	IPage<ExampleOrderEntity> querySlave(TestOrderDBParam params, Pageable pageable);
 }

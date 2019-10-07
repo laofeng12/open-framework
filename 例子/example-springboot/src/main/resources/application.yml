@@ -1,7 +1,7 @@
 # 多环境配置文件激活属性
 spring:
   profiles:
-      active: dev
+      active: dynamicds
   # 缓存配置
 #  cache:
 #    type: ehcache

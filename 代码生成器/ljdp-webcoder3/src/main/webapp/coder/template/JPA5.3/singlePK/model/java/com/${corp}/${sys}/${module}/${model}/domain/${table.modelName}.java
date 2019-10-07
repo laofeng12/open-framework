@@ -11,6 +11,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 
+import org.ljdp.secure.valid.AddGroup;
+import org.ljdp.secure.valid.UpdateGroup;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.data.domain.Persistable;
 import org.hibernate.validator.constraints.Length;
@@ -41,8 +43,8 @@ public class ${table.modelName} implements Persistable<${table.keyFieldType}>,Se
 	<#list table.columnList as item>
 	@ApiModelProperty("${item.comment}")<#if item.iskey == true>
 	@Id<#else><#if item.javaDataType == "String">
-	@Length(min=0, max=${item.precision})</#if><#if item.isNumber == true>
-	@Max(${item.maxnumber}L)</#if><#if item.javaDataType == "Date">
+	@Length(min=0, max=${item.precision}, groups= {AddGroup.class, UpdateGroup.class})</#if><#if item.isNumber == true>
+	@Max(value=${item.maxnumber}L, groups= {AddGroup.class, UpdateGroup.class})</#if><#if item.javaDataType == "Date">
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")</#if></#if>
 	@Column(name = "${item.name}")
