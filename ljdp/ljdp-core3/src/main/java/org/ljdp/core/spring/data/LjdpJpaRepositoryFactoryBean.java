@@ -52,7 +52,7 @@ public class LjdpJpaRepositoryFactoryBean<R extends JpaRepository<T, I>, T, I ex
 							(Class<T>) information.getDomainType(), entityManager);
 				}
 			}
-			return super.getTargetRepository(information);
+			return super.getTargetRepository(information, entityManager);
 		}
 
 		protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
