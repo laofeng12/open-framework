@@ -43,6 +43,9 @@ public class UserVO implements Serializable, BaseUserInfo{
 
 	private String statue;//账号状态
 	private String msg;//返回信息
+
+	private Integer isMember;//"是否为会员 0 否 1 是"
+	private Date expireTime;//过期时间
 	
 	public UserVO() {
 		
@@ -441,5 +444,21 @@ public class UserVO implements Serializable, BaseUserInfo{
 
 	public void setMsg(String msg) {
 		this.msg = msg;
+	}
+
+	public Integer getIsMember() {
+		return isMember;
+	}
+
+	public void setIsMember(Integer isMember) {
+		this.isMember = isMember;
+	}
+
+	public Date getExpireTime() {
+		return expireTime;
+	}
+
+	public void setExpireTime(Date expireTime) {
+		this.expireTime = expireTime;
 	}
 }
