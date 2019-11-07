@@ -1,15 +1,11 @@
 package org.ljdp.log.aop;
 
-import java.awt.List;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -241,7 +237,7 @@ public class ControllerLogAspect {
 			String reqParams;
 			if(isRequestBody) {
 				boolean isList = false;
-				if(bodyClass.equals(ArrayList.class)) {
+				if(bodyClass.equals(ArrayList.class) || bodyClass.equals(List.class)) {
 					isList = true;
 				} else {
 					Class<?>[] clss = bodyClass.getInterfaces();
