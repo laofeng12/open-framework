@@ -226,7 +226,22 @@ public class ControllerLogAspect {
 					inMap.put(paramName, args[i]);
 				}
 			}
-			
+			SequenceService ss = ConcurrentSequence.getCentumInstance();
+			if(mySequenceService != null) {
+				ss = mySequenceService;
+			} else {
+				if(sequenceServiceName != null) {
+					//查找自定义的序列
+					mySequenceService = (SequenceService)SpringContextManager.getBean(sequenceServiceName);
+					if(mySequenceService != null) {
+						ss = mySequenceService;
+						log.info("LogSequenceInit: use "+sequenceServiceName);
+					} else {
+						log.info("LogSequenceInit: can not find "+sequenceServiceName);
+					}
+				}
+			}
+			SsoContext.setRequestId(ss.getSequence());
 			Date requestDate = new Date();
 			returnVal = point.proceed();
 			Date responseDate = new Date();
@@ -312,21 +327,7 @@ public class ControllerLogAspect {
 					logreq.setTub2(theTubs[1]);
 					logreq.setTub3(theTubs[2]);
 				}
-				SequenceService ss = ConcurrentSequence.getInstance();
-				if(mySequenceService != null) {
-					ss = mySequenceService;
-				} else {
-					if(sequenceServiceName != null) {
-						//查找自定义的序列
-						mySequenceService = (SequenceService)SpringContextManager.getBean(sequenceServiceName);
-						if(mySequenceService != null) {
-							ss = mySequenceService;
-							log.info("LogSequenceInit: use "+sequenceServiceName);
-						} else {
-							log.info("LogSequenceInit: can not find "+sequenceServiceName);
-						}
-					}
-				}
+				
 				logreq.setAccount(loginId);
 				logreq.setClientIp(clientIp);
 				logreq.setFromChannel(fromChannel);

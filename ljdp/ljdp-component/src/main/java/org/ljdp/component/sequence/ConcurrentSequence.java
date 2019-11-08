@@ -3,6 +3,7 @@ package org.ljdp.component.sequence;
 import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Random;
 
 import org.ljdp.util.NumberUtil;
 
@@ -33,6 +34,8 @@ public class ConcurrentSequence implements SequenceService{
 	private final int base;
 	
 	private long timeReduce = 0;//为了减少生成的序列长度，减去一个过去的时间
+	
+	private Random random = new Random();
 	
 	public ConcurrentSequence() {
 		this.base = 10;
@@ -113,6 +116,7 @@ public class ConcurrentSequence implements SequenceService{
 				millis = result;
 				result *= base;
 				old = result;
+				old += random.nextInt(base);//不再默认从0开始，从一个随机数开始，减少刚好同一毫秒获取时的冲突
 			}
 			return result;
 		}
