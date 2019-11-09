@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -163,6 +164,7 @@ public class RedisSessionVaidator implements SessionValidator {
 							//session有效
 //							System.out.println("[RedisSessionVaidator]session有效："+user);
 							boolean allow = true;
+							//验证身份
 							if(secure.allowIdentitys() != null && secure.allowIdentitys().length > 0) {
 								allow = false;
 								for(String identity : secure.allowIdentitys()) {
@@ -183,9 +185,38 @@ public class RedisSessionVaidator implements SessionValidator {
 									}
 								}
 							}
+							//验证资源权限
+							if(secure.allowResources() != null && secure.allowResources().length > 0) {
+								Set<String> myresources = SsoContext.getResources();
+								if(myresources != null) {
+									allow = false;
+									for(String res : secure.allowResources()) {
+										if(myresources.contains(res)) {
+											allow = true;
+											break;
+										}
+									}
+								}
+							}
+							//验证角色
+							if(secure.allowRoles() != null && secure.allowRoles().length > 0) {
+								allow = false;
+								List<String> rolealias = user.getRoleAlias();
+								if(rolealias != null) {
+									for(String allowrole : secure.allowRoles()) {
+										for(String myalia : rolealias) {
+											if(myalia.equals(allowrole)) {
+												allow = true;
+												break;
+											}
+										}
+										if(allow) break;
+									}
+								}
+							}
 							if(!allow) {
 								result.setCode(APIConstants.IDENTITY_NOTPASS);
-								result.setMessage("不允许此用户身份操作");
+								result.setMessage("无此资源访问权限");
 							} else {
 								//允许访问，刷新session时间
 								if(user.getRefreshTime() == null) {

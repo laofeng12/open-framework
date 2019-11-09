@@ -1,5 +1,7 @@
 package org.ljdp.secure.sso;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -22,6 +24,7 @@ public class SsoContext {
 	private static final ThreadLocal<String> tubHolder = new ThreadLocal<>();
 	private static final ThreadLocal<String> tokenHolder = new ThreadLocal<>();
 	private static final ThreadLocal<Object> userHolder = new ThreadLocal<>();
+	private static final ThreadLocal<Set<String>> resourcesHolder = new ThreadLocal<>();
 
 	public static boolean authenticate(HttpServletRequest request) {
 		Object u = getSignedInUserFromSession(request);
@@ -137,6 +140,14 @@ public class SsoContext {
 		return userHolder.get();
 	}
 	
+	public static void setResources(Set<String> resources) {
+		resourcesHolder.set(resources);
+	}
+	
+	public static Set<String> getResources(){
+		return resourcesHolder.get();
+	}
+	
 	public static void clearContext() {
 		passIdHolder.remove();
 		accountHolder.remove();
@@ -146,6 +157,6 @@ public class SsoContext {
 		tubHolder.remove();
 		tokenHolder.remove();
 		userHolder.remove();
-		
+		resourcesHolder.remove();
 	}
 }

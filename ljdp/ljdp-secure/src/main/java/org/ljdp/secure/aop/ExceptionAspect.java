@@ -158,11 +158,15 @@ public class ExceptionAspect {
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
-				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
+				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
 				entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
+			} else if(resp.getCode().intValue() == APIConstants.IDENTITY_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
+				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
 			} else {
 				entity = ResponseEntity.badRequest().body(resp);
 			}
@@ -336,11 +340,15 @@ public class ExceptionAspect {
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
-				response.setStatus(HttpStatus.FORBIDDEN.value());
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
 				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			} else if(resp.getCode().intValue() == APIConstants.IDENTITY_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
