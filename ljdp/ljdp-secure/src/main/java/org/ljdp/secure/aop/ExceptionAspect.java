@@ -268,11 +268,15 @@ public class ExceptionAspect {
 			if(errorCode == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.CODE_AUTH_FAILED) {
-				response.setStatus(HttpStatus.FORBIDDEN.value());
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.CODE_SERVER_ERR) {
 				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			} else if(errorCode == APIConstants.IDENTITY_NOTPASS
+					|| errorCode == APIConstants.ROLE_NOTPASS
+					|| errorCode == APIConstants.USER_NOTPASS) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
