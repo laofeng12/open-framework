@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import org.ljdp.util.LocalDateTimeUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class RedisSessionVaidator implements SessionValidator {
@@ -40,6 +42,8 @@ public class RedisSessionVaidator implements SessionValidator {
 	
 	@Resource
 	private RedisTemplate<String, Object> redisTemplate;
+	@Resource
+    private RedisTemplate<String, Object> stringRedisTemplate;
 	private AES aes = null;
 	private boolean debug = false;
 	private List<String> defaultAllowIdentitys = new ArrayList<>();//默认全局允许的身份
@@ -110,7 +114,7 @@ public class RedisSessionVaidator implements SessionValidator {
 						BaseUserInfo dbuser = authPersist.getUserByToken(tokenid);
 						if(dbuser != null) {
 							user = dbuser;
-							redisTemplate.opsForValue().set(tokenid, dbuser, dbuser.getExpireInMin(), TimeUnit.MINUTES);
+							redisTemplate.boundValueOps(tokenid).set(dbuser, dbuser.getExpireInMin(), TimeUnit.MINUTES);
 						}
 					}
 				}
@@ -121,17 +125,19 @@ public class RedisSessionVaidator implements SessionValidator {
 					if(StringUtils.isNumeric(user.getUserId())) {
 						SsoContext.setUserId(new Long(user.getUserId()));
 					}
-					if(!secure.validateUserAgent()) {
-						return result;
+					//从redis获取资源权限
+					String resJson = (String)stringRedisTemplate.boundValueOps(tokenid+"-RES").get();
+					if(StringUtils.isNotBlank(resJson)) {
+						JavaType stringSetType = JacksonTools.getObjectMapper().getTypeFactory().constructParametricType(HashSet.class, String.class);
+						HashSet<String> myresources = JacksonTools.getObjectMapper().readValue(resJson, stringSetType);
+						SsoContext.setResources(myresources);
 					}
-//					String method = request.getMethod();
-					String userAgent = request.getHeader("user-agent");
-//					if(StringUtils.isEmpty(userAgent)){
-//						userAgent = request.getParameter("userAgent");
-//						if("GET".equals(method)) {
-//							userAgent = URLDecoder.decode(userAgent, "utf-8");
-//						}
+					
+//					if(!secure.validateUserAgent()) {
+//						return result;
 //					}
+					String userAgent = request.getHeader("user-agent");
+
 					boolean validateUserAgent = secure.validateUserAgent();//是否验证userAgent
 					if(validateUserAgent && StringUtils.isEmpty(userAgent)){
 						result.setCode(APIConstants.CODE_AUTH_FAILED);
