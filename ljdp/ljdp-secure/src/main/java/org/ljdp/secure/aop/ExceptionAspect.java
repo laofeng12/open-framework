@@ -104,17 +104,19 @@ public class ExceptionAspect {
 			if(logCls != null) {//保存错误日志
 				try {
 					RequestErrorLog log = (RequestErrorLog)logCls.newInstance();
-					Long reqId = null;
-					if(this.mySequenceService != null) {
-						log.setErrorId(mySequenceService.getSequence(""));
-						reqId = mySequenceService.getSequence();
-					} else {
-						SequenceService cs = ConcurrentSequence.getCentumInstance();
-						log.setErrorId(cs.getSequence(""));
-						reqId = cs.getSequence();
+					Long reqId = SsoContext.getRequestId();
+					if(reqId == null) {
+						if(this.mySequenceService != null) {
+							log.setErrorId(mySequenceService.getSequence(""));
+							reqId = mySequenceService.getSequence();
+						} else {
+							SequenceService cs = ConcurrentSequence.getCentumInstance();
+							log.setErrorId(cs.getSequence(""));
+							reqId = cs.getSequence();
+						}
+						SsoContext.setRequestId(reqId);
 					}
 					log.setRequestId(reqId.toString());
-					SsoContext.setRequestId(reqId);
 					
 					StringWriter sw = new StringWriter();
 					exp.printStackTrace(new PrintWriter(sw, true));
@@ -156,11 +158,15 @@ public class ExceptionAspect {
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
-				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
+				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
 			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
 				entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
+			} else if(resp.getCode().intValue() == APIConstants.IDENTITY_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
+				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
 			} else {
 				entity = ResponseEntity.badRequest().body(resp);
 			}
@@ -262,11 +268,15 @@ public class ExceptionAspect {
 			if(errorCode == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.CODE_AUTH_FAILED) {
-				response.setStatus(HttpStatus.FORBIDDEN.value());
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(errorCode == APIConstants.CODE_SERVER_ERR) {
 				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			} else if(errorCode == APIConstants.IDENTITY_NOTPASS
+					|| errorCode == APIConstants.ROLE_NOTPASS
+					|| errorCode == APIConstants.USER_NOTPASS) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
@@ -334,11 +344,15 @@ public class ExceptionAspect {
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
-				response.setStatus(HttpStatus.FORBIDDEN.value());
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.ACCESS_NO_USER) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.CODE_SERVER_ERR) {
 				response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			} else if(resp.getCode().intValue() == APIConstants.IDENTITY_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
+					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
 			} else {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}

@@ -47,4 +47,10 @@ public @interface Security {
 	 * @return
 	 */
 	String[] allowUserAccounts() default {};
+	
+	/**
+	 * 允许访问的资源
+	 * @return
+	 */
+	String[] allowResources() default {};
 }

@@ -1,15 +1,11 @@
 package org.ljdp.log.aop;
 
-import java.awt.List;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -230,7 +226,22 @@ public class ControllerLogAspect {
 					inMap.put(paramName, args[i]);
 				}
 			}
-			
+			SequenceService ss = ConcurrentSequence.getCentumInstance();
+			if(mySequenceService != null) {
+				ss = mySequenceService;
+			} else {
+				if(sequenceServiceName != null) {
+					//查找自定义的序列
+					mySequenceService = (SequenceService)SpringContextManager.getBean(sequenceServiceName);
+					if(mySequenceService != null) {
+						ss = mySequenceService;
+						log.info("LogSequenceInit: use "+sequenceServiceName);
+					} else {
+						log.info("LogSequenceInit: can not find "+sequenceServiceName);
+					}
+				}
+			}
+			SsoContext.setRequestId(ss.getSequence());
 			Date requestDate = new Date();
 			returnVal = point.proceed();
 			Date responseDate = new Date();
@@ -241,7 +252,7 @@ public class ControllerLogAspect {
 			String reqParams;
 			if(isRequestBody) {
 				boolean isList = false;
-				if(bodyClass.equals(ArrayList.class)) {
+				if(bodyClass.equals(ArrayList.class) || bodyClass.equals(List.class)) {
 					isList = true;
 				} else {
 					Class<?>[] clss = bodyClass.getInterfaces();
@@ -316,21 +327,7 @@ public class ControllerLogAspect {
 					logreq.setTub2(theTubs[1]);
 					logreq.setTub3(theTubs[2]);
 				}
-				SequenceService ss = ConcurrentSequence.getInstance();
-				if(mySequenceService != null) {
-					ss = mySequenceService;
-				} else {
-					if(sequenceServiceName != null) {
-						//查找自定义的序列
-						mySequenceService = (SequenceService)SpringContextManager.getBean(sequenceServiceName);
-						if(mySequenceService != null) {
-							ss = mySequenceService;
-							log.info("LogSequenceInit: use "+sequenceServiceName);
-						} else {
-							log.info("LogSequenceInit: can not find "+sequenceServiceName);
-						}
-					}
-				}
+				
 				logreq.setAccount(loginId);
 				logreq.setClientIp(clientIp);
 				logreq.setFromChannel(fromChannel);

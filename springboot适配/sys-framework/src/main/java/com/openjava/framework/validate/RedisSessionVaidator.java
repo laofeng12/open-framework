@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -31,6 +33,7 @@ import org.ljdp.util.LocalDateTimeUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class RedisSessionVaidator implements SessionValidator {
@@ -39,6 +42,8 @@ public class RedisSessionVaidator implements SessionValidator {
 	
 	@Resource
 	private RedisTemplate<String, Object> redisTemplate;
+	@Resource
+    private RedisTemplate<String, Object> stringRedisTemplate;
 	private AES aes = null;
 	private boolean debug = false;
 	private List<String> defaultAllowIdentitys = new ArrayList<>();//默认全局允许的身份
@@ -109,7 +114,7 @@ public class RedisSessionVaidator implements SessionValidator {
 						BaseUserInfo dbuser = authPersist.getUserByToken(tokenid);
 						if(dbuser != null) {
 							user = dbuser;
-							redisTemplate.opsForValue().set(tokenid, dbuser, dbuser.getExpireInMin(), TimeUnit.MINUTES);
+							redisTemplate.boundValueOps(tokenid).set(dbuser, dbuser.getExpireInMin(), TimeUnit.MINUTES);
 						}
 					}
 				}
@@ -120,17 +125,19 @@ public class RedisSessionVaidator implements SessionValidator {
 					if(StringUtils.isNumeric(user.getUserId())) {
 						SsoContext.setUserId(new Long(user.getUserId()));
 					}
-					if(!secure.validateUserAgent()) {
-						return result;
+					//从redis获取资源权限
+					String resJson = (String)stringRedisTemplate.boundValueOps(tokenid+"-RES").get();
+					if(StringUtils.isNotBlank(resJson)) {
+						JavaType stringSetType = JacksonTools.getObjectMapper().getTypeFactory().constructParametricType(HashSet.class, String.class);
+						HashSet<String> myresources = JacksonTools.getObjectMapper().readValue(resJson, stringSetType);
+						SsoContext.setResources(myresources);
 					}
-//					String method = request.getMethod();
-					String userAgent = request.getHeader("user-agent");
-//					if(StringUtils.isEmpty(userAgent)){
-//						userAgent = request.getParameter("userAgent");
-//						if("GET".equals(method)) {
-//							userAgent = URLDecoder.decode(userAgent, "utf-8");
-//						}
+					
+//					if(!secure.validateUserAgent()) {
+//						return result;
 //					}
+					String userAgent = request.getHeader("user-agent");
+
 					boolean validateUserAgent = secure.validateUserAgent();//是否验证userAgent
 					if(validateUserAgent && StringUtils.isEmpty(userAgent)){
 						result.setCode(APIConstants.CODE_AUTH_FAILED);
@@ -163,6 +170,7 @@ public class RedisSessionVaidator implements SessionValidator {
 							//session有效
 //							System.out.println("[RedisSessionVaidator]session有效："+user);
 							boolean allow = true;
+							//验证身份
 							if(secure.allowIdentitys() != null && secure.allowIdentitys().length > 0) {
 								allow = false;
 								for(String identity : secure.allowIdentitys()) {
@@ -183,9 +191,38 @@ public class RedisSessionVaidator implements SessionValidator {
 									}
 								}
 							}
+							//验证资源权限
+							if(secure.allowResources() != null && secure.allowResources().length > 0) {
+								Set<String> myresources = SsoContext.getResources();
+								if(myresources != null) {
+									allow = false;
+									for(String res : secure.allowResources()) {
+										if(myresources.contains(res)) {
+											allow = true;
+											break;
+										}
+									}
+								}
+							}
+							//验证角色
+							if(secure.allowRoles() != null && secure.allowRoles().length > 0) {
+								allow = false;
+								List<String> rolealias = user.getRoleAlias();
+								if(rolealias != null) {
+									for(String allowrole : secure.allowRoles()) {
+										for(String myalia : rolealias) {
+											if(myalia.equals(allowrole)) {
+												allow = true;
+												break;
+											}
+										}
+										if(allow) break;
+									}
+								}
+							}
 							if(!allow) {
 								result.setCode(APIConstants.IDENTITY_NOTPASS);
-								result.setMessage("不允许此用户身份操作");
+								result.setMessage("无此资源访问权限");
 							} else {
 								//允许访问，刷新session时间
 								if(user.getRefreshTime() == null) {
