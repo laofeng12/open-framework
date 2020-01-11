@@ -35,4 +35,8 @@ public class JacksonTools {
 	public static JavaType constructParametrizedType(Class<?> parametrized, Class<?> parametersFor, Class<?>... parameterClasses) {
 		return om.getTypeFactory().constructParametrizedType(parametrized,parametersFor,parameterClasses);
 	}
+	
+	public static JavaType constructParametricType(Class<?> parametrized, Class<?>... parameterClasses) {
+		return om.getTypeFactory().constructParametricType(parametrized,parameterClasses);
+	}
 }
