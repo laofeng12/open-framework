@@ -2,6 +2,7 @@ package org.ljdp.module.batch;
 
 import jxl.Cell;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.ljdp.component.namespace.NameNotFoundException;
 import org.ljdp.component.result.BatchResult;
 import org.ljdp.component.result.GeneralBatchResult;
@@ -86,6 +87,46 @@ public abstract class TransactionFileBatchBO extends AbstractFileBatchBO {
 	}
 	
 	protected abstract BatchResult doProcessRecord(int sheetLocation, String line);
+	
+	@Override
+	public BatchResult doProcessRecord(int sheetLocation, Row[] rows, int size) {
+		BatchResult res = null;
+		try {
+			GeneralService gs = ServiceFactory.buildGeneral();
+			res = (BatchResult)gs.doTransaction(new BusinessObject() {
+				
+				public Object doBusiness(Object... params) throws Exception {
+					 Row[] rows = (Row[])params[0];
+					Integer size = (Integer)params[1];
+					return process(sheetLocation, rows, size);
+				}
+			}, new Object[] {rows, size});
+		} catch (Throwable e) {
+			while(e.getCause() != null) {
+				e = e.getCause();
+			}
+			log.error("doProcessRecord(Row[] rows, int size)", e);
+			res = new GeneralBatchResult();
+			res.setSuccess(false);
+			res.setMsg(e.getMessage());
+		}
+		return res;
+	}
+	
+	private final BatchResult process(int sheetLocation, Row[] rows, int size)  {
+		BatchResult res = null;
+		for(int i = 0; i < size; ++i) {
+			res = doProcessRecord(sheetLocation, rows[i]);
+			if(res == null || !res.isSuccess()) {
+				break;
+			}
+		}
+		return res;
+	}
+	
+	protected BatchResult doProcessRecord(int sheetLocation, Row row) {
+		return null;
+	}
 
 	@Override
 	public BatchResult doProcessRecord(Cell[][] rows, int size) {

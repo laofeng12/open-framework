@@ -2,6 +2,7 @@ package org.ljdp.component.strategy;
 
 import jxl.Cell;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.ljdp.component.result.BatchResult;
 
 /**
@@ -26,6 +27,8 @@ public interface FileBusinessObject {
 //	public BatchResult doProcessRecord(String[] line, int size);
 	
 	public BatchResult doProcessRecord(int sheetLocation, String[] line, int size);
+	
+	BatchResult doProcessRecord(int sheetLocation, Row[] rows, int size);
 
 	public BatchResult doProcessRecord(Cell[][] row, int size);
 }

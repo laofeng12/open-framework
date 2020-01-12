@@ -2,6 +2,7 @@ package org.ljdp.module.filetask;
 
 import jxl.Cell;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.ljdp.component.result.BatchResult;
 import org.ljdp.component.result.GeneralBatchResult;
 import org.ljdp.component.strategy.FileBusinessObject;
@@ -43,7 +44,7 @@ public class BOFileBatchTask extends FileBatchTask {
 
 	@Override
 	protected void destory() {
-		super.destory();
+		bo.destory();
 	}
 
 	@Override
@@ -89,7 +90,30 @@ public class BOFileBatchTask extends FileBatchTask {
 			return result;
 		}
 	}
+	
+	/**
+	 * excel2007
+	 */
+	@Override
+	protected BatchResult doProcessRecord(int sheetLocation, Row[] rows, int size) {
+		try {
+			BatchResult res = (BatchResult)bo.doProcessRecord(sheetLocation, rows, size);
+			if(res == null) {
+				return super.doProcessRecord(sheetLocation, rows, size);
+			}
+			return res;
+		} catch (Exception e) {
+			log.error("doProcessRecord_Cell", e);
+			BatchResult result = new GeneralBatchResult();
+			result.setSuccess(false);
+			result.setMsg(e.getMessage());
+			return result;
+		}
+    }
 
+	/**
+	 * excel2003
+	 */
 	@Override
 	protected BatchResult doProcessRecord(Cell[][] row, int size) {
 		try {

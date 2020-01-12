@@ -125,9 +125,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
     	return true;
     }
     
-    protected void destory() {
-    	
-    }
+    protected abstract void destory();
     
     /**
      * 最后的工作。导入完成后可能还有些后续的处理
