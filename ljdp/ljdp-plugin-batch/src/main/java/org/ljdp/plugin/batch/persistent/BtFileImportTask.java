@@ -25,24 +25,24 @@ public class BtFileImportTask extends BaseVO implements java.io.Serializable {
 	private static final long serialVersionUID = 9081020205343681983L;
 	private String taskId;
 	private String taskName;
-	private String taskType;
+	private String taskType;//对应ExampleOrderBatchAction.java中传入的batchType
 	private String operType;
 	private String operatorId;
-	private String operator;
+	private String operator;//操作人账号
 	private String operatorName;
 	private String bsBo;
-	private Integer totalRec;
-	private Integer succRec;
-	private Integer failRec;
-	private String failLog;
-	private String procState;
+	private Integer totalRec;//总记录数
+	private Integer succRec;//成功数量
+	private Integer failRec;//失败数量
+	private String failLog;//失败结果文件路径
+	private String procState;//任务状态
 	private String procWay;
-	private Long costTime;
-	private Date createDate;
+	private Long costTime;//耗时（秒）
+	private Date createDate;//任务创建时间
 	private String serverIP;
-	private Date beginTime;
-	private Date finishTime;
-	private String proceFileName;
+	private Date beginTime;//任务开始时间
+	private Date finishTime;//任务结束时间
+	private String proceFileName;//上传的文件名
 
 	// Constructors
 

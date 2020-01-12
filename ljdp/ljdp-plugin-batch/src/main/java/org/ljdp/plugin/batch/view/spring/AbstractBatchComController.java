@@ -105,6 +105,7 @@ public abstract class AbstractBatchComController extends BaseController {
 		try {
 			FileBatchTask batch = getBatchTask(bo);
 			beginBatchTask(batch, fileFullName, fileName, batchType, totalCount);
+			res.setData(batch.getId());
 			res.setSuccess(true);
 		} catch (Exception e) {
 			log.error("doBatchProcess", e);
