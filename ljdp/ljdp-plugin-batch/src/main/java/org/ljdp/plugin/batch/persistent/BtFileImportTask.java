@@ -1,20 +1,12 @@
 package org.ljdp.plugin.batch.persistent;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.ljdp.component.bean.BaseVO;
 import org.ljdp.plugin.batch.model.BatchFileDic;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="BATCH_FILEIMPORT_TASK"
@@ -105,7 +97,7 @@ public class BtFileImportTask extends BaseVO implements java.io.Serializable {
 		this.taskType = taskType;
 	}
 
-	@Column(name="OPER_TYPE", length=30)
+	@Column(name="OPER_TYPE", length=50)
 	public String getOperType() {
 		return this.operType;
 	}

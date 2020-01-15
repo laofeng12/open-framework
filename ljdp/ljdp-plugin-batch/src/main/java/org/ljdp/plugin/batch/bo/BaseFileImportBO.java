@@ -1,9 +1,5 @@
 package org.ljdp.plugin.batch.bo;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.ljdp.common.config.ConfigFile;
@@ -26,6 +22,10 @@ import org.ljdp.plugin.batch.task.LJDPFileBatchBO;
 import org.ljdp.plugin.batch.task.LJDPFileBatchTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 
 /**
  * 后台导入方式前台入库BO
@@ -136,6 +136,7 @@ public class BaseFileImportBO extends LJDPFileBatchBO {
 			dbLog.setFailRec(task.getFailNum());
 			dbLog.setCostTime(task.getUserTime());
 			dbLog.setSuccRec(0);
+			dbLog.setOperType(this.getOperType());
 			if(task.getFailNum() > 0) {
 				dbLog.setSuccRec(task.getSuccessNum());
 				if(dbLog.getProcWay().equals(BatchFileDic.PW_F)) {
