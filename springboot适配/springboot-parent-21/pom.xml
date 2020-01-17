@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.openjava</groupId>
 	<artifactId>springboot-parent</artifactId>
-	<version>2.1.8.R10</version>
+	<version>2.1.8.R11</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -24,7 +24,7 @@
 		<ljdp-secure.version>2.3.6</ljdp-secure.version>
 		<ljdp-plugin-batch.version>2.0.6</ljdp-plugin-batch.version>
 		<ljdp-plugin-sys.version>5.0.9</ljdp-plugin-sys.version>
-		<ljdp-support-web.version>2.0.7</ljdp-support-web.version>
+		<ljdp-support-web.version>2.0.8</ljdp-support-web.version>
 		<swagger-models.version>1.5.21</swagger-models.version>
 		<springfox-swagger2.version>2.9.2</springfox-swagger2.version>
 		<swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>

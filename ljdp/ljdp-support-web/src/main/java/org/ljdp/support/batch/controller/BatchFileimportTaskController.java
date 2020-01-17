@@ -23,6 +23,7 @@ import org.ljdp.secure.annotation.Security;
 import org.ljdp.support.batch.service.BatchFileimportTaskService;
 import org.ljdp.ui.bootstrap.TablePage;
 import org.ljdp.ui.bootstrap.TablePageImpl;
+import org.ljdp.ui.extjs.ExtUtils;
 import org.ljdp.util.DateFormater;
 import org.ljdp.util.FileUtils;
 import org.springframework.data.domain.Page;
@@ -121,7 +122,14 @@ public class BatchFileimportTaskController {
 			@RequestParam("taskId")String taskId) {
 		
 		BtFileImportTask task = batchFileimportTaskService.get(taskId);
-		
+		if(task == null) {
+			ExtUtils.writeHtmlFailure("任务不存在", response);
+			return;
+		}
+		if(StringUtils.isEmpty(task.getFailLog())) {
+			ExtUtils.writeHtmlFailure("没有失败记录", response);
+			return;
+		}
 		try {
 			String hostAddress = InetAddress.getLocalHost().getHostAddress();
 			if(StringUtils.isNotBlank(task.getServerIP()) && !hostAddress.equals(task.getServerIP())) {
@@ -150,4 +158,29 @@ public class BatchFileimportTaskController {
 				);
 	}
 	
+	@RequestMapping(value="/downloadUploadFile.act",method=RequestMethod.GET)
+	@Security(session=true)
+	public void downloadUploadFile(HttpServletRequest request, 
+			HttpServletResponse response,
+			@RequestParam("taskId")String taskId) {
+		
+		BtFileImportTask task = batchFileimportTaskService.get(taskId);
+		if(task == null) {
+			ExtUtils.writeHtmlFailure("任务不存在", response);
+			return;
+		}
+		if(StringUtils.isEmpty(task.getProceFileName())) {
+			ExtUtils.writeHtmlFailure("没有保存原文件", response);
+			return;
+		}
+		
+		String fileName = "【原文件】"+task.getTaskName();
+		
+		DownloadController downloadCtl = new DownloadController();
+		downloadCtl.downloadFile(request, response, 
+				 //客户端显示的文件名
+				fileName,
+				task.getProceFileName()	//文件在本地服务器存放路径
+				);
+	}
 }
