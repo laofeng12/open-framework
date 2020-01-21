@@ -63,6 +63,8 @@ public class ControllerLogAspect {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("request.log.entity: null");
 		}
 		String tmp_max = Env.getCurrent().getConfigFile().getValue("service_max_capacity");
 		if(StringUtils.isNotEmpty(tmp_max)) {

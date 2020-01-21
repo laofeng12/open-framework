@@ -26,7 +26,7 @@ public class AES {
 	private IvParameterSpec ivSpec;
 	private Charset charset = Charset.forName("utf-8");
 
-	public AES(String sKey, String ivStr) throws NoSuchAlgorithmException {
+	public AES(String sKey, String ivStr) {
 		if (sKey == null) {
 			throw new UnsupportedOperationException("Key为空null");
 		}

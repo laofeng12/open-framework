@@ -46,6 +46,8 @@ public class ExceptionAspect {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("request.errorlog.entity: null");
 		}
 		queue = new LinkedBlockingQueue<>(ControllerLogAspect.Service_Max_Capacity);
 	}
