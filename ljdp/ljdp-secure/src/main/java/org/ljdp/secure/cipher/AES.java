@@ -26,7 +26,7 @@ public class AES {
 	private IvParameterSpec ivSpec;
 	private Charset charset = Charset.forName("utf-8");
 
-	public AES(String sKey, String ivStr) {
+	public AES(String sKey, String ivStr) throws NoSuchAlgorithmException {
 		if (sKey == null) {
 			throw new UnsupportedOperationException("Key为空null");
 		}
@@ -40,6 +40,14 @@ public class AES {
 		if (ivStr.length() != 16) {
 			throw new UnsupportedOperationException("iv长度不是16位");
 		}
+//		//构造密钥生成器，指定为AES算法,不区分大小写
+//		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+//		//生成一个128位的随机源,根据传入的字节数组
+//		keyGenerator.init(128, new SecureRandom(sKey.getBytes()));
+//		//产生原始对称密钥
+//		SecretKey secretKey = keyGenerator.generateKey();
+//		// key转换,根据字节数组生成AES密钥
+//		skeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 		skeySpec = new SecretKeySpec(sKey.getBytes(), "AES");
 		// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
 		ivSpec = new IvParameterSpec(ivStr.getBytes());

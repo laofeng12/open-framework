@@ -352,7 +352,9 @@ public class ControllerLogAspect {
 				logreq.setUserAgent(userAgent);
 				ApiResponse apiresult = SsoContext.getApiResponse();
 				if(apiresult != null) {
-					logreq.setResponseCode(apiresult.getCode().toString());
+					if(apiresult.getCode() != null) {
+						logreq.setResponseCode(apiresult.getCode().toString());
+					}
 					logreq.setResponseMessage(apiresult.getMessage());
 				} else {
 					logreq.setResponseCode("200");
