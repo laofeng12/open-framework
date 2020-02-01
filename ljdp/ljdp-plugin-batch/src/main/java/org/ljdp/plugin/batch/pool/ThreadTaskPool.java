@@ -1,7 +1,9 @@
 package org.ljdp.plugin.batch.pool;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,6 +55,18 @@ public class ThreadTaskPool {
 	
 	public BaseBatchTask getTaskByID(String id) {
 		return taskMap.get(id);
+	}
+	
+	public List<BaseBatchTask> getAllTask(){
+		ArrayList<BaseBatchTask> list = new ArrayList<BaseBatchTask>();
+		synchronized (this) {
+			Iterator<BaseBatchTask> it = taskMap.values().iterator();
+			while(it.hasNext()) {
+				BaseBatchTask task = it.next();
+				list.add(task);
+			}
+		}
+		return list;
 	}
 	
 	public ArrayList<TaskInfoVO> queryByUser(String userId){

@@ -1,7 +1,10 @@
 package org.ljdp.plugin.batch.view.spring;
 
+import java.io.Serializable;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.ljdp.common.spring.SpringContextManager;
 import org.ljdp.component.result.GeneralResult;
 import org.ljdp.component.result.Result;
 import org.ljdp.component.sequence.ConcurrentSequence;
@@ -15,6 +18,7 @@ import org.ljdp.secure.sso.SsoContext;
 import org.ljdp.ui.spring.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * 文件组件处理器基础层
@@ -25,7 +29,15 @@ public abstract class AbstractBatchComController extends BaseController {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	protected FileBatchTask getBatchTask(FileBusinessObject bo) {
-		FileBatchTask batchTask = new LJDPFileBatchTask(bo);
+		LJDPFileBatchTask batchTask = new LJDPFileBatchTask(bo);
+		try {
+			RedisTemplate redisTemplate = (RedisTemplate)SpringContextManager.getBean("redisTemplate");
+			if(redisTemplate != null) {
+				batchTask.setRedisTemplate(redisTemplate);
+			}
+		} catch (Exception e) {
+			log.error("获取redis失败",e);
+		}
 		try {
 			BeanUtils.setProperty(bo, "cursor", batchTask.getCursor());
 			BeanUtils.setProperty(bo, "user", getUser());
@@ -44,7 +56,7 @@ public abstract class AbstractBatchComController extends BaseController {
 		batch.setId(ConcurrentSequence.getInstance().getSequence(""));
 		//设置任务的操作者
 		if(batch.getUser() == null) {
-			batch.setUser(SsoContext.getUser());
+			batch.setUser((Serializable)SsoContext.getUser());
 		}
 		if(batch.getUser() == null) {
 			batch.setUser(getUser());

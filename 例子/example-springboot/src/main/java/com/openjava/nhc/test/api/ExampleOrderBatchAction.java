@@ -8,7 +8,10 @@ import javax.annotation.Resource;
 import org.ljdp.component.result.GeneralResult;
 import org.ljdp.component.result.Result;
 import org.ljdp.component.strategy.FileBusinessObject;
+import org.ljdp.component.task.BaseBatchTask;
 import org.ljdp.module.filetask.FileBatchTask;
+import org.ljdp.plugin.batch.pool.MemoryTaskPool;
+import org.ljdp.plugin.batch.pool.TaskPoolManager;
 import org.ljdp.plugin.batch.view.spring.AbstractBatchComController;
 import org.ljdp.secure.annotation.Security;
 import org.ljdp.support.attach.component.LjdpFileuploadConfig;
@@ -26,6 +29,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import com.openjava.nhc.test.component.ExampleOrderBatchBO;
+import com.openjava.nhc.test.service.ExampleOrderService;
 
 /**
  * 导入api接口
@@ -42,6 +46,8 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 	private RedisTemplate<String, Object> redisTemplate;
 	@Resource
 	private ExampleOrderBatchBO exampleOrderBatchBO;
+	@Resource
+	private ExampleOrderService exampleOrderService;
 	
 	@ApiOperation(value = "开始导入", nickname="process")
 	@ApiImplicitParams({
@@ -71,6 +77,10 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 			result.setMsg(e.getMessage());
 			return result;
 		}
+		//也可以自己创建业务对象传入参数（因为用spring注入默认是单例，如果传入参数不能用单例，防止并发任务参数被覆盖）
+//		ExampleOrderBatchBO exampleOrderBatchBO2 = new ExampleOrderBatchBO();
+//		exampleOrderBatchBO2.set
+		
 		//开始处理
 //		String fullFilePath = "C:/tempupload/导入测试example-.xlsx";
 //		String fileName = "导入测试example-.xlsx";
@@ -96,5 +106,35 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		//如果是excel文件，填写一共有多少个sheet需要处理
 		task.setSheetNumber(1);
 		return task;
+	}
+	
+	public void showProgressRate(String taskId) {
+		BaseBatchTask task = TaskPoolManager.getFgPool().getTaskByID(taskId);
+		if(task == null) {
+			//任务已经结束放到临时内存
+//			task = MemoryTaskPool.getTask(taskId);
+			task = (BaseBatchTask)redisTemplate.opsForValue().get(taskId);
+		}
+		if(task == null) {
+			//任务已经结束长时间了，不在内存里，从数据库读取
+		}
+		//获取当前任务进度%
+		task.getPercent();
+		//已处理记录数量
+		task.getCurrentRecord();
+		//成功数量
+		task.getOk();
+		//失败数量
+		task.getFail();
+		//总数量
+		task.getTotalRecords();
+		//是否已开始
+		task.isStarted();
+		//是否处理中
+		task.isRunning();
+		//文件是否已处理完成
+		task.isCompleted();
+		//任务是否已结束
+		task.isFinished();
 	}
 }

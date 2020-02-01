@@ -28,7 +28,7 @@ public abstract class BaseBatchTask implements Runnable, Serializable {
     
     private long useTime;
     
-    private Object user;
+    private Serializable user;
     private transient StopWatch watch;
     
     protected BatchResult result;
@@ -122,8 +122,11 @@ public abstract class BaseBatchTask implements Runnable, Serializable {
 	}
 
 	public long getUseTime() {
-		useTime = watch.getTime();
-		return useTime / 1000;
+		if(watch != null) {
+			useTime = watch.getTime();
+			return useTime / 1000;
+		}
+		return useTime;
 	}
 
 	public void setCurrentRecord(int currentRecord) {
@@ -174,11 +177,11 @@ public abstract class BaseBatchTask implements Runnable, Serializable {
 		this.id = id;
 	}
 
-	public Object getUser() {
+	public Serializable getUser() {
 		return user;
 	}
 
-	public void setUser(Object user) {
+	public void setUser(Serializable user) {
 		this.user = user;
 	}
 

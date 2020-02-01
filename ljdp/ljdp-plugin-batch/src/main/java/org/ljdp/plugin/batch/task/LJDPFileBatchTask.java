@@ -1,10 +1,13 @@
 package org.ljdp.plugin.batch.task;
 
+import java.time.Duration;
+
 import org.ljdp.component.strategy.FileBusinessObject;
 import org.ljdp.module.filetask.BOFileBatchTask;
 import org.ljdp.plugin.batch.model.BatchFileDic;
 import org.ljdp.plugin.batch.pool.MemoryTaskPool;
 import org.ljdp.plugin.batch.pool.TaskPoolManager;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * LJDP架构封装的文件数据批量处理任务。
@@ -17,6 +20,8 @@ import org.ljdp.plugin.batch.pool.TaskPoolManager;
 public class LJDPFileBatchTask extends BOFileBatchTask {
 	private static final long serialVersionUID = 385027441905010674L;
 	private boolean endInMemoryTemp = true;
+	
+	private transient RedisTemplate<String, Object> redisTemplate;
 
 	public LJDPFileBatchTask(FileBusinessObject bo) {
 		super(bo);
@@ -30,13 +35,24 @@ public class LJDPFileBatchTask extends BOFileBatchTask {
 					getCursor().resset();
 				}
 			}
+		}
+		super.destory();
+	}
+	
+	@Override
+	protected synchronized void finish() {
+		super.finish();
+		if(TaskPoolManager.getFgPool().containsTask(getId())) {
 			//如果任务没成功完成，需记录到临时池查看
 			if(isEndInMemoryTemp() || !wholeTaskSuccess) {
-				MemoryTaskPool.putTask(this);
+				if(redisTemplate != null) {
+					redisTemplate.opsForValue().set(this.getId(), this, Duration.ofMinutes(60));
+				} else {
+					MemoryTaskPool.putTask(this);
+				}
 			}
 			TaskPoolManager.getFgPool().removeTask(this);
 		}
-		super.destory();
 	}
 
 	public boolean isEndInMemoryTemp() {
@@ -49,6 +65,13 @@ public class LJDPFileBatchTask extends BOFileBatchTask {
 	 */
 	public void setEndInMemoryTemp(boolean endInMemoryTemp) {
 		this.endInMemoryTemp = endInMemoryTemp;
+	}
+
+	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+		this.redisTemplate = redisTemplate;
+		if(redisTemplate != null) {
+			this.endInMemoryTemp = true;
+		}
 	}
 
 }

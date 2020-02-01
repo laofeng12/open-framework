@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class BOFileBatchTask extends FileBatchTask {
 	private static final long serialVersionUID = 1059345974980129705L;
-	protected Logger log = LoggerFactory.getLogger(this.getClass());
-	protected FileBusinessObject bo;
+	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
+	protected transient FileBusinessObject bo;
 	/**
 	 * 是否整个任务都成功，即所有子任务都成功
 	 */

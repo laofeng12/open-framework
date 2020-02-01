@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public abstract class FileBatchTask extends BaseBatchTask {
 	private static final long serialVersionUID = 2285103252677431960L;
 	
-	private Logger log = LoggerFactory.getLogger(FileBatchTask.class);
+	private transient Logger log = LoggerFactory.getLogger(FileBatchTask.class);
 	protected String filename;//待处理的文件
     protected String uploadFileName;//上传的文件名
     protected String fileContentType;
@@ -48,7 +48,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
     
     protected boolean needSuccFile = false;//是否需要写成功文件,resultType为TOW_RES_FILE时才有用
 
-    protected AbstractResultFile resultFile;//存放处理结果文件
+    protected transient AbstractResultFile resultFile;//存放处理结果文件
 
     protected boolean deleteAfterProcess = false;
     
@@ -58,7 +58,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
     protected boolean showRate = false;//是否显示进度
     protected int rateRadix = 10;//显示进度的间隔数
     
-    private String bsBusinessObject;//后台业务对象
+    private transient String bsBusinessObject;//后台业务对象
     
     private int sheetNumber = 1;//处理几个sheet
     

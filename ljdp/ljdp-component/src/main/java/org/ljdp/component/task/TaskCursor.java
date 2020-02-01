@@ -1,6 +1,12 @@
 package org.ljdp.component.task;
 
-public class TaskCursor {
+import java.io.Serializable;
+
+public class TaskCursor implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2636651758820376149L;
 	private int totalRecords; //总需要处理数据量（如文件的行数）
 	private int currentRecord = 0;//当前已处理的数据量
 	private int totalProcedure; //总步骤数,用于计算完成率，由于处理完文件不一定表示批量结束，可能还有后续的处理

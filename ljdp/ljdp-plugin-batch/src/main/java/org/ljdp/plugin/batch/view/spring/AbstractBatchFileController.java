@@ -1,5 +1,7 @@
 package org.ljdp.plugin.batch.view.spring;
 
+import java.io.Serializable;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -78,7 +80,7 @@ public abstract class AbstractBatchFileController extends BaseController {
 		batch.setId(ConcurrentSequence.getInstance().getSequence(""));
 		//设置任务的操作者
 		if(batch.getUser() == null) {
-			batch.setUser(SsoContext.getUser());
+			batch.setUser((Serializable)SsoContext.getUser());
 		}
 		if(batch.getUser() == null) {
 			batch.setUser(getUser());
