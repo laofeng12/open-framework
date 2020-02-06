@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.ljdp.common.spring.SpringContextManager;
 import org.ljdp.component.result.GeneralResult;
 import org.ljdp.component.result.Result;
 import org.ljdp.component.sequence.ConcurrentSequence;
@@ -13,12 +12,11 @@ import org.ljdp.component.task.BaseBatchTask;
 import org.ljdp.module.filetask.FileBatchTask;
 import org.ljdp.plugin.batch.model.BatchFileDic;
 import org.ljdp.plugin.batch.pool.TaskPoolManager;
-import org.ljdp.plugin.batch.task.LJDPFileBatchTask;
+import org.ljdp.plugin.batch.task.RedisFileBatchTask;
 import org.ljdp.secure.sso.SsoContext;
 import org.ljdp.ui.spring.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * 文件组件处理器基础层
@@ -29,15 +27,12 @@ public abstract class AbstractBatchComController extends BaseController {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	protected FileBatchTask getBatchTask(FileBusinessObject bo) {
-		LJDPFileBatchTask batchTask = new LJDPFileBatchTask(bo);
-		try {
-			RedisTemplate redisTemplate = (RedisTemplate)SpringContextManager.getBean("redisTemplate");
-			if(redisTemplate != null) {
-				batchTask.setRedisTemplate(redisTemplate);
-			}
-		} catch (Exception e) {
-			log.error("获取redis失败",e);
-		}
+		RedisFileBatchTask batchTask = new RedisFileBatchTask(bo);
+		batchTask.setShowRate(true);//默认后台打印进度
+		return batchTask;
+	}
+
+	protected void initBatchTask(FileBatchTask batchTask, FileBusinessObject bo) {
 		try {
 			BeanUtils.setProperty(bo, "cursor", batchTask.getCursor());
 			BeanUtils.setProperty(bo, "user", getUser());
@@ -46,8 +41,6 @@ public abstract class AbstractBatchComController extends BaseController {
 		} catch (Exception e) {
 			log.error("设置业务对象参数失败",e);
 		}
-		batchTask.setShowRate(true);//默认后台打印进度
-		return batchTask;
 	}
 	
 	protected void initializeBatchTask(FileBatchTask batch, 
@@ -116,6 +109,7 @@ public abstract class AbstractBatchComController extends BaseController {
 		Result res = new GeneralResult();
 		try {
 			FileBatchTask batch = getBatchTask(bo);
+			initBatchTask(batch, bo);
 			beginBatchTask(batch, fileFullName, fileName, batchType, totalCount);
 			res.setData(batch.getId());
 			res.setSuccess(true);
