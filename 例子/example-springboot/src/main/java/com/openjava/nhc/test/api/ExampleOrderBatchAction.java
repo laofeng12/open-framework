@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Part;
 
 import org.ljdp.component.result.GeneralResult;
 import org.ljdp.component.result.Result;
@@ -18,6 +19,7 @@ import org.ljdp.support.attach.component.LjdpFileuploadConfig;
 import org.ljdp.support.attach.vo.AttachVO;
 import org.ljdp.util.FileUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +51,7 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 	@Resource
 	private ExampleOrderService exampleOrderService;
 	
+	//方案一：分2步上传文件
 	@ApiOperation(value = "开始导入", nickname="process")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "string", paramType = "post"),
@@ -88,6 +91,24 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		return super.doBatchProcess(exampleOrderBatchBO, fullFilePath,
 				fileName, batchType, 0);
 	}
+	
+	//方案二：直接上传文件
+	@ApiOperation(value = "开始导入", nickname="process")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "file1", value = "文件", required = true, dataType = "file", paramType = "post"),
+	})
+	@RequestMapping(value="/process2", method=RequestMethod.POST)
+	@Security(session=true)
+	public Result doBatchProcess2(@RequestParam("file1") Part file1) throws Exception{
+		//1、先保存到服务器
+        String fullFilePath1 = FileUtils.joinDirectory(fileuploadConfig.getLocalPath(),file1.getSubmittedFileName());
+        file1.write(fullFilePath1);
+        
+		String batchType = "订单管理导入";
+		return super.doBatchProcess(exampleOrderBatchBO, fullFilePath1,
+				file1.getSubmittedFileName(), batchType, 0);
+	}
+	
 
 	@Override
 	protected FileBatchTask getBatchTask(FileBusinessObject bo) {
@@ -108,11 +129,14 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		return task;
 	}
 	
-	public void showProgressRate(String taskId) {
+	@RequestMapping(value="/task/{taskId}", method= RequestMethod.GET)
+    @Security(session=true)
+    public BaseBatchTask getTask(@PathVariable("taskId")String taskId) {
 		BaseBatchTask task = TaskPoolManager.getFgPool().getTaskByID(taskId);
 		if(task == null) {
 			//任务已经结束放到临时内存
 //			task = MemoryTaskPool.getTask(taskId);
+			//分布式环境下，任务不在当前节点，去redis获取
 			task = (BaseBatchTask)redisTemplate.opsForValue().get(taskId);
 		}
 		if(task == null) {
@@ -136,5 +160,6 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		task.isCompleted();
 		//任务是否已结束
 		task.isFinished();
+		return task;
 	}
 }

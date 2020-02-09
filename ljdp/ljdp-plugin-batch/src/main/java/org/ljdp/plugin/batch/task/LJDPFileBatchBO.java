@@ -3,12 +3,13 @@ package org.ljdp.plugin.batch.task;
 import org.ljdp.component.user.BaseUserInfo;
 import org.ljdp.component.user.DBAccessUser;
 import org.ljdp.module.batch.TransactionFileBatchBO;
+import org.ljdp.module.filetask.FileBatchTask;
 import org.ljdp.plugin.batch.model.TaskInfoVO;
 
 public abstract class LJDPFileBatchBO extends TransactionFileBatchBO {
 	
 	public TaskInfoVO getBatchTaskInfo() {
-		LJDPFileBatchTask task = (LJDPFileBatchTask)getFileBatchTask();
+		FileBatchTask task = (FileBatchTask)getFileBatchTask();
 		TaskInfoVO vo = new TaskInfoVO(task.getId(), task.getUploadFileName());
 		vo.setType(task.getType());
 		Object user = task.getUser();
