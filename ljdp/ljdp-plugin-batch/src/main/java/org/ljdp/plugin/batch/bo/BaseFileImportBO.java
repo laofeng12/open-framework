@@ -202,8 +202,8 @@ public class BaseFileImportBO extends LJDPFileBatchBO {
 
 	@Override
 	public void destory() {
-		gs.flush();
-		gs.clear();
+//		gs.flush();
+//		gs.clear();
 	}
 
 }
