@@ -57,7 +57,7 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		@ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "string", paramType = "post"),
 	})
 	@RequestMapping(value="/process", method=RequestMethod.POST)
-	@Security(session=true)
+	@Security(session=false)
 	public Result doBatchProcess(@RequestParam("fileId")String fileId) {
 		//获取文件
 		AttachVO vo = (AttachVO)redisTemplate.boundValueOps(fileId).get();
@@ -98,7 +98,7 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 		@ApiImplicitParam(name = "file1", value = "文件", required = true, dataType = "file", paramType = "post"),
 	})
 	@RequestMapping(value="/process2", method=RequestMethod.POST)
-	@Security(session=true)
+	@Security(session=false)
 	public Result doBatchProcess2(@RequestParam("file1") Part file1) throws Exception{
 		//1、先保存到服务器
         String fullFilePath1 = FileUtils.joinDirectory(fileuploadConfig.getLocalPath(),file1.getSubmittedFileName());

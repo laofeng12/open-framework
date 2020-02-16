@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -89,6 +90,25 @@ public class POIResultFile extends AbstractResultFile {
 				cell.setCellValue(items[i]);
 			}
 		}
+    }
+    
+    public void writeErrorTitle(int sheet, String title) {
+    	if(StringUtils.isNotBlank(title)) {
+    		String[] items = title.split("\\|");
+    		if(errorSheet[sheet] != null) {
+    			Row errRow = errorSheet[sheet].createRow((short)0);
+    			for(int i = 0; i < items.length; ++i) {
+    				Cell cell = errRow.createCell(i);
+    				cell.setCellValue(items[i]);
+    			}
+    			Cell error1 = errRow.createCell(items.length);
+    			error1.setCellValue("导入结果");
+    			Cell error2 = errRow.createCell(items.length+1);
+    			error2.setCellValue("位置（行数）");
+    			Cell error3 = errRow.createCell(items.length+2);
+    			error3.setCellValue("原因");
+    		}
+    	}
     }
     
     /**

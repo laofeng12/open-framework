@@ -349,14 +349,15 @@ public abstract class FileBatchTask extends BaseBatchTask {
     	try {
     		poiRf.openFile(false);//false:只是创建excel，先不创建sheet
     		String title = getTitle();
-            if(title != null) {
-            	poiRf.writeTitle(title);
-            }
+//            if(title != null) {
+//            	poiRf.writeTitle(title);
+//            }
             input = new FileInputStream(filename);
             xwb = WorkbookFactory.create(input);
             for(int slocation = 0; slocation < sheetNumber; slocation++) {
             	Sheet sheet = xwb.getSheetAt(slocation);
             	poiRf.createErrorSheet(slocation, sheet.getSheetName());//创建对应的失败记录sheet
+            	poiRf.writeErrorTitle(slocation, title);
                 if(currentReadRow < beginIndex){
     				currentReadRow = beginIndex;
     			}

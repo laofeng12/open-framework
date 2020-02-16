@@ -37,11 +37,16 @@ public class ExampleOrderBatchBO extends BaseFileImportBO {
 	public String getTitle() {
 		return "下单账号|下单时间|订单总额|用户名称|用户地址|订单状态|";
 	}
-	
+	private int currentcount = 0;
 	@Override
 	protected BatchResult doProcessRecord(String record) {
+		currentcount++;
+		System.out.println(record);
 		BatchResult result = new GeneralBatchResult();
 		try {
+			if(currentcount % 2 == 0) {
+				throw new Exception("测试报错");
+			}
 			String[] items = record.split("\\|");
 			int i = 0;
 			//读取文件字段
@@ -63,7 +68,7 @@ public class ExampleOrderBatchBO extends BaseFileImportBO {
 			j.setUserAddress(userAddress);
 			j.setOrderStatus(orderStatus);
 			
-			exampleOrderService.doSave(j);
+//			exampleOrderService.doSave(j);
 			
 			result.setSuccess(true);
 		} catch (Exception e) {
