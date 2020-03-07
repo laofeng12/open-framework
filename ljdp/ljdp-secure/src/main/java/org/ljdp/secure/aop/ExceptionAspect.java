@@ -106,14 +106,18 @@ public class ExceptionAspect {
 			if(logCls != null) {//保存错误日志
 				try {
 					RequestErrorLog log = (RequestErrorLog)logCls.newInstance();
+					if(this.mySequenceService != null) {
+						log.setErrorId(mySequenceService.getSequence(""));
+					} else {
+						SequenceService cs = ConcurrentSequence.getCentumInstance();
+						log.setErrorId(cs.getSequence(""));
+					}
 					Long reqId = SsoContext.getRequestId();
 					if(reqId == null) {
 						if(this.mySequenceService != null) {
-							log.setErrorId(mySequenceService.getSequence(""));
 							reqId = mySequenceService.getSequence();
 						} else {
 							SequenceService cs = ConcurrentSequence.getCentumInstance();
-							log.setErrorId(cs.getSequence(""));
 							reqId = cs.getSequence();
 						}
 						SsoContext.setRequestId(reqId);
