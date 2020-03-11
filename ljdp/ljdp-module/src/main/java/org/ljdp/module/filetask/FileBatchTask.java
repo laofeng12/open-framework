@@ -143,7 +143,9 @@ public abstract class FileBatchTask extends BaseBatchTask {
 			fileContentType = ContentType.getContentType(filename);
 		}
 		if (fileContentType.equals(ContentType.TEXT)) {
-			doProcessFile();
+			doProcessFile(ContentType.TEXT);
+		} else if (fileContentType.equals(ContentType.CSV)) {
+			doProcessFile(ContentType.CSV);
 		} else if (fileContentType.equals(ContentType.EXCEL)) {
 			doProcessExcelFile();
 		} else if (fileContentType.equals(ContentType.EXCELX)) {
@@ -157,11 +159,11 @@ public abstract class FileBatchTask extends BaseBatchTask {
 	 * 默认处理text文件
 	 * 
 	 */
-    private void doProcessFile() throws Exception {
+    private void doProcessFile(String contentType) throws Exception {
         resultFile = new TxtXlsResultFile(resultType);
         TxtXlsResultFile txtRf = (TxtXlsResultFile)resultFile;
         resultFile.setNeedSuccFile(needSuccFile);
-        resultFile.setContentType(ContentType.TEXT);
+        resultFile.setContentType(contentType);
         txtRf.initialize(filename);
         RandomAccessFile rin = new RandomAccessFile(filename, "r");
         try {
@@ -200,7 +202,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
                     // 组合字段写成功记录
                 	for(int i = 0; i < currentBatchNum; ++i) {
                 		String line = records[i];
-                		String resultStr = makeResultLine(resultVO, line, 
+                		String resultStr = makeResultLine(contentType, resultVO, line, 
                 				resultFile.getSuccessSerial());
                 		txtRf.writeSuccessRecord(resultStr);
                 	}
@@ -213,10 +215,10 @@ public abstract class FileBatchTask extends BaseBatchTask {
                 		String line = records[i];
                 		String resultStr;
                 		if(i == resultVO.getCurrent() || resultVO.getCurrent() == -1) {
-                			resultStr = makeResultLine(resultVO, line, 
+                			resultStr = makeResultLine(contentType, resultVO, line, 
                 					resultFile.getCurrentCount());		
                 		} else {
-                			resultStr = makeResultLine(transactionError, line, 
+                			resultStr = makeResultLine(contentType, transactionError, line, 
                 					resultFile.getCurrentCount()); 
                 		}
                 		txtRf.writeErrorRecord(resultStr);
@@ -430,13 +432,21 @@ public abstract class FileBatchTask extends BaseBatchTask {
      * 生成一行处理结果数据
      * 
      */
-    protected String makeResultLine(BatchResult resultVO, String line, int i) {
+    protected String makeResultLine(String contentType, BatchResult resultVO, String line, int i) {
     	String resLine = line;
-		if(resultVO.isSuccess()) {
-			resLine += "|成功|";
-        } else {
-        	resLine += "|失败|" + i + "|" + resultVO.getMsg();
-        }
+    	if(contentType.equals(ContentType.TEXT)) {
+    		if(resultVO.isSuccess()) {
+    			resLine += "|成功|";
+    		} else {
+    			resLine += "|失败|" + i + "|" + resultVO.getMsg();
+    		}
+    	} else if(contentType.equals(ContentType.CSV)) {
+    		if(resultVO.isSuccess()) {
+    			resLine += ",成功";
+            } else {
+            	resLine += ",失败," + i + "," + resultVO.getMsg();
+            }
+    	}
 		return resLine;
     }
     
@@ -548,7 +558,7 @@ public abstract class FileBatchTask extends BaseBatchTask {
 			fileContentType = ContentType.getContentType(filename);
 		}
 		try {
-			if (fileContentType.equals(ContentType.TEXT)) {
+			if (fileContentType.equals(ContentType.TEXT) || fileContentType.equals(ContentType.CSV)) {
 				BufferedReader reader = new BufferedReader(new FileReader(new File(filename)));
 				int currentRow = 0;
 				while(true) {

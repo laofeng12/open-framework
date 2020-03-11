@@ -56,7 +56,7 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "string", paramType = "post"),
 	})
-	@RequestMapping(value="/process", method=RequestMethod.POST)
+	@RequestMapping(value="/process")
 	@Security(session=false)
 	public Result doBatchProcess(@RequestParam("fileId")String fileId) {
 		//获取文件
@@ -93,21 +93,21 @@ public class ExampleOrderBatchAction extends AbstractBatchComController {
 	}
 	
 	//方案二：直接上传文件
-	@ApiOperation(value = "开始导入", nickname="process")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "file1", value = "文件", required = true, dataType = "file", paramType = "post"),
-	})
-	@RequestMapping(value="/process2", method=RequestMethod.POST)
-	@Security(session=false)
-	public Result doBatchProcess2(@RequestParam("file1") Part file1) throws Exception{
-		//1、先保存到服务器
-        String fullFilePath1 = FileUtils.joinDirectory(fileuploadConfig.getLocalPath(),file1.getSubmittedFileName());
-        file1.write(fullFilePath1);
-        
-		String batchType = "订单管理导入";
-		return super.doBatchProcess(exampleOrderBatchBO, fullFilePath1,
-				file1.getSubmittedFileName(), batchType, 0);
-	}
+//	@ApiOperation(value = "开始导入", nickname="process")
+//	@ApiImplicitParams({
+//		@ApiImplicitParam(name = "file1", value = "文件", required = true, dataType = "file", paramType = "post"),
+//	})
+//	@RequestMapping(value="/process2", method=RequestMethod.POST)
+//	@Security(session=false)
+//	public Result doBatchProcess2(@RequestParam("file1") Part file1) throws Exception{
+//		//1、先保存到服务器
+//        String fullFilePath1 = FileUtils.joinDirectory(fileuploadConfig.getLocalPath(),file1.getSubmittedFileName());
+//        file1.write(fullFilePath1);
+//        
+//		String batchType = "订单管理导入";
+//		return super.doBatchProcess(exampleOrderBatchBO, fullFilePath1,
+//				file1.getSubmittedFileName(), batchType, 0);
+//	}
 	
 
 	@Override

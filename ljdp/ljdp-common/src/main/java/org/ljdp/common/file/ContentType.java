@@ -5,6 +5,7 @@ import org.ljdp.util.FileUtils;
 public class ContentType {
 
 	public static final String TEXT = "text/plain";
+	public static final String CSV = "text/csv";
 	public static final String EXCEL = "application/vnd.ms-excel";
 	public static final String EXCEL2 = "application/x-xls";
 	public static final String EXCELX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -101,13 +102,14 @@ public class ContentType {
 			return ".gzip";
 		} else if(MP4.equals(ctype)) {
 			return ".mp4";
+		} else if(CSV.equals(ctype)) {
+			return ".csv";
 		}
 		return ".unknow";
 	}
 
 	private static String transform(String ext) {
-		if (ext.equals(".XLS") ||  ext.equals(".XLT")
-				|| ext.equals(".XLW") || ext.equals(".CSV")) {
+		if (ext.equals(".XLS")) {
 			return EXCEL;
 		} else if(ext.equals(".XLSX")) {
 			return EXCELX;
@@ -144,6 +146,8 @@ public class ContentType {
 			return JSON;
 		} else if (ext.equals(".MP4")) {
 			return MP4;
+		} else if (ext.equals(".csv") || ext.equals(".CSV")) {
+			return CSV;
 		}
 		return null;
 	}
@@ -155,6 +159,8 @@ public class ContentType {
 			return "Excel文件";
 		} else if (type.equals(EXCELX)) {
 			return "Excelx文件";
+		} else if (type.equals(CSV)) {
+			return "csv文件";
 		}
 		return "";
 	}

@@ -48,7 +48,7 @@ public class TxtXlsResultFile extends AbstractResultFile {
         	} else if(resultType == TOW_RES_FILE) {
         		sucResultFileName = impoFileName.replaceFirst("\\.txt$", "_suc.txt");
         		errResultFileName = impoFileName.replaceFirst("\\.txt$", "_err.txt");
-        	}        	
+        	}
         } else if(contentType.equals(ContentType.EXCEL)) {
         	if(resultType == ONE_RES_FILE) {
         		resultFileName = impoFileName.replaceFirst("\\.xls$", "_result.xls");            
@@ -56,11 +56,18 @@ public class TxtXlsResultFile extends AbstractResultFile {
         		sucResultFileName = impoFileName.replaceFirst("\\.xls$", "_suc.xls");
         		errResultFileName = impoFileName.replaceFirst("\\.xls$", "_err.xls");
         	}
+        } else if(contentType.equals(ContentType.CSV)) {
+        	if(resultType == ONE_RES_FILE) {
+        		resultFileName = impoFileName.replaceFirst("\\.csv$", "_result.csv");            
+        	} else if(resultType == TOW_RES_FILE) {
+        		sucResultFileName = impoFileName.replaceFirst("\\.csv$", "_suc.csv");
+        		errResultFileName = impoFileName.replaceFirst("\\.csv$", "_err.csv");
+        	}
         }
     }
     
     public void openFile() throws IOException {
-    	if(contentType.equals(ContentType.TEXT)) {
+    	if(contentType.equals(ContentType.TEXT) || contentType.equals(ContentType.CSV)) {
     		if(resultType == ONE_RES_FILE) {            
     			resultFile = new RandomAccessFile(new File(resultFileName), "rw");
     		} else if(resultType == TOW_RES_FILE) {
@@ -80,7 +87,7 @@ public class TxtXlsResultFile extends AbstractResultFile {
     }
     
     public void writeTitle(String title) throws IOException, RowsExceededException, WriteException {
-    	if(contentType.equals(ContentType.TEXT)) {
+    	if(contentType.equals(ContentType.TEXT) || contentType.equals(ContentType.CSV)) {
     		if(ONE_RES_FILE == resultType) {
     			resultFile.writeBytes( title );                 
     		} else if(TOW_RES_FILE == resultType) {
@@ -104,7 +111,7 @@ public class TxtXlsResultFile extends AbstractResultFile {
     
     public void writeSuccessRecord(String msg) throws IOException {
         if(ONE_RES_FILE == resultType) {
-            resultFile.writeBytes( newLine(msg) );                            
+            resultFile.writeBytes( newLine(msg) );
         } else if(TOW_RES_FILE == resultType) {
         	if(needSuccFile) {
         		sucResultFile.writeBytes( newLine(msg) );
