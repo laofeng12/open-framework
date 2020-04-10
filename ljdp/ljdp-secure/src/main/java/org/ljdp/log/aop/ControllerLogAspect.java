@@ -170,62 +170,117 @@ public class ControllerLogAspect {
 			
 //			StringBuffer inContent = new StringBuffer(1000);
 			Map<String, Object> inMap = new HashMap<>();
-			boolean isRequestBody = false;
 			Object bodyValue = null;
-			Parameter[] params = method.getParameters();
-			for (int i = 0; i < params.length; i++) {
-				Parameter p = params[i];
-				if(args == null || args.length <= i) {
-					break;
-				}
-				if(args[i] == null) {
-					continue;
-				}
-				if(ServletRequest.class.isAssignableFrom(args[i].getClass())) {
-					continue;
-				}
-				if(ServletResponse.class.isAssignableFrom(args[i].getClass())) {
-					continue;
-				}
-				if(args[i].getClass().getName().startsWith("javax.")) {
-					continue;
-				}
-				if(args[i].getClass().getName().startsWith("org.apache.")) {
-					continue;
-				}
-				String paramName = null;
-				RequestParam rp = p.getAnnotation(RequestParam.class);
-				if(rp != null) {
-					paramName = rp.value();
-					if(StringUtils.isEmpty(paramName)) {
-						paramName = rp.name();
+			String reqParams = "";
+			if(logCfg == null || logCfg.saveParams()) {
+				Parameter[] params = method.getParameters();
+				boolean isRequestBody = false;
+				for (int i = 0; i < params.length; i++) {
+					Parameter p = params[i];
+					if(args == null || args.length <= i) {
+						break;
+					}
+					if(args[i] == null) {
+						continue;
+					}
+					if(ServletRequest.class.isAssignableFrom(args[i].getClass())) {
+						continue;
+					}
+					if(ServletResponse.class.isAssignableFrom(args[i].getClass())) {
+						continue;
+					}
+					if(args[i].getClass().getName().startsWith("javax.")) {
+						continue;
+					}
+					if(args[i].getClass().getName().startsWith("org.apache.")) {
+						continue;
+					}
+					String paramName = null;
+					RequestParam rp = p.getAnnotation(RequestParam.class);
+					if(rp != null) {
+						paramName = rp.value();
+						if(StringUtils.isEmpty(paramName)) {
+							paramName = rp.name();
+						}
+					}
+					PathVariable pv = p.getAnnotation(PathVariable.class);
+					if(pv != null) {
+						paramName = pv.value();
+					}
+					RequestBody rbody = p.getAnnotation(RequestBody.class);
+					if(rbody != null) {
+						isRequestBody = true;
+						bodyValue = args[i];
+						bodyClass = p.getType();
+						break;
+					}
+//					if(i > 0) {
+//						inContent.append(",");
+//					}
+					
+//					System.out.println("paramName="+paramName);
+//					System.out.println("args="+args[i]);
+					
+					if(paramName == null) {
+						Map<String, Object> argMap = MyBeanUtils.reflectionToMap(args[i]);
+						inMap.putAll(argMap);
+//						inContent.append(MyBeanUtils.reflectionToString(args[i]));
+					} else {
+//						inContent.append(paramName+"="+args[i]);
+						inMap.put(paramName, args[i]);
 					}
 				}
-				PathVariable pv = p.getAnnotation(PathVariable.class);
-				if(pv != null) {
-					paramName = pv.value();
+				String[] desensitizeParam = {};
+				if(logCfg != null && logCfg.desensitizeParams() != null) {
+					desensitizeParam = logCfg.desensitizeParams();
 				}
-				RequestBody rbody = p.getAnnotation(RequestBody.class);
-				if(rbody != null) {
-					isRequestBody = true;
-					bodyValue = args[i];
-					bodyClass = p.getType();
-					break;
-				}
-//				if(i > 0) {
-//					inContent.append(",");
-//				}
-				
-//				System.out.println("paramName="+paramName);
-//				System.out.println("args="+args[i]);
-				
-				if(paramName == null) {
-					Map<String, Object> argMap = MyBeanUtils.reflectionToMap(args[i]);
-					inMap.putAll(argMap);
-//					inContent.append(MyBeanUtils.reflectionToString(args[i]));
+				if(isRequestBody) {
+					boolean isList = false;
+					if(bodyClass.equals(ArrayList.class) || bodyClass.equals(List.class)) {
+						isList = true;
+					} else {
+						Class<?>[] clss = bodyClass.getInterfaces();
+						for (Class<?> clz : clss) {
+							if(clz.equals(List.class)) {
+								isList = true;
+								break;
+							}
+						}
+					}
+					if(isList) {
+						reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+					} else {
+						try {
+							for (String ds : desensitizeParam) {
+								PropertyUtils.setProperty(bodyValue, ds, "***");
+							}
+							//对象如果用了lombok后，用不了PropertyUtils这个工具
+							reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+						} catch (JsonProcessingException e) {
+//							System.out.println("解析参数失败："+e.getMessage());
+							Object myvalue = bodyClass.newInstance();
+							PropertyUtils.copyProperties(myvalue, bodyValue);
+							for (String ds : desensitizeParam) {
+								PropertyUtils.setProperty(myvalue, ds, "***");
+							}
+							reqParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
+						}
+					}
 				} else {
-//					inContent.append(paramName+"="+args[i]);
-					inMap.put(paramName, args[i]);
+					Iterator<String> it = inMap.keySet().iterator();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						//过滤密码字段
+						if(key.equals("userPwd") || key.equals("pwd") || key.contains("password")) {
+							inMap.put(key, "***");
+						}
+					}
+					for (String ds : desensitizeParam) {
+						if(inMap.containsKey(ds)) {
+							inMap.put(ds, "***");
+						}
+					}
+					reqParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);
 				}
 			}
 			SequenceService ss = ConcurrentSequence.getCentumInstance();
@@ -251,36 +306,7 @@ public class ControllerLogAspect {
 //			System.out.println(iden+" "+logreq.getRequestParams());
 //			System.out.println(logreq.toString());
 //			String reqParams = inContent.toString();
-			String reqParams;
-			if(isRequestBody) {
-				boolean isList = false;
-				if(bodyClass.equals(ArrayList.class) || bodyClass.equals(List.class)) {
-					isList = true;
-				} else {
-					Class<?>[] clss = bodyClass.getInterfaces();
-					for (Class<?> clz : clss) {
-						if(clz.equals(List.class)) {
-							isList = true;
-							break;
-						}
-					}
-				}
-				if(isList) {
-					reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
-				} else {
-					try {
-						//对象如果用了lombok后，用不了PropertyUtils这个工具
-						reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
-					} catch (JsonProcessingException e) {
-//						System.out.println("解析参数失败："+e.getMessage());
-						Object myvalue = bodyClass.newInstance();
-						PropertyUtils.copyProperties(myvalue, bodyValue);
-						reqParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
-					}
-				}
-			} else {
-				reqParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);
-			}
+			
 			if(null == logCfg) {
 				//如果没有配置，那么看默认设置
 				if(defaultPrintLog) {

@@ -12,4 +12,8 @@ public @interface LogConfig {
 	boolean save() default true;
 	
 	boolean print() default true;
+	
+	boolean saveParams() default true;
+	
+	String[] desensitizeParams() default {};//需要脱敏的参数字段
 }
