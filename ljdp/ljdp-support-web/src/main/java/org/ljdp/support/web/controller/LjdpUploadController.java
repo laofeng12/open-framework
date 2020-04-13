@@ -306,8 +306,10 @@ public class LjdpUploadController extends FileUploadController {
 				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getAudioServerUrl()));
 			} else if(type.equals("image")) {
 				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getImageServerUrl()));
-			}else if(type.equals("chat")) {
+			} else if(type.equals("chat")) {
 				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getChatServerUrl()));
+			} else if(type.equals("readguidance")) {
+				result.setViewUrl(dfsUtils.replaceObsToServer(imgFile.getPicurl(), dfsUtils.getGuidanceServerUrl()));
 			}
 		}
 		return result;
