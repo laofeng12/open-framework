@@ -93,10 +93,10 @@ public abstract class FileBatchTask extends BaseBatchTask {
 				result.setMsg(ex.toString());
 			}
 			Boolean finalSucc = false;
-			if(isRunning()) {
+//			if(isRunning()) {
 				finalSucc = finalWork();
 				addCurrentProcedure(1);
-			}
+//			}
 			result.setSuccess(finalSucc);
 			if(!finalSucc) {
 				result.setMsg("文件处理完成，结束步骤出错");

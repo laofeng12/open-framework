@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.openjava</groupId>
 	<artifactId>springboot-parent</artifactId>
-	<version>2.1.8.R24</version>
+	<version>2.1.8.R25</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -19,7 +19,7 @@
 		<ljdp-component.version>2.0.6</ljdp-component.version>
 		<ljdp-common.version>2.1.1</ljdp-common.version>
 		<ljdp-core3.version>5.1.9.R02</ljdp-core3.version>
-		<ljdp-module.version>2.0.4</ljdp-module.version>
+		<ljdp-module.version>2.0.5</ljdp-module.version>
 		<ljdp-ui.version>2.0.5</ljdp-ui.version>
 		<ljdp-secure.version>2.4.1</ljdp-secure.version>
 		<ljdp-plugin-batch.version>2.1.1</ljdp-plugin-batch.version>
