@@ -1,6 +1,7 @@
 package org.ljdp.component.result;
 
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class GeneralBatchResult implements BatchResult {
 
@@ -30,6 +31,8 @@ public class GeneralBatchResult implements BatchResult {
     
     private Object data;
     
+    private Map<Integer,String> failRecords = new HashMap<>();//失败记录位置，失败原因
+    
     public GeneralBatchResult() {
         success=false;
         if(success) {
@@ -38,6 +41,16 @@ public class GeneralBatchResult implements BatchResult {
     		this.code = 1001;
     	}
     }
+    
+	public GeneralBatchResult(boolean success, String msg) {
+		this.success = success;
+		this.msg = msg;
+		if(success) {
+    		this.code = 200;
+    	} else {
+    		this.code = 1001;
+    	}
+	}
 
 	public int getTotalCount() {
 		return totalCount;
@@ -147,4 +160,18 @@ public class GeneralBatchResult implements BatchResult {
 	public void setMessage(String msg) {
 		this.msg = msg;
 	}
+
+	public Map<Integer, String> getFailRecords() {
+		return failRecords;
+	}
+
+	public void setFailRecords(Map<Integer, String> failRecords) {
+		this.failRecords = failRecords;
+	}
+	
+	public void addFailRecord(Integer position, String msg) {
+		this.failRecords.put(position, msg);
+	}
+	
+	
 }

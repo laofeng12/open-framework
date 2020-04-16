@@ -78,4 +78,33 @@ public class ExampleOrderBatchBO extends BaseFileImportBO {
 		}
 		return result;
 	}
+	
+	@Override
+	public BatchResult doProcessRecord(int sheetLocation, String[] line, int size) {
+		BatchResult result = new GeneralBatchResult();
+		//开始事务
+		beginTransaction();
+		for(int i=0; i < size; i++) {
+			String record = line[i];
+			if(checkValidate(record)) {
+				//验证通过正常处理
+			} else {
+				//验证失败，写入错误文件
+				result.addFailRecord(i, "失败原因");
+			}
+		}
+		//提交事务
+		commitTransaction();
+		return result;
+	}
+	
+	private boolean checkValidate(String record) {
+		return true;
+	}
+	private void beginTransaction() {
+		
+	}
+	private void commitTransaction() {
+		
+	}
 }

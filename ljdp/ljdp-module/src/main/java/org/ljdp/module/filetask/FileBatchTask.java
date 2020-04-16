@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.text.NumberFormat;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -200,11 +201,17 @@ public abstract class FileBatchTask extends BaseBatchTask {
                 BatchResult resultVO = doProcessRecord(0, records, currentBatchNum);
                 if ( resultVO.isSuccess() ) {
                     // 组合字段写成功记录
+                	Map<Integer,String> failRecords = resultVO.getFailRecords();
                 	for(int i = 0; i < currentBatchNum; ++i) {
                 		String line = records[i];
-                		String resultStr = makeResultLine(contentType, resultVO, line, 
-                				resultFile.getSuccessSerial());
-                		txtRf.writeSuccessRecord(resultStr);
+                		if(failRecords != null && failRecords.containsKey(i)) {//存在部分失败记录
+                			String resultStr = makeFailLine(contentType, failRecords.get(i), line, resultFile.getCurrentCount());
+                			txtRf.writeErrorRecord(resultStr);
+                		} else {
+                			String resultStr = makeResultLine(contentType, resultVO, line, 
+                					resultFile.getSuccessSerial());
+                			txtRf.writeSuccessRecord(resultStr);
+                		}
                 	}
                 } else {
                 	BatchResult transactionError = new GeneralBatchResult();
@@ -296,10 +303,16 @@ public abstract class FileBatchTask extends BaseBatchTask {
 				}
 				BatchResult resultVO = doProcessRecord(records, currentBatchNum);
 				if ( resultVO.isSuccess() ) {
+					Map<Integer,String> failRecords = resultVO.getFailRecords();
 					for(int j = 0; j < currentBatchNum; ++j) {
 						jxl.Cell[] cells = records[j];
-						jxl.Cell[] resultCell = makeResultLine(resultVO, cells, null);
-						xlsRf.writeSuccessRecord(resultCell);
+						if(failRecords != null && failRecords.containsKey(j)) {//存在部分失败记录
+							jxl.Cell[] resultCell = makeResultLine(new GeneralBatchResult(false,failRecords.get(j)) , cells, null);
+							xlsRf.writeErrorRecord(resultCell);
+						} else {
+							jxl.Cell[] resultCell = makeResultLine(resultVO, cells, null);
+							xlsRf.writeSuccessRecord(resultCell);
+						}
 					}
 				} else {
 					BatchResult transactionError = new GeneralBatchResult();
@@ -381,9 +394,15 @@ public abstract class FileBatchTask extends BaseBatchTask {
     				}
     				BatchResult resultVO = doProcessRecord(slocation, records, currentBatchNum);
     				if ( resultVO.isSuccess() ) {
+    					Map<Integer,String> failRecords = resultVO.getFailRecords();
     					for(int j = 0; j < currentBatchNum; ++j) {
-    						String[] resultInfo = makeResultMsg(resultVO);
-    						poiRf.writeSuccessRecord(records[j], resultInfo);
+    						if(failRecords!= null && failRecords.containsKey(j)) {//存在部分失败记录
+    							String[] resultInfo = makeFailMsg(failRecords.get(j));
+    							poiRf.writeErrorRecord(slocation, records[j], resultInfo);
+    						} else {
+    							String[] resultInfo = makeResultMsg(resultVO);
+    							poiRf.writeSuccessRecord(records[j], resultInfo);
+    						}
     					}
     				} else {
     					BatchResult transactionError = new GeneralBatchResult();
@@ -449,6 +468,15 @@ public abstract class FileBatchTask extends BaseBatchTask {
     	}
 		return resLine;
     }
+    protected String makeFailLine(String contentType, String failMsg, String line, int i) {
+    	String resLine = line;
+    	if(contentType.equals(ContentType.TEXT)) {
+    		resLine += "|失败|" + i + "|" + failMsg;
+    	} else if(contentType.equals(ContentType.CSV)) {
+            resLine += ",失败," + i + "," + failMsg;
+    	}
+		return resLine;
+    }
     
     protected jxl.Cell[] makeResultLine(BatchResult resultVO, jxl.Cell[] row, Integer lastColumn) {
     	jxl.Cell[] cells = new jxl.Cell[row.length+3];
@@ -495,6 +523,14 @@ public abstract class FileBatchTask extends BaseBatchTask {
     		items[1] = String.valueOf(resultFile.getCurrentCount() + 1);
     		items[2] = resultVO.getMsg();
     	}
+    	return items;
+    }
+    
+    protected String[] makeFailMsg(String errorMsg) {
+    	String[] items = new String[3];
+    	items[0] = "失败";
+		items[1] = String.valueOf(resultFile.getCurrentCount() + 1);
+		items[2] = errorMsg;
     	return items;
     }
 

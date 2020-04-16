@@ -1,5 +1,8 @@
 package org.ljdp.component.result;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface BatchResult extends Result{
 
@@ -34,5 +37,8 @@ public interface BatchResult extends Result{
 	public int getFail();
 	
 	public void setFail(int fail);
-
+	
+	Map<Integer, String> getFailRecords();
+	void setFailRecords(Map<Integer, String> failRecords);
+	void addFailRecord(Integer position, String msg);
 }
