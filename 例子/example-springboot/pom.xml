@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.openjava</groupId>
 			<artifactId>ljdp-admin-api</artifactId>
-			<version>2.1.6.R09</version>
+			<version>2.1.8.R26</version>
 		</dependency>
 		
 		<dependency>

@@ -1,16 +1,25 @@
 package com.openjava.nhc.test.api;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.ljdp.common.bean.FieldType;
 import org.ljdp.common.bean.MyBeanUtils;
 import org.ljdp.common.file.ContentType;
 import org.ljdp.common.file.POIExcelBuilder;
@@ -205,6 +214,65 @@ public class ExampleOrderAction {
 				response.getWriter().write(e.getMessage());
 			} catch (Exception e2) {
 			}
+		}
+	}
+	
+	private final static ReentrantLock lock = new ReentrantLock();
+	@Security(session=false)
+	@RequestMapping(value="/export/v2", method=RequestMethod.GET)
+	public void doExportV2(HttpServletRequest request, HttpServletResponse response,
+			ExampleOrderDBParam params) throws Exception{
+		try {
+			boolean havelock = lock.tryLock(5, TimeUnit.SECONDS);
+			if (!havelock) {
+				throw new Exception("系统繁忙，请稍后再导出");
+			}
+			Pageable pageable = PageRequest.of(0, 20000);//限制只能导出2w，防止内存溢出
+			Page<ExampleOrder> result = exampleOrderService.query(params, pageable);
+			
+			String filename = "test("+DateFormater.formatDatetime_SHORT(new Date())+").xlsx";
+			new File("/export").mkdir();
+			File expfile = new File("/export/"+filename);
+			OutputStream outputstream = new BufferedOutputStream(new FileOutputStream(expfile));
+			POIExcelBuilder myBuilder = new POIExcelBuilder(outputstream);
+			//设置导出字段，以下是示例，请自行编写
+			myBuilder.addProperty("operAccount", "账号");
+			myBuilder.addProperty("userName", "用户姓名");
+			myBuilder.addProperty("submitTime", "创建时间", FieldType.BASE_DATE, "yyyy-MM-dd HH:mm:ss");//设置时间格式
+			myBuilder.addProperty("userAddress", "地址");
+			myBuilder.addProperty("totalPrice", "订单金额");
+//			myBuilder.addProperty("userStatus", "用户状态", SysCodeUtil.codeToMap("sys.user.status"));//自动数据字典【tsys_code】翻译
+//			Map<K, V> tfMap1 = new HashMap();
+//			tfMap1.put(1, "状态1");
+//			tfMap1.put(2, "状态2");
+//			myBuilder.addProperty("userStatus", "用户状态",tfMap1);//写死静态字典翻译
+			
+			myBuilder.buildSheet("", result.getContent());//放到第一个sheet
+			//保存文件
+			myBuilder.finish();
+			outputstream.close();
+			
+			//上传minio：查看文档《文件对象分布式存储服务组件使用教程v1.6.docx》
+			//上传后，得到文件对象key，和文件路径url
+//			vo.getObjectkey();
+//			vo.getDownloadPath();
+			//保存导出日志：查看文档《审计日志组件使用说明》
+			//把上面得到的文件key和路径，作为参数存入日志
+
+			//开始导出
+			response.setContentType(ContentType.EXCEL);
+			response.addHeader("Content-disposition", "attachment;filename="
+					+ new String(filename.getBytes("GBK"), "iso-8859-1"));
+			IOUtils.copy(new FileInputStream(expfile), response.getOutputStream());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setContentType("text/html;charset=utf-8");
+			try {
+				response.getWriter().write(e.getMessage());
+			} catch (Exception e2) {
+			}
+		} finally {
+			lock.unlock();
 		}
 	}
 }
