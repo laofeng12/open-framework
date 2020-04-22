@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ import org.ljdp.support.attach.service.HwObsService;
 import org.ljdp.support.attach.vo.AttachVO;
 import org.ljdp.support.attach.vo.ImageResult;
 import org.ljdp.support.dictionary.DictConstants;
+import org.ljdp.support.web.util.FileTypeUtil;
 import org.ljdp.ui.extjs.ExtUtils;
 import org.ljdp.util.ByteUtil;
 import org.ljdp.util.FileUtils;
@@ -76,7 +78,8 @@ public class LjdpUploadController extends FileUploadController {
 		rootLocation = cfg.getValue("upload_local_path");
 		System.out.println("upload_local_path="+rootLocation);
 	}
-	
+
+
 	/**
 	 * 上传文件，返回文件上传后的信息； 如果文件上传成功，将把结果信息临时存放内存，供后续提交表单请求使用；
 	 * 结果信息里的{data}字段记录了内存区中存放的id值
@@ -263,20 +266,54 @@ public class LjdpUploadController extends FileUploadController {
 			@RequestParam(value="bid",required=false) String bid,
 			@RequestParam(value="type",required=false) String type,
 			@RequestParam(value="persistent",required=false) String persistent) throws Exception{
+		String filename = file.getSubmittedFileName();
+		int lastIndex = filename.lastIndexOf(".");
+		if (lastIndex <= 0) {
+			throw new APIException(-10004, "上传文件名称格式有误");
+		}
+		String prefix =filename.substring(filename.lastIndexOf(".")+1,filename.length());
+
 		if(StringUtils.isBlank(busiPath)) {
 			if(StringUtils.isNotBlank(type)) {
 				if(type.equals("vedio")) {
+					if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_VEDIO.get(prefix)))
+					{
+						throw new APIException(-10005, "暂不支持该视频文件格式上传");
+					}
 					busiPath = fileuploadConfig.getVedioBucket();
 				} else if(type.equals("audio")) {
+					if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_AUDIO.get(prefix)))
+					{
+						throw new APIException(-10005, "暂不支持该音频文件格式上传");
+					}
 					busiPath = fileuploadConfig.getAudioBucket();
 				} else if(type.equals("image")) {
+					if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_IMAGE.get(prefix)))
+					{
+						throw new APIException(-10005, "暂不支持该图片文件格式上传");
+					}
 					busiPath = fileuploadConfig.getImageBucket();
 				} else if(type.equals("chat")){
+					if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_IMAGE.get(prefix)))
+					{
+						throw new APIException(-10005, "暂不支持该图片文件格式上传");
+					}
 					busiPath = fileuploadConfig.getChatBucket();
 				} else if(type.equals("readguidance")){
+					if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_VEDIO.get(prefix)))
+					{
+						throw new APIException(-10005, "暂不支持该视频文件格式上传");
+					}
 					busiPath = fileuploadConfig.getGuidanceBucket();
 				}
 			}
+			else{
+				if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_ALL.get(prefix)))
+				{
+					throw new APIException(-10006, "暂不支持该文件格式上传");
+				}
+			}
+
 		}
 		if(StringUtils.isBlank(persistent)) {
 			persistent = "database";//默认保存数据库
@@ -314,6 +351,9 @@ public class LjdpUploadController extends FileUploadController {
 		}
 		return result;
 	}
+
+
+
 	
 	/**
 	 * 导入文件的临时上传
