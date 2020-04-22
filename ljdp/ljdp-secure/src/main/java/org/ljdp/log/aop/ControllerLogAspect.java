@@ -192,7 +192,13 @@ public class ControllerLogAspect {
 					if(args[i].getClass().getName().startsWith("javax.")) {
 						continue;
 					}
+					if(args[i].getClass().getName().startsWith("java.io.")) {
+						continue;
+					}
 					if(args[i].getClass().getName().startsWith("org.apache.")) {
+						continue;
+					}
+					if(args[i].getClass().getName().equals("org.springframework.web.multipart.MultipartFile")) {
 						continue;
 					}
 					String paramName = null;
