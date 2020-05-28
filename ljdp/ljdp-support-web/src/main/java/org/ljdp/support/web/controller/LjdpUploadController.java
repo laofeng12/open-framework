@@ -1,17 +1,5 @@
 package org.ljdp.support.web.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
 import org.apache.commons.lang3.StringUtils;
 import org.ljdp.common.config.ConfigFile;
 import org.ljdp.common.config.ConfigFileFactory;
@@ -42,11 +30,13 @@ import org.ljdp.util.ByteUtil;
 import org.ljdp.util.FileUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.*;
 
 
 /**
@@ -306,6 +296,10 @@ public class LjdpUploadController extends FileUploadController {
 					}
 					busiPath = fileuploadConfig.getGuidanceBucket();
 				}
+				else{
+					throw new APIException(-10005, "暂不支持该文件格式上传");
+				}
+
 			}
 			else{
 				if(StringUtils.isBlank(FileTypeUtil.FILE_TYPE_ALL.get(prefix)))
