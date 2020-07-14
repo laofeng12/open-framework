@@ -250,7 +250,7 @@ public class ControllerLogAspect {
 						isList = true;
 					} else if(bodyClass.equals(Map.class)) {
 						isMap = true;
-					} else if(bodyClass.toString().equals("com.alibaba.fastjson.JSONObject")) {
+					} else if(bodyClass.getName().equals("com.alibaba.fastjson.JSONObject")) {
 						isJSONObject = true;
 					} else {
 						Class<?>[] clss = bodyClass.getInterfaces();
