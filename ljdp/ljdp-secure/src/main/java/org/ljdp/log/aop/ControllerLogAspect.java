@@ -218,7 +218,8 @@ public class ControllerLogAspect {
 						isRequestBody = true;
 						bodyValue = args[i];
 						bodyClass = p.getType();
-						break;
+//						break;//可能同时存在RequestBody+PathVariable+get参数,所以改为continue;
+						continue;
 					}
 //					if(i > 0) {
 //						inContent.append(",");
@@ -240,28 +241,57 @@ public class ControllerLogAspect {
 				if(logCfg != null && logCfg.desensitizeParams() != null) {
 					desensitizeParam = logCfg.desensitizeParams();
 				}
+				String bodyParams = "";
 				if(isRequestBody) {
 					boolean isList = false;
+					boolean isJSONObject = false;
+					boolean isMap = false;
 					if(bodyClass.equals(ArrayList.class) || bodyClass.equals(List.class)) {
 						isList = true;
+					} else if(bodyClass.equals(Map.class)) {
+						isMap = true;
+					} else if(bodyClass.toString().equals("com.alibaba.fastjson.JSONObject")) {
+						isJSONObject = true;
 					} else {
 						Class<?>[] clss = bodyClass.getInterfaces();
 						for (Class<?> clz : clss) {
 							if(clz.equals(List.class)) {
 								isList = true;
 								break;
+							} else if(clz.equals(Map.class)) {
+								isMap = true;
+								break;
 							}
 						}
 					}
+					
 					if(isList) {
-						reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+						bodyParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+					} else if(isJSONObject) {
+						Map bodyMap = (Map)bodyValue;
+						Map paramsMap = new HashMap();
+						paramsMap.putAll(bodyMap);
+						for (String ds : desensitizeParam) {
+							if(paramsMap.containsKey(ds)) {
+								paramsMap.put(ds, "***");
+							}
+						}
+						bodyParams = JacksonTools.getObjectMapper().writeValueAsString(paramsMap);
+					} else if(isMap) {
+						Map bodyMap = (Map)bodyValue;
+						for (String ds : desensitizeParam) {
+							if(bodyMap.containsKey(ds)) {
+								bodyMap.put(ds, "***");
+							}
+						}
+						bodyParams = JacksonTools.getObjectMapper().writeValueAsString(bodyMap);
 					} else {
 						try {
 							for (String ds : desensitizeParam) {
 								PropertyUtils.setProperty(bodyValue, ds, "***");
 							}
 							//对象如果用了lombok后，用不了PropertyUtils这个工具
-							reqParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
+							bodyParams = JacksonTools.getObjectMapper().writeValueAsString(bodyValue);
 						} catch (JsonProcessingException e) {
 //							System.out.println("解析参数失败："+e.getMessage());
 							Object myvalue = bodyClass.newInstance();
@@ -269,10 +299,12 @@ public class ControllerLogAspect {
 							for (String ds : desensitizeParam) {
 								PropertyUtils.setProperty(myvalue, ds, "***");
 							}
-							reqParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
+							bodyParams = JacksonTools.getObjectMapper().writeValueAsString(myvalue);
 						}
 					}
-				} else {
+				}
+				String queryParams = "";
+				if(!inMap.isEmpty()){
 					Iterator<String> it = inMap.keySet().iterator();
 					while (it.hasNext()) {
 						String key = (String) it.next();
@@ -286,9 +318,11 @@ public class ControllerLogAspect {
 							inMap.put(ds, "***");
 						}
 					}
-					reqParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);
+					queryParams = JacksonTools.getObjectMapper().writeValueAsString(inMap);
 				}
+				reqParams = queryParams+bodyParams;
 			}
+			
 			SequenceService ss = ConcurrentSequence.getCentumInstance();
 			if(mySequenceService != null) {
 				ss = mySequenceService;
