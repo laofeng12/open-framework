@@ -173,8 +173,13 @@ public class ExceptionAspect {
 					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
 					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
 				entity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
-			} else {
+			} else if(resp.getCode().intValue() == APIConstants.CODE_PARAM_ERR
+					|| resp.getCode().intValue() == APIConstants.PARAMS_NOT_Valid
+					|| resp.getCode().intValue() == APIConstants.CODE_VERIFYCODE_ERR
+					|| resp.getCode().intValue() == APIConstants.CODE_FAILD){
 				entity = ResponseEntity.badRequest().body(resp);
+			} else {
+				entity = ResponseEntity.ok().body(resp);
 			}
 			
 			retObj = entity;
@@ -347,6 +352,13 @@ public class ExceptionAspect {
 			RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 			HttpServletResponse response = ((ServletRequestAttributes)ra).getResponse();
 			BasicApiResponse resp = new BasicApiResponse(APIConstants.CODE_SERVER_ERR, "服务异常");
+			if(ae != null) {
+				resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
+			} else if(be != null) {
+				resp = new BasicApiResponse(be.getCode(), be.getMessage());
+			} else if(ce != null) {
+				resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
+			}
 			if(resp.getCode().intValue() == APIConstants.ACCOUNT_NO_LOGIN) {
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			} else if(resp.getCode().intValue() == APIConstants.CODE_AUTH_FAILED) {
@@ -359,18 +371,14 @@ public class ExceptionAspect {
 					|| resp.getCode().intValue() == APIConstants.ROLE_NOTPASS
 					|| resp.getCode().intValue() == APIConstants.USER_NOTPASS) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
-			} else {
+			} else if(resp.getCode().intValue() == APIConstants.CODE_PARAM_ERR
+					|| resp.getCode().intValue() == APIConstants.PARAMS_NOT_Valid
+					|| resp.getCode().intValue() == APIConstants.CODE_VERIFYCODE_ERR
+					|| resp.getCode().intValue() == APIConstants.CODE_FAILD){
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 			}
 			if(null == retObj) {
 				try {
-					if(ae != null) {
-						resp = new BasicApiResponse(ae.getCode(), ae.getMessage());
-					} else if(be != null) {
-						resp = new BasicApiResponse(be.getCode(), be.getMessage());
-					} else if(ce != null) {
-						resp = new BasicApiResponse(ce.getCode(), ce.getMessage());
-					}
 					JacksonTools.writePage(resp, response);
 //					return null;
 				} catch (Exception e) {

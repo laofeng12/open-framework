@@ -16,12 +16,12 @@
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-component</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-common</artifactId>
-			<version>2.0.7</version>
+			<version>2.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
@@ -36,22 +36,22 @@
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-module</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp</groupId>
 			<artifactId>ljdp-secure</artifactId>
-			<version>2.3.7</version>
+			<version>2.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
 			<artifactId>ljdp-plugin-batch</artifactId>
-			<version>2.0.0</version>
+			<version>2.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.support</groupId>
 			<artifactId>ljdp-support-web</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>org.ljdp.plugin</groupId>
 			<artifactId>ljdp-plugin-sys</artifactId>
-			<version>2.0.0</version>
+			<version>5.0.9</version>
 		</dependency>
 
 		<dependency>
@@ -69,6 +69,12 @@
 			<artifactId>xmemcached</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+		
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.70</version>
+        </dependency>
 		
 	<!-- 日志  -->
     <dependency>
