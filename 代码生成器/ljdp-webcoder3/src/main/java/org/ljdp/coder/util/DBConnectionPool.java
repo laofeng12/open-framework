@@ -47,6 +47,8 @@ public class DBConnectionPool {
 						}
 						String sc = dbc.getUrl().substring(b, e);
 						dbc.setSchema(sc);
+					}else if(dbc.getUrl().indexOf("kingbase") != -1) {
+						dbc.setDbType("KINGBASE");
 					}
 					
 					System.out.println(dbc.toString());

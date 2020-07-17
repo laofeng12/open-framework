@@ -47,8 +47,10 @@ public class TableParser {
 				tableSql = "select * from "+tableName+" where rownum=1";
 			} else if(info.getDbType().equals("MYSQL")) {
 				tableSql = "select * from "+tableName+" LIMIT 1";
+			}else if(info.getDbType().equals("KINGBASE")) {
+				tableSql = "select * from \"" +tableName+ "\" LIMIT 1";
 			}
-		    
+
 			ResultSet rs = stmt.executeQuery(tableSql);
 			ResultSetMetaData rsm = rs.getMetaData();
 			int count = rsm.getColumnCount();
@@ -172,6 +174,19 @@ public class TableParser {
 			pstmt.setString(1, table.getSchema());
 			pstmt.setString(2, table.getName().toUpperCase());
 			rs = pstmt.executeQuery();
+		}else if(info.getDbType().equals("KINGBASE")){
+			String querySQL = "SELECT c.COLUMN_NAME,c.ORDINAL_POSITION "+
+					"FROM"+
+					"  INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t,"+
+					"  INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS c "+
+					"WHERE"+
+					"  t.TABLE_NAME=c.TABLE_NAME and t.TABLE_SCHEMA=c.TABLE_SCHEMA and t.CONSTRAINT_NAME=c.CONSTRAINT_NAME"+
+					"  AND t.CONSTRAINT_TYPE = 'PRIMARY KEY'"+
+					"  AND t.table_catalog =? and t.TABLE_NAME=? ";
+			PreparedStatement pstmt = connection.prepareStatement(querySQL);
+			pstmt.setString(1, table.getSchema());
+			pstmt.setString(2, table.getName());
+			rs = pstmt.executeQuery();
 		}
 		if(rs != null) {
 			while(rs.next()){
@@ -215,6 +230,16 @@ public class TableParser {
 			pstmt.setString(2, tableName.toLowerCase());
 			ResultSet rs1 = pstmt.executeQuery();
 			commentMap = getTableObjectMap(rs1, "COLUMN_NAME", "COLUMN_COMMENT");
+			rs1.close();
+		}else if(info.getDbType().equals("KINGBASE")) {
+			String querySQL ="SELECT t.TABLE_NAME,t.COLUMN_NAME,s.DESCRIPTION FROM information_schema.columns t , SYS_DESCRIPTION s ,SYS_ATTRIBUTE a,SYS_CLASS y "
+					+" where s.OBJOID=a.ATTRELID and  y.OID=a.ATTRELID and a.ATTNUM=s.OBJSUBID and a.ATTNAME=t.COLUMN_NAME and y.RELNAME= t.TABLE_NAME and "
+					+" t.table_catalog=? and t.TABLE_NAME=?  ";
+			PreparedStatement pstmt = connection.prepareStatement(querySQL);
+			pstmt.setString(1, info.getSchema());
+			pstmt.setString(2, tableName);
+			ResultSet rs1 = pstmt.executeQuery();
+			commentMap = getTableObjectMap(rs1, "COLUMN_NAME", "DESCRIPTION");
 			rs1.close();
 		}
 		
