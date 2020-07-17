@@ -1,6 +1,6 @@
 package org.ljdp.component.exception;
 
-public class APIException extends Exception {
+public class APIException extends RuntimeException {
 	private static final long serialVersionUID = -8467257091128458758L;
 	public Integer code;
 
